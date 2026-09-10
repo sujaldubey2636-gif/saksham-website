@@ -1,133 +1,107 @@
 import React from 'react';
 
-const COMPARISON_ROWS = [
-  {
-    feature: 'Who builds your system?',
-    saksham: 'Saksham directly (Senior engineer with 10+ yrs experience)',
-    agency: 'Junior interns or outsourced white-label subcontractors',
-    freelancer: 'Single unvetted contractor (risk of sudden ghosting)',
-    sakshamGood: true,
-  },
-  {
-    feature: 'Delivery & turnaround speed',
-    saksham: '7 to 14 business days in hyper-focused agile sprints',
-    agency: '3 to 6 months dragged out by internal bureaucracy',
-    freelancer: 'Open-ended, prone to delays and missed milestones',
-    sakshamGood: true,
-  },
-  {
-    feature: 'Code & asset ownership',
-    saksham: '100% yours on Day 1 (Full GitHub repository & design transfer)',
-    agency: 'Held hostage on proprietary builders or monthly retainers',
-    freelancer: 'Vague contracts, messy code, or missing environment keys',
-    sakshamGood: true,
-  },
-  {
-    feature: 'Pricing & scope predictability',
-    saksham: 'Fixed milestone pricing with zero surprise charges',
-    agency: 'Bloated $15k+ quotes with creeping billable hours',
-    freelancer: 'Starts cheap, then multiplies with hidden "scope changes"',
-    sakshamGood: true,
-  },
-  {
-    feature: 'Post-launch support & guarantee',
-    saksham: 'Included 30-day hypercare + video training library',
-    agency: '$250/hr minimum retainer or tickets ignored for days',
-    freelancer: 'Unavailable once the final invoice is cleared',
-    sakshamGood: true,
-  },
-];
-
 const TrustMatrixSection = () => {
   return (
-    <section id="trust-matrix-section" className="w-full px-gutter-mobile md:px-gutter-tablet lg:px-gutter-desktop py-space-2xl bg-surface-container-lowest">
-      <div className="max-w-screen-xl mx-auto flex flex-col gap-space-xl">
-        {/* Header */}
-        <div className="flex flex-col gap-space-2xs text-left max-w-2xl">
-          <span className="section-label text-primary">Radical Transparency</span>
-          <h2 className="font-display font-bold text-headline-lg-mobile md:text-headline-lg text-on-surface tracking-tight">
-            Why Growing Businesses Choose Team SAKSHAM
-          </h2>
-          <p className="font-body text-body-sm md:text-body-md text-on-surface-variant">
-            You don't need layers of account managers, bloated markups, or the anxiety of disappearing freelancers. Here is how we compare side-by-side.
-          </p>
+    <section className="w-full py-24 lg:py-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <div className="flex flex-col gap-4 text-left max-w-2xl mb-12">
+        <span className="section-label text-primary uppercase tracking-widest text-sm font-semibold">Why us</span>
+        <h2 className="text-4xl md:text-5xl font-display font-bold tracking-tight text-on-surface">
+          The SAKSHAM difference
+        </h2>
+        <p className="text-lg text-on-surface-variant max-w-2xl mt-4">
+          See how we stack up against traditional options. We believe in direct communication, speed, and complete transparency.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Team SAKSHAM */}
+        <div className="bg-surface-container border border-primary/20 rounded-xl p-8 flex flex-col gap-6">
+          <div>
+            <h3 className="text-lg font-headline font-semibold text-on-surface">Team SAKSHAM</h3>
+            <span className="text-sm text-primary mt-1 block">The modern partner</span>
+          </div>
+          <ul className="flex flex-col gap-4">
+            <li className="flex items-start gap-3">
+              <span className="material-symbols-outlined text-primary mt-0.5 text-xl">check_circle</span>
+              <span className="text-on-surface text-base">Direct senior engineer</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="material-symbols-outlined text-primary mt-0.5 text-xl">check_circle</span>
+              <span className="text-on-surface text-base">7-14 day delivery</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="material-symbols-outlined text-primary mt-0.5 text-xl">check_circle</span>
+              <span className="text-on-surface text-base">100% code ownership</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="material-symbols-outlined text-primary mt-0.5 text-xl">check_circle</span>
+              <span className="text-on-surface text-base">Fixed milestone pricing</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="material-symbols-outlined text-primary mt-0.5 text-xl">check_circle</span>
+              <span className="text-on-surface text-base">30-day post-launch support</span>
+            </li>
+          </ul>
         </div>
 
-        {/* Comparison Table / Cards for Mobile & Desktop */}
-        <div className="w-full overflow-x-auto rounded-2xl ring-1 ring-outline-variant/30 shadow-xl bg-surface-container-low">
-          <table className="w-full text-left border-collapse min-w-[700px]">
-            <thead>
-              <tr className="border-b border-surface-bright/40 bg-surface-container/70">
-                <th className="p-space-md font-label text-xs uppercase tracking-wider text-outline w-1/4">
-                  Feature & Expectation
-                </th>
-                <th className="p-space-md font-headline text-sm font-bold text-primary bg-primary-container/10 border-x border-primary/20 w-1/3">
-                  <div className="flex items-center gap-1.5">
-                    <span className="material-symbols-outlined text-[18px] text-primary">verified</span>
-                    <span>Team SAKSHAM</span>
-                  </div>
-                </th>
-                <th className="p-space-md font-headline text-sm font-semibold text-on-surface-variant w-1/4">
-                  Traditional Agencies
-                </th>
-                <th className="p-space-md font-headline text-sm font-semibold text-on-surface-variant w-1/4">
-                  Anonymous Freelancers
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-surface-bright/20 font-body text-xs">
-              {COMPARISON_ROWS.map((row) => (
-                <tr key={row.feature} className="hover:bg-surface-container/40 transition-colors">
-                  <td className="p-space-md font-semibold text-on-surface">
-                    {row.feature}
-                  </td>
-                  <td className="p-space-md text-on-surface bg-primary-container/5 border-x border-primary/20 font-medium">
-                    <div className="flex items-start gap-2">
-                      <span className="material-symbols-outlined text-[16px] text-primary shrink-0 mt-0.5">check_circle</span>
-                      <span>{row.saksham}</span>
-                    </div>
-                  </td>
-                  <td className="p-space-md text-on-surface-variant">
-                    <div className="flex items-start gap-2">
-                      <span className="material-symbols-outlined text-[16px] text-error shrink-0 mt-0.5">cancel</span>
-                      <span>{row.agency}</span>
-                    </div>
-                  </td>
-                  <td className="p-space-md text-on-surface-variant">
-                    <div className="flex items-start gap-2">
-                      <span className="material-symbols-outlined text-[16px] text-error shrink-0 mt-0.5">cancel</span>
-                      <span>{row.freelancer}</span>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        {/* Agencies */}
+        <div className="bg-surface-container border border-outline-variant/20 rounded-xl p-8 flex flex-col gap-6">
+          <div>
+            <h3 className="text-lg font-headline font-semibold text-on-surface">Agencies</h3>
+            <span className="text-sm text-outline mt-1 block">Traditional & slow</span>
+          </div>
+          <ul className="flex flex-col gap-4">
+            <li className="flex items-start gap-3">
+              <span className="material-symbols-outlined text-outline mt-0.5 text-xl">cancel</span>
+              <span className="text-on-surface-variant text-base">Junior account managers</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="material-symbols-outlined text-outline mt-0.5 text-xl">cancel</span>
+              <span className="text-on-surface-variant text-base">3-6 month timelines</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="material-symbols-outlined text-outline mt-0.5 text-xl">cancel</span>
+              <span className="text-on-surface-variant text-base">Proprietary lock-in</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="material-symbols-outlined text-outline mt-0.5 text-xl">cancel</span>
+              <span className="text-on-surface-variant text-base">Hourly billing surprises</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="material-symbols-outlined text-outline mt-0.5 text-xl">cancel</span>
+              <span className="text-on-surface-variant text-base">Expensive retainers</span>
+            </li>
+          </ul>
         </div>
 
-        {/* Trust Badges Footer */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-space-sm">
-          <div className="p-space-sm rounded-xl bg-surface-container/70 ring-1 ring-outline-variant/20 flex items-center gap-space-xs">
-            <span className="material-symbols-outlined text-primary text-[22px]">lock_reset</span>
-            <div className="flex flex-col">
-              <span className="font-label text-xs font-semibold text-on-surface">No Vendor Lock-In</span>
-              <span className="font-body text-[11px] text-outline">You own the code, hosting, and data 100%.</span>
-            </div>
+        {/* Freelancers */}
+        <div className="bg-surface-container border border-outline-variant/20 rounded-xl p-8 flex flex-col gap-6">
+          <div>
+            <h3 className="text-lg font-headline font-semibold text-on-surface">Freelancers</h3>
+            <span className="text-sm text-outline mt-1 block">Hit or miss</span>
           </div>
-          <div className="p-space-sm rounded-xl bg-surface-container/70 ring-1 ring-outline-variant/20 flex items-center gap-space-xs">
-            <span className="material-symbols-outlined text-tertiary text-[22px]">published_with_changes</span>
-            <div className="flex flex-col">
-              <span className="font-label text-xs font-semibold text-on-surface">Milestone-Based Billing</span>
-              <span className="font-body text-[11px] text-outline">Funds only released when milestones pass.</span>
-            </div>
-          </div>
-          <div className="p-space-sm rounded-xl bg-surface-container/70 ring-1 ring-outline-variant/20 flex items-center gap-space-xs">
-            <span className="material-symbols-outlined text-secondary text-[22px]">support_agent</span>
-            <div className="flex flex-col">
-              <span className="font-label text-xs font-semibold text-on-surface">Direct Line to Builder</span>
-              <span className="font-body text-[11px] text-outline">Zero middleman telephone game.</span>
-            </div>
-          </div>
+          <ul className="flex flex-col gap-4">
+            <li className="flex items-start gap-3">
+              <span className="material-symbols-outlined text-outline mt-0.5 text-xl">cancel</span>
+              <span className="text-on-surface-variant text-base">Often unavailable</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="material-symbols-outlined text-outline mt-0.5 text-xl">cancel</span>
+              <span className="text-on-surface-variant text-base">Unpredictable timelines</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="material-symbols-outlined text-outline mt-0.5 text-xl">cancel</span>
+              <span className="text-on-surface-variant text-base">Messy handoffs</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="material-symbols-outlined text-outline mt-0.5 text-xl">cancel</span>
+              <span className="text-on-surface-variant text-base">Pay per task</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="material-symbols-outlined text-outline mt-0.5 text-xl">cancel</span>
+              <span className="text-on-surface-variant text-base">No support guarantees</span>
+            </li>
+          </ul>
         </div>
       </div>
     </section>

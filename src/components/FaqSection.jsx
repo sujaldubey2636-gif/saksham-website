@@ -35,71 +35,46 @@ const FaqSection = () => {
   };
 
   return (
-    <section id="faq-section" className="w-full px-gutter-mobile md:px-gutter-tablet lg:px-gutter-desktop py-space-2xl bg-surface-container-lowest">
-      <div className="max-w-screen-xl mx-auto flex flex-col gap-space-xl">
-        {/* Header */}
-        <div className="flex flex-col gap-space-2xs text-left max-w-2xl">
-          <span className="section-label text-tertiary">Zero Hesitation</span>
-          <h2 className="font-display font-bold text-headline-lg-mobile md:text-headline-lg text-on-surface tracking-tight">
-            Frequently Asked Questions
+    <section id="faq-section" className="py-24 lg:py-32 px-gutter-mobile md:px-gutter-tablet lg:px-gutter-desktop">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex flex-col items-center justify-center text-center">
+          <span className="section-label text-primary text-sm font-semibold tracking-wider uppercase">FAQ</span>
+          <h2 className="text-4xl md:text-5xl font-display font-bold tracking-tight text-on-surface mt-2">
+            Common questions
           </h2>
-          <p className="font-body text-body-sm md:text-body-md text-on-surface-variant">
-            Everything you need to know before partnering with us. If you have any other question, message Saksham directly.
+          <p className="text-lg text-on-surface-variant max-w-xl mx-auto mt-4">
+            Everything you need to know before partnering with us.
           </p>
         </div>
 
-        {/* Accordion List */}
-        <div className="flex flex-col gap-space-xs max-w-3xl">
+        <div className="max-w-2xl mx-auto mt-12 flex flex-col">
           {FAQS.map((faq, idx) => {
             const isOpen = openIndex === idx;
             return (
-              <div
-                key={faq.q}
-                className="rounded-xl bg-surface-container/70 ring-1 ring-outline-variant/20 overflow-hidden transition-all duration-200"
-              >
+              <div key={idx} className="border-b border-outline-variant/30">
                 <button
-                  type="button"
                   onClick={() => toggleFaq(idx)}
-                  className="w-full p-space-md flex items-center justify-between text-left gap-space-sm hover:bg-surface-container transition-colors"
-                  aria-expanded={isOpen}
+                  className="w-full py-6 flex justify-between items-center text-left focus:outline-none"
                 >
-                  <span className="font-headline text-sm font-semibold text-on-surface">
+                  <span className="text-base font-medium text-on-surface pr-8">
                     {faq.q}
                   </span>
-                  <span className={`material-symbols-outlined text-[20px] text-primary transition-transform duration-200 shrink-0 ${isOpen ? 'rotate-180' : ''}`}>
+                  <span
+                    className={`material-symbols-outlined text-on-surface-variant transition-transform duration-200 ${
+                      isOpen ? 'rotate-180' : ''
+                    }`}
+                  >
                     expand_more
                   </span>
                 </button>
                 {isOpen && (
-                  <div className="px-space-md pb-space-md pt-0 text-xs font-body text-on-surface-variant leading-relaxed border-t border-surface-bright/20 mt-1">
-                    <p className="pt-space-xs">{faq.a}</p>
+                  <div className="pb-6 text-sm text-on-surface-variant leading-relaxed pr-8">
+                    {faq.a}
                   </div>
                 )}
               </div>
             );
           })}
-        </div>
-
-        {/* Still have questions banner */}
-        <div className="p-space-md rounded-xl bg-surface-container-low ring-1 ring-outline-variant/30 flex flex-col sm:flex-row items-center justify-between gap-space-sm max-w-3xl">
-          <div className="flex items-center gap-space-sm text-center sm:text-left">
-            <div className="w-10 h-10 rounded-xl bg-primary-container/20 text-primary flex items-center justify-center shrink-0">
-              <span className="material-symbols-outlined text-[22px]">contact_support</span>
-            </div>
-            <div className="flex flex-col">
-              <span className="font-headline text-xs font-bold text-on-surface">Have a specific or unusual technical requirement?</span>
-              <span className="font-body text-[11px] text-outline">We reply to WhatsApp and email questions in under 2 hours.</span>
-            </div>
-          </div>
-          <a
-            href="https://wa.me"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-space-sm py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high ring-1 ring-tertiary/30 text-tertiary text-xs font-label font-semibold flex items-center gap-1.5 shrink-0 transition-colors"
-          >
-            <span>Ask on WhatsApp</span>
-            <span className="material-symbols-outlined text-[15px]">arrow_forward</span>
-          </a>
         </div>
       </div>
     </section>

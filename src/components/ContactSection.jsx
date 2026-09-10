@@ -5,7 +5,7 @@ const ContactSection = ({ selectedScope }) => {
   const [form, setForm] = useState({
     name: '',
     email: '',
-    service: 'web-dev',
+    service: 'High-Converting Website Development',
     notes: '',
   });
 
@@ -24,189 +24,105 @@ const ContactSection = ({ selectedScope }) => {
   };
 
   return (
-    <section
-      id="contact-section"
-      className="w-full px-gutter-mobile md:px-gutter-tablet lg:px-gutter-desktop py-space-2xl bg-surface-container-lowest"
-    >
-      <div className="max-w-screen-xl mx-auto flex flex-col gap-space-xl">
-        {/* Header */}
-        <div className="flex flex-col gap-space-2xs text-left max-w-2xl">
-          <div className="inline-flex items-center gap-1.5 px-space-xs py-1 rounded-md bg-tertiary-container/20 text-tertiary w-fit ring-1 ring-tertiary/30">
-            <span className="material-symbols-outlined text-[16px]">schedule</span>
-            <span className="font-label text-label-sm font-semibold uppercase tracking-wider">Fast 2-Hour Response</span>
-          </div>
-          <h2 className="font-display font-bold text-headline-lg-mobile md:text-headline-lg text-on-surface tracking-tight">
-            Let's Build Something Capable Together
+    <section id="contact-section" className="py-24 lg:py-32 px-gutter-mobile md:px-gutter-tablet lg:px-gutter-desktop">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
+        
+        {/* Left Side */}
+        <div className="flex flex-col text-left">
+          <span className="section-label text-primary text-sm font-semibold tracking-wider uppercase">Get in touch</span>
+          <h2 className="text-3xl md:text-4xl font-display font-bold tracking-tight text-on-surface mt-2">
+            Let's talk about your project
           </h2>
-          <p className="font-body text-body-sm md:text-body-md text-on-surface-variant">
-            Zero pressure, no aggressive sales pitches. Speak directly with Saksham to review your bottlenecks, clarify deliverables, and get an honest feasibility assessment.
+          <p className="text-base text-on-surface-variant mt-4 leading-relaxed">
+            Tell us what you're working on and we'll get back to you within a few hours.
           </p>
+
+          <div className="mt-8 flex flex-col gap-4">
+            <div className="flex items-center gap-3">
+              <span className="material-symbols-outlined text-on-surface-variant">mail</span>
+              <span className="text-sm text-on-surface-variant">hello@teamsaksham.com</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="material-symbols-outlined text-on-surface-variant">chat</span>
+              <span className="text-sm text-on-surface-variant">WhatsApp — typically replies in 15 min</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="material-symbols-outlined text-on-surface-variant">calendar_month</span>
+              <span className="text-sm text-on-surface-variant">Book a 15-minute discovery call</span>
+            </div>
+          </div>
         </div>
 
-        <div className="max-w-3xl w-full flex flex-col gap-space-md">
-          {/* Quick Direct Actions */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-space-sm">
-            <a
-              href="https://calendly.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-space-md rounded-xl font-label text-xs flex items-center justify-between transition-all duration-200 active:scale-[0.98] ring-1 ring-primary/40 hover:brightness-110 shadow-md"
-              style={{
-                background: 'linear-gradient(135deg, #4d8eff 0%, #005ac2 50%, #571bc1 100%)',
-                color: 'white',
-              }}
-            >
-              <div className="flex items-center gap-space-xs">
-                <span className="material-symbols-outlined text-[20px]">calendar_today</span>
-                <div className="flex flex-col text-left">
-                  <span className="font-bold text-sm leading-tight">Book 15-Min Discovery</span>
-                  <span className="text-[11px] text-primary-fixed opacity-90">Pick a time directly on calendar</span>
-                </div>
+        {/* Right Side */}
+        <div>
+          <form onSubmit={handleSubmit} className="bg-surface-container rounded-xl p-8 border border-outline-variant/20 flex flex-col">
+            {submitted ? (
+              <div className="text-center py-8">
+                <span className="material-symbols-outlined text-4xl text-primary mb-4">check_circle</span>
+                <h3 className="text-xl font-bold text-on-surface mb-2">Message sent</h3>
+                <p className="text-on-surface-variant text-sm">We'll get back to you shortly.</p>
               </div>
-              <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
-            </a>
-
-            <a
-              href="https://wa.me"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-space-md rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-label text-xs flex items-center justify-between shadow-sm ring-1 ring-outline-variant/30 transition-all duration-200 active:scale-[0.98]"
-            >
-              <div className="flex items-center gap-space-xs">
-                <span className="material-symbols-outlined text-[20px] text-tertiary">chat</span>
-                <div className="flex flex-col text-left">
-                  <span className="font-bold text-sm leading-tight">Direct WhatsApp Chat</span>
-                  <span className="text-[11px] text-tertiary">Typically replies in under 15 minutes</span>
-                </div>
-              </div>
-              <span className="material-symbols-outlined text-[16px] text-on-surface-variant">north_east</span>
-            </a>
-          </div>
-
-          {/* Divider */}
-          <div className="flex items-center gap-space-sm my-1">
-            <div className="flex-1 h-px bg-surface-bright/40" />
-            <span className="font-label text-xs text-outline uppercase tracking-wider">Or send a direct project inquiry</span>
-            <div className="flex-1 h-px bg-surface-bright/40" />
-          </div>
-
-          {/* Contact Form */}
-          <form
-            onSubmit={handleSubmit}
-            className="p-space-lg rounded-2xl bg-surface-container shadow-lg flex flex-col gap-space-md ring-1 ring-outline-variant/30 border-gradient-top"
-          >
-            {/* Name + Email Row */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
-              <div className="flex flex-col gap-space-2xs text-left">
-                <label htmlFor="contact-name" className="font-label text-xs font-semibold text-on-surface">
-                  Your Full Name <span className="text-primary">*</span>
-                </label>
-                <input
-                  id="contact-name"
-                  type="text"
-                  required
-                  placeholder="e.g. Alex Morgan"
-                  value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="w-full min-h-[44px] px-space-md py-space-xs rounded-xl bg-surface-container-lowest text-on-surface placeholder:text-outline font-body text-xs ring-1 ring-outline-variant/30 focus:outline-none focus:ring-2 focus:ring-primary shadow-inner transition-all duration-200"
-                />
-              </div>
-
-              <div className="flex flex-col gap-space-2xs text-left">
-                <label htmlFor="contact-email" className="font-label text-xs font-semibold text-on-surface">
-                  Work Email <span className="text-primary">*</span>
-                </label>
-                <input
-                  id="contact-email"
-                  type="email"
-                  required
-                  placeholder="alex@company.com"
-                  value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  className="w-full min-h-[44px] px-space-md py-space-xs rounded-xl bg-surface-container-lowest text-on-surface placeholder:text-outline font-body text-xs ring-1 ring-outline-variant/30 focus:outline-none focus:ring-2 focus:ring-primary shadow-inner transition-all duration-200"
-                />
-              </div>
-            </div>
-
-            {/* Service Select */}
-            <div className="flex flex-col gap-space-2xs text-left">
-              <label htmlFor="contact-service" className="font-label text-xs font-semibold text-on-surface">
-                Primary Goal / Service Focus
-              </label>
-              <div className="relative">
-                <select
-                  id="contact-service"
-                  value={form.service}
-                  onChange={(e) => setForm({ ...form, service: e.target.value })}
-                  className="w-full min-h-[44px] px-space-md py-space-xs rounded-xl bg-surface-container-lowest text-on-surface font-body text-xs appearance-none ring-1 ring-outline-variant/30 focus:outline-none focus:ring-2 focus:ring-primary shadow-inner transition-all duration-200"
-                >
-                  <option value="web-dev">High-Converting Website Development (Next.js / Astro)</option>
-                  <option value="custom-webapp">Custom Web Application / Booking Portal</option>
-                  <option value="workflow-automation">Workflow & API Automation (Make / Zapier)</option>
-                  <option value="digital-marketing">Digital Marketing & Performance SEO</option>
-                  <option value="overhaul">Complete Digital Overhaul (Website + Automation)</option>
-                </select>
-                <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant text-[20px]">
-                  expand_more
-                </span>
-              </div>
-            </div>
-
-            {/* Project Notes / Scope */}
-            <div className="flex flex-col gap-space-2xs text-left">
-              <label htmlFor="contact-notes" className="font-label text-xs font-semibold text-on-surface flex items-center justify-between">
-                <span>Project Context or Questions</span>
-                <span className="text-[11px] text-outline font-normal">Optional</span>
-              </label>
-              <textarea
-                id="contact-notes"
-                rows={3}
-                placeholder="Briefly share your current bottlenecks, targets, or link to your current website..."
-                value={form.notes}
-                onChange={(e) => setForm({ ...form, notes: e.target.value })}
-                className="w-full p-space-md rounded-xl bg-surface-container-lowest text-on-surface placeholder:text-outline font-body text-xs ring-1 ring-outline-variant/30 focus:outline-none focus:ring-2 focus:ring-primary shadow-inner transition-all duration-200 resize-none"
-              />
-            </div>
-
-            {/* Submit / Success */}
-            {!submitted ? (
-              <button
-                type="submit"
-                className="w-full min-h-[48px] mt-space-2xs px-space-md py-space-sm rounded-xl font-label text-sm font-semibold flex items-center justify-center gap-space-xs transition-all duration-200 active:scale-[0.98] hover:brightness-110 shadow-lg"
-                style={{
-                  background: 'linear-gradient(135deg, #4d8eff 0%, #571bc1 100%)',
-                  color: 'white',
-                  boxShadow: '0 0 24px rgba(77, 142, 255, 0.35)',
-                }}
-              >
-                <span>Submit Inquiry to Saksham</span>
-                <span className="material-symbols-outlined text-[18px]">send</span>
-              </button>
             ) : (
-              <div className="p-space-md rounded-xl bg-tertiary-container/30 text-tertiary ring-1 ring-tertiary/40 text-center font-body text-xs flex flex-col items-center gap-1">
-                <span className="material-symbols-outlined text-[24px]">task_alt</span>
-                <strong className="text-sm">Inquiry received directly by Saksham!</strong>
-                <span>You will receive an honest, tailored response to your inbox within 2 hours.</span>
+              <div className="flex flex-col gap-6">
+                <div>
+                  <label htmlFor="name" className="text-sm font-medium text-on-surface mb-2 block">Name</label>
+                  <input
+                    id="name"
+                    type="text"
+                    required
+                    value={form.name}
+                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                    className="w-full rounded-lg bg-surface-container-high border border-outline-variant/30 p-3 text-sm text-on-surface placeholder:text-outline focus:outline-none focus:border-primary/50 transition"
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="email" className="text-sm font-medium text-on-surface mb-2 block">Email</label>
+                  <input
+                    id="email"
+                    type="email"
+                    required
+                    value={form.email}
+                    onChange={(e) => setForm({ ...form, email: e.target.value })}
+                    className="w-full rounded-lg bg-surface-container-high border border-outline-variant/30 p-3 text-sm text-on-surface placeholder:text-outline focus:outline-none focus:border-primary/50 transition"
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="service" className="text-sm font-medium text-on-surface mb-2 block">Service</label>
+                  <select
+                    id="service"
+                    value={form.service}
+                    onChange={(e) => setForm({ ...form, service: e.target.value })}
+                    className="w-full rounded-lg bg-surface-container-high border border-outline-variant/30 p-3 text-sm text-on-surface focus:outline-none focus:border-primary/50 transition appearance-none"
+                  >
+                    <option>High-Converting Website Development</option>
+                    <option>Custom Web Application</option>
+                    <option>Workflow Automation</option>
+                    <option>Digital Marketing</option>
+                    <option>Complete Digital Overhaul</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label htmlFor="notes" className="text-sm font-medium text-on-surface mb-2 block">Message</label>
+                  <textarea
+                    id="notes"
+                    rows={4}
+                    value={form.notes}
+                    onChange={(e) => setForm({ ...form, notes: e.target.value })}
+                    className="w-full rounded-lg bg-surface-container-high border border-outline-variant/30 p-3 text-sm text-on-surface placeholder:text-outline focus:outline-none focus:border-primary/50 transition resize-none"
+                  />
+                </div>
+                
+                <button type="submit" className="btn-primary w-full mt-2 py-3 rounded-lg bg-primary text-surface font-semibold hover:bg-primary/90 transition-colors">
+                  Send message
+                </button>
               </div>
             )}
           </form>
-
-          {/* Psychological Reassurance Strip */}
-          <div className="flex flex-wrap items-center justify-center gap-space-md text-center pt-space-2xs text-[11px] text-outline">
-            <div className="flex items-center gap-1">
-              <span className="material-symbols-outlined text-[15px] text-primary">lock</span>
-              <span>100% Confidential</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <span className="material-symbols-outlined text-[15px] text-tertiary">check_circle</span>
-              <span>No spam or sales harassment</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <span className="material-symbols-outlined text-[15px] text-secondary">handshake</span>
-              <span>Direct engineer response</span>
-            </div>
-          </div>
         </div>
+
       </div>
     </section>
   );
