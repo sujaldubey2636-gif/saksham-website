@@ -1,41 +1,35 @@
 import React from 'react';
 
-const FEATURES = [
+const GUARANTEES = [
   {
-    icon: 'timer',
-    title: 'Rapid Turnaround',
-    description: 'Lean, hyper-focused sprints getting your digital platform or automated workflow fully live in days, not endless quarters.',
-    iconBg:   'bg-tertiary-container/20',
-    iconColor: 'text-tertiary',
-    iconRing: 'ring-tertiary/30',
-    hoverRing: 'hover:ring-tertiary/30',
-  },
-  {
-    icon: 'connect_without_contact',
-    title: 'Direct Founder Access',
-    description: 'Communicate 1-on-1 with the creators and software architects building your product. No game of telephone with middlemen.',
-    iconBg:   'bg-primary-container/20',
+    icon: 'verified_user',
+    title: 'Milestone Approval Guarantee',
+    highlight: 'Zero financial risk',
+    description:
+      'You never pay for work you haven’t reviewed and approved. Each phase has a clear milestone checkpoint. If the interactive prototype doesn’t meet your vision, we refine it together before any production code begins.',
+    badgeBg: 'bg-primary-container/20 ring-primary/30',
     iconColor: 'text-primary',
-    iconRing: 'ring-primary/30',
-    hoverRing: 'hover:ring-primary/30',
+    hoverRing: 'hover:ring-primary/40',
   },
   {
-    icon: 'terminal',
-    title: 'Transparent Process',
-    description: 'Clear fixed scopes, crystal milestones, and transparent Notion and Figma boards showing granular progress at every checkpoint.',
-    iconBg:   'bg-secondary-container/25',
+    icon: 'lock_open_right',
+    title: '100% Code & Asset Ownership',
+    highlight: 'No agency hostage traps',
+    description:
+      'On launch day, full administrative ownership of your GitHub repository, Figma files, DNS records, and deployment keys are transferred directly to your name. No proprietary lock-in, no ongoing agency dependencies.',
+    badgeBg: 'bg-secondary-container/25 ring-secondary/30',
     iconColor: 'text-secondary',
-    iconRing: 'ring-secondary/30',
-    hoverRing: 'hover:ring-secondary/30',
+    hoverRing: 'hover:ring-secondary/40',
   },
   {
-    icon: 'price_check',
-    title: 'Built for Small Businesses',
-    description: 'Transparent, fair tier pricing tailored for emerging ventures looking for tangible business ROI without artificial markups.',
-    iconBg:   'bg-surface-bright/40',
-    iconColor: 'text-tertiary-fixed-dim',
-    iconRing: 'ring-tertiary-fixed-dim/30',
-    hoverRing: 'hover:ring-tertiary/30',
+    icon: 'health_and_safety',
+    title: '30-Day Post-Launch Hypercare',
+    highlight: 'We stand by our craft',
+    description:
+      'Going live is just the beginning. For 30 days post-launch, we actively monitor your system, resolve any unexpected edge-case bugs, and provide personalized video training for you and your team at zero extra charge.',
+    badgeBg: 'bg-tertiary-container/20 ring-tertiary/30',
+    iconColor: 'text-tertiary',
+    hoverRing: 'hover:ring-tertiary/40',
   },
 ];
 
@@ -43,35 +37,49 @@ const WhySakhamSection = () => {
   return (
     <section
       id="why-section"
-      className="w-full px-gutter-mobile md:px-gutter-tablet lg:px-gutter-desktop py-space-2xl"
+      className="w-full px-gutter-mobile md:px-gutter-tablet lg:px-gutter-desktop py-space-2xl bg-surface-container-lowest/40"
     >
       <div className="max-w-screen-xl mx-auto flex flex-col gap-space-xl">
         {/* Header */}
         <div className="flex flex-col gap-space-2xs text-left max-w-2xl">
-          <span className="section-label text-primary">The Saksham Difference</span>
+          <span className="section-label text-primary">Unmatched Client Safety</span>
           <h2 className="font-display font-bold text-headline-lg-mobile md:text-headline-lg text-on-surface tracking-tight">
-            Honest Execution. Zero Fluff.
+            The SAKSHAM Triple Guarantee
           </h2>
           <p className="font-body text-body-sm md:text-body-md text-on-surface-variant">
-            Engineered explicitly for growing teams who demand agility and accountability, never bureaucratic agency drag.
+            Hiring digital talent shouldn't feel like a gamble. We structure our contracts to place all accountability on our shoulders, giving you total peace of mind.
           </p>
         </div>
 
-        {/* Feature Grid: 1 col → 2 col → 2 col desktop */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
-          {FEATURES.map((feature) => (
+        {/* 3 Guarantee Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+          {GUARANTEES.map((g) => (
             <div
-              key={feature.title}
-              className={`p-space-md rounded-xl bg-surface-container-low shadow-sm ring-1 ring-outline-variant/20 ${feature.hoverRing} flex items-start gap-space-md transition-all duration-300`}
+              key={g.title}
+              className={`p-space-lg rounded-2xl bg-surface-container/90 ring-1 ring-outline-variant/20 ${g.hoverRing} shadow-md flex flex-col justify-between gap-space-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl`}
             >
-              <div className={`w-11 h-11 rounded-xl ${feature.iconBg} ring-1 ${feature.iconRing} flex items-center justify-center ${feature.iconColor} flex-shrink-0 shadow-sm`}>
-                <span className="material-symbols-outlined text-[24px]">{feature.icon}</span>
-              </div>
-              <div className="flex flex-col">
-                <h4 className="font-headline text-headline-sm text-on-surface font-semibold">{feature.title}</h4>
-                <p className="font-body text-body-sm text-on-surface-variant mt-space-2xs leading-relaxed">
-                  {feature.description}
+              <div className="flex flex-col gap-space-sm">
+                <div className="flex items-center justify-between">
+                  <div className={`w-12 h-12 rounded-xl ${g.badgeBg} ring-1 flex items-center justify-center ${g.iconColor} shadow-inner`}>
+                    <span className="material-symbols-outlined text-[28px]">{g.icon}</span>
+                  </div>
+                  <span className="font-code text-[11px] px-2.5 py-0.5 rounded-full bg-surface-container-high text-primary ring-1 ring-primary/20 font-semibold">
+                    {g.highlight}
+                  </span>
+                </div>
+
+                <h3 className="font-headline text-headline-sm text-on-surface font-semibold pt-1">
+                  {g.title}
+                </h3>
+
+                <p className="font-body text-xs text-on-surface-variant leading-relaxed">
+                  {g.description}
                 </p>
+              </div>
+
+              <div className="pt-space-xs border-t border-surface-bright/20 flex items-center gap-1 text-[11px] text-tertiary font-medium">
+                <span className="material-symbols-outlined text-[15px]">verified</span>
+                <span>Contractually Guaranteed</span>
               </div>
             </div>
           ))}
