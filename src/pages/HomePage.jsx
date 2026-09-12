@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import HeroSection from '../components/HeroSection';
-import TestimonialsSection from '../components/TestimonialsSection';
 import ServicesSection from '../components/ServicesSection';
-import ProjectEstimator from '../components/ProjectEstimator';
+import BeforeAfterSection from '../components/BeforeAfterSection';
 import ProjectsSection from '../components/ProjectsSection';
-import TrustMatrixSection from '../components/TrustMatrixSection';
+import TestimonialsSection from '../components/TestimonialsSection';
+import ProjectEstimator from '../components/ProjectEstimator';
 import ProcessTimelineSection from '../components/ProcessTimelineSection';
+import TrustMatrixSection from '../components/TrustMatrixSection';
 import WhySakhamSection from '../components/WhySakhamSection';
 import AboutSection from '../components/AboutSection';
 import FaqSection from '../components/FaqSection';
@@ -15,9 +16,10 @@ export default function HomePage() {
   const [selectedScope, setSelectedScope] = useState('');
 
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col w-full bg-[#121316] text-[#F0F1F3]">
       <HeroSection />
       <ServicesSection />
+      <BeforeAfterSection />
       <ProjectsSection />
       <TestimonialsSection />
       <ProjectEstimator onSelectScope={setSelectedScope} />
