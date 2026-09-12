@@ -84,7 +84,7 @@ export default function ContactSection({ selectedScope }) {
             </a>
 
             <a
-              href={`https://wa.me/?text=${whatsappMessage}`}
+              href={`https://wa.me/919867781756?text=${whatsappMessage}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-3 p-3 rounded bg-[#1A1C21] border border-[#2A2D35] hover:border-emerald-400 text-[#F0F1F3] transition-colors"
@@ -118,7 +118,7 @@ export default function ContactSection({ selectedScope }) {
                 </p>
                 <div className="mt-4 pt-4 border-t border-[#2A2D35] w-full flex justify-center">
                   <a
-                    href={`https://wa.me/?text=${whatsappMessage}`}
+                    href={`https://wa.me/919867781756?text=${whatsappMessage}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 text-xs text-emerald-400 hover:underline"
@@ -204,7 +204,7 @@ export default function ContactSection({ selectedScope }) {
                   </button>
 
                   <a
-                    href={`https://wa.me/?text=${whatsappMessage}`}
+                    href={`https://wa.me/919867781756?text=${whatsappMessage}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn-secondary w-full sm:w-auto py-3 text-xs font-mono flex items-center justify-center gap-1.5"

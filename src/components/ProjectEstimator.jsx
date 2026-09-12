@@ -177,7 +177,7 @@ const ProjectEstimator = ({ onSelectScope }) => {
                 </button>
 
                 <a
-                  href={`https://wa.me/?text=${whatsappMessage}`}
+                  href={`https://wa.me/919867781756?text=${whatsappMessage}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn-secondary w-full py-3 text-xs flex items-center justify-center gap-2"
