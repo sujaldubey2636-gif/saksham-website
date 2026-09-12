@@ -5,10 +5,10 @@ import logoFull from '../assets/saksham-logo-dark.png';
 
 export default function Logo({ size = 'md', variant = 'horizontal', className = '' }) {
   const heights = {
-    sm: 'h-7',
-    md: 'h-9',
-    lg: 'h-11',
-    xl: 'h-14',
+    sm: 'h-6 sm:h-7',
+    md: 'h-8 sm:h-9',
+    lg: 'h-10 sm:h-11',
+    xl: 'h-12 sm:h-14',
   };
 
   const sources = {
