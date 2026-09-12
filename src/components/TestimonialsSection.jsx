@@ -23,11 +23,11 @@ const TestimonialsSection = () => {
   ];
 
   return (
-    <section className="w-full py-24 lg:py-32 px-4 sm:px-6 lg:px-8 bg-[#11131a]">
+    <section className="w-full py-24 lg:py-32 px-6 sm:px-10 lg:px-16 bg-[#121316] border-b border-[#2A2D35]">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col gap-4 text-left max-w-2xl">
-          <span className="section-label text-primary uppercase tracking-widest text-sm font-semibold">Testimonials</span>
-          <h2 className="text-4xl md:text-5xl font-display font-bold tracking-tight text-on-surface">
+          <span className="text-xs font-mono text-[#E58E26] uppercase tracking-widest font-semibold">// CLIENT SIGNALS</span>
+          <h2 className="text-4xl md:text-5xl font-['Bricolage_Grotesque',sans-serif] font-bold tracking-tight text-[#F0F1F3]">
             What our clients say
           </h2>
         </div>
@@ -36,9 +36,9 @@ const TestimonialsSection = () => {
           {testimonials.map((t) => (
             <div
               key={t.name}
-              className="bg-surface-container rounded-xl p-8 border border-outline-variant/20 flex flex-col justify-between"
+              className="bg-[#1A1C21] rounded-xl p-8 border border-[#2A2D35] flex flex-col justify-between"
             >
-              <p className="text-base text-on-surface leading-relaxed italic">
+              <p className="text-base text-[#F0F1F3] leading-relaxed italic">
                 "{t.quote}"
               </p>
               
@@ -50,10 +50,10 @@ const TestimonialsSection = () => {
                   loading="lazy"
                 />
                 <div className="flex flex-col">
-                  <span className="text-sm font-semibold text-on-surface">
+                  <span className="text-sm font-semibold text-[#F0F1F3]">
                     {t.name}
                   </span>
-                  <span className="text-xs text-on-surface-variant">
+                  <span className="text-xs text-[#8A919E]">
                     {t.role}
                   </span>
                 </div>

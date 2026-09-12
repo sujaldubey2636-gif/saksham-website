@@ -25,13 +25,13 @@ const ProcessTimelineSection = () => {
   ];
 
   return (
-    <section className="w-full py-24 lg:py-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <section id="process-section" className="w-full py-24 lg:py-32 px-6 sm:px-10 lg:px-16 max-w-7xl mx-auto bg-[#121316] border-b border-[#2A2D35]">
       <div className="flex flex-col gap-4 text-left max-w-2xl mb-16">
-        <span className="section-label text-primary uppercase tracking-widest text-sm font-semibold">How we work</span>
-        <h2 className="text-4xl md:text-5xl font-display font-bold tracking-tight text-on-surface">
+        <span className="text-xs font-mono text-[#E58E26] uppercase tracking-widest font-semibold">// HOW WE OPERATE</span>
+        <h2 className="text-4xl md:text-5xl font-['Bricolage_Grotesque',sans-serif] font-bold tracking-tight text-[#F0F1F3]">
           A clear, proven process
         </h2>
-        <p className="text-lg text-on-surface-variant max-w-2xl mt-4">
+        <p className="text-lg text-[#8A919E] max-w-2xl mt-4">
           No vague timelines. No endless meetings. Just a straightforward path from idea to production.
         </p>
       </div>
@@ -39,13 +39,13 @@ const ProcessTimelineSection = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {steps.map((step) => (
           <div key={step.num} className="flex flex-col">
-            <span className="text-4xl font-display font-bold text-outline-variant/50 mb-4">
+            <span className="text-4xl font-['Bricolage_Grotesque',sans-serif] font-bold text-[#2A2D35] mb-4">
               {step.num}
             </span>
-            <h3 className="text-lg font-headline font-semibold text-on-surface">
+            <h3 className="text-lg font-['Bricolage_Grotesque',sans-serif] font-semibold text-[#F0F1F3]">
               {step.title}
             </h3>
-            <p className="text-sm text-on-surface-variant mt-2 leading-relaxed">
+            <p className="text-sm text-[#8A919E] mt-2 leading-relaxed">
               {step.description}
             </p>
           </div>

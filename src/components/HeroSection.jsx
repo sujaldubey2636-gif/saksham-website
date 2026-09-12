@@ -32,6 +32,7 @@ export default function HeroSection() {
           <div className="mt-8 flex flex-wrap items-center gap-4">
             <a
               href="#contact-section"
+              onClick={(e) => { e.preventDefault(); document.getElementById('contact-section')?.scrollIntoView({ behavior: 'smooth' }); }}
               className="inline-flex items-center justify-center px-5 py-3 rounded text-sm font-medium bg-[#E58E26] text-[#121316] hover:bg-[#d07e1e] transition-colors font-mono tracking-tight"
             >
               Discuss a project &rarr;
@@ -39,6 +40,7 @@ export default function HeroSection() {
 
             <a
               href="#work-section"
+              onClick={(e) => { e.preventDefault(); document.getElementById('work-section')?.scrollIntoView({ behavior: 'smooth' }); }}
               className="inline-flex items-center justify-center px-5 py-3 rounded text-sm font-medium bg-[#1A1C21] text-[#F0F1F3] border border-[#2A2D35] hover:border-[#8A919E] transition-colors font-mono"
             >
               Inspect recent builds

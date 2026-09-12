@@ -35,14 +35,14 @@ const FaqSection = () => {
   };
 
   return (
-    <section id="faq-section" className="py-24 lg:py-32 px-gutter-mobile md:px-gutter-tablet lg:px-gutter-desktop">
+    <section id="faq-section" className="py-24 lg:py-32 px-6 sm:px-10 lg:px-16 bg-[#121316] border-b border-[#2A2D35]">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col items-center justify-center text-center">
-          <span className="section-label text-primary text-sm font-semibold tracking-wider uppercase">FAQ</span>
-          <h2 className="text-4xl md:text-5xl font-display font-bold tracking-tight text-on-surface mt-2">
+          <span className="text-xs font-mono text-[#E58E26] font-semibold tracking-wider uppercase">// COMMON QUESTIONS</span>
+          <h2 className="text-4xl md:text-5xl font-['Bricolage_Grotesque',sans-serif] font-bold tracking-tight text-[#F0F1F3] mt-2">
             Common questions
           </h2>
-          <p className="text-lg text-on-surface-variant max-w-xl mx-auto mt-4">
+          <p className="text-lg text-[#8A919E] max-w-xl mx-auto mt-4">
             Everything you need to know before partnering with us.
           </p>
         </div>
@@ -51,16 +51,17 @@ const FaqSection = () => {
           {FAQS.map((faq, idx) => {
             const isOpen = openIndex === idx;
             return (
-              <div key={idx} className="border-b border-outline-variant/30">
+              <div key={idx} className="border-b border-[#2A2D35]">
                 <button
                   onClick={() => toggleFaq(idx)}
+                  aria-expanded={isOpen}
                   className="w-full py-6 flex justify-between items-center text-left focus:outline-none"
                 >
-                  <span className="text-base font-medium text-on-surface pr-8">
+                  <span className="text-base font-medium text-[#F0F1F3] pr-8">
                     {faq.q}
                   </span>
                   <span
-                    className={`material-symbols-outlined text-on-surface-variant transition-transform duration-200 ${
+                    className={`material-symbols-outlined text-[#8A919E] transition-transform duration-200 ${
                       isOpen ? 'rotate-180' : ''
                     }`}
                   >
@@ -68,7 +69,7 @@ const FaqSection = () => {
                   </span>
                 </button>
                 {isOpen && (
-                  <div className="pb-6 text-sm text-on-surface-variant leading-relaxed pr-8">
+                  <div className="pb-6 text-sm text-[#8A919E] leading-relaxed pr-8">
                     {faq.a}
                   </div>
                 )}
