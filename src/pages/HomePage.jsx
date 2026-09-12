@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import HeroSection from '../components/HeroSection';
+import FounderVideoSection from '../components/FounderVideoSection';
 import ServicesSection from '../components/ServicesSection';
 import BeforeAfterSection from '../components/BeforeAfterSection';
 import ProjectsSection from '../components/ProjectsSection';
@@ -18,6 +19,7 @@ export default function HomePage() {
   return (
     <div className="flex flex-col w-full bg-[#121316] text-[#F0F1F3]">
       <HeroSection />
+      <FounderVideoSection />
       <ServicesSection />
       <BeforeAfterSection />
       <ProjectsSection />
