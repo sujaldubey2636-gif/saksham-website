@@ -451,6 +451,7 @@ export default function HeroScene3D() {
     let animationFrameId;
     let clock = new THREE.Clock();
     const tempNodePos = new THREE.Vector3(); // For calculating spherical orbits
+    const baseCameraPos = new THREE.Vector3(0, 14, 42);
 
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
