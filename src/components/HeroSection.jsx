@@ -27,7 +27,7 @@ export default function HeroSection() {
             <a
               href="#contact-section"
               onClick={(e) => { e.preventDefault(); document.getElementById('contact-section')?.scrollIntoView({ behavior: 'smooth' }); }}
-              className="inline-flex items-center justify-center px-5 py-3 rounded text-sm font-medium bg-[#E58E26] text-[#121316] hover:bg-[#d07e1e] transition-colors font-mono tracking-tight"
+              className="inline-flex items-center justify-center px-5 py-3 rounded text-sm font-medium bg-[#E58E26]/20 backdrop-blur-md border border-[#E58E26]/50 text-[#E58E26] hover:bg-[#E58E26]/30 transition-colors font-mono tracking-tight shadow-[0_0_15px_rgba(229,142,38,0.15)]"
             >
               Discuss a project &rarr;
             </a>
@@ -35,7 +35,7 @@ export default function HeroSection() {
             <a
               href="#work-section"
               onClick={(e) => { e.preventDefault(); document.getElementById('work-section')?.scrollIntoView({ behavior: 'smooth' }); }}
-              className="inline-flex items-center justify-center px-5 py-3 rounded text-sm font-medium bg-[#1A1C21] text-[#F0F1F3] border border-[#2A2D35] hover:border-[#8A919E] transition-colors font-mono"
+              className="inline-flex items-center justify-center px-5 py-3 rounded text-sm font-medium bg-[#1A1C21]/40 backdrop-blur-md text-[#F0F1F3] border border-[#2A2D35]/80 hover:bg-[#1A1C21]/60 hover:border-[#8A919E]/80 transition-colors font-mono"
             >
               Inspect recent builds
             </a>
