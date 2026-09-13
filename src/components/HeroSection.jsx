@@ -41,8 +41,14 @@ export default function HeroSection() {
             </a>
           </div>
 
-
-
+          <div className="mt-12 pt-6 border-t border-[#2A2D35]/50 w-full flex items-center font-mono">
+            <div className="flex items-center gap-3">
+              <div className="text-2xl font-bold text-[#E58E26] animate-pulse drop-shadow-[0_0_12px_rgba(229,142,38,0.8)]">
+                100%
+              </div>
+              <div className="text-sm text-[#8A919E] uppercase tracking-wider">code ownership</div>
+            </div>
+          </div>
         </div>
 
 
