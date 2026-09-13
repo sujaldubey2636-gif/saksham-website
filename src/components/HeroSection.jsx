@@ -1,10 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import HeroScene3D from './HeroScene3D';
-import Card3D from './Card3D';
 
 export default function HeroSection() {
-  const [activeTab, setActiveTab] = useState('diff');
-
   return (
     <section className="relative w-full min-h-[calc(100vh-4rem)] flex items-center bg-[#121316] text-[#F0F1F3] px-6 sm:px-10 lg:px-16 py-16 lg:py-24 border-b border-[#2A2D35] overflow-hidden">
       {/* 3D WebGL Particle Terrain */}
@@ -70,111 +67,7 @@ export default function HeroSection() {
 
         </div>
 
-        {/* Right Column: Tangible Work Inspector (5 cols) */}
-        <div className="lg:col-span-5 w-full pointer-events-auto relative z-20">
-          <Card3D maxTilt={10} glare={true} scale={1.02}>
-            <div className="w-full rounded-lg bg-[#141619]/50 backdrop-blur-md border border-[#2A2D35]/50 overflow-hidden shadow-2xl shadow-black/90 font-mono text-xs">
-            
-            {/* Window header */}
-            <div className="flex items-center justify-between px-4 py-2.5 bg-[#141619]/60 border-b border-[#2A2D35]/50">
-              <div className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#2A2D35]"></span>
-                <span className="w-2.5 h-2.5 rounded-full bg-[#2A2D35]"></span>
-                <span className="w-2.5 h-2.5 rounded-full bg-[#2A2D35]"></span>
-                <span className="ml-2 text-[#8A919E] text-[11px]">release_v2.4.log</span>
-              </div>
-              
-              <div className="flex gap-1 text-[11px]">
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('diff')}
-                  className={`px-2 py-0.5 rounded transition-colors ${
-                    activeTab === 'diff'
-                      ? 'bg-[#2A2D35]/80 text-[#F0F1F3]'
-                      : 'text-[#8A919E] hover:text-[#F0F1F3]'
-                  }`}
-                >
-                  git-diff
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('stack')}
-                  className={`px-2 py-0.5 rounded transition-colors ${
-                    activeTab === 'stack'
-                      ? 'bg-[#2A2D35]/80 text-[#F0F1F3]'
-                      : 'text-[#8A919E] hover:text-[#F0F1F3]'
-                  }`}
-                >
-                  stack
-                </button>
-              </div>
-            </div>
 
-            {/* Terminal / Code Body */}
-            <div className="p-5 text-[#8A919E] leading-relaxed select-none min-h-[260px] flex flex-col justify-between">
-              {activeTab === 'diff' ? (
-                <div className="space-y-2">
-                  <div className="text-[#F0F1F3]">
-                    <span className="text-[#E58E26] font-bold">commit 85bae00</span> (HEAD -&gt; main)
-                  </div>
-                  <div className="text-[#8A919E]">Author: Saksham &lt;direct@saksham.dev&gt;</div>
-                  <div className="text-[#8A919E]">Date:   Yesterday, 18:42:10 IST</div>
-                  
-                  <div className="pt-3 text-[#F0F1F3]">
-                    feat(dispatch): strip out bloated framework
-                  </div>
-                  <div className="text-emerald-400">
-                    + 340 lines (pure react + webhook pipeline)
-                  </div>
-                  <div className="text-rose-400">
-                    - 1,530 lines (unneeded plugins &amp; legacy scripts)
-                  </div>
-                  
-                  <div className="pt-3 border-t border-[#2A2D35]/50 text-[11px] text-[#8A919E]">
-                    Bundle size: <span className="text-[#F0F1F3]">26.8 kB</span> &bull; TTFB: <span className="text-emerald-400">42ms</span>
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  <div className="text-[#F0F1F3] font-bold">Production Stack Choice:</div>
-                  <div className="grid grid-cols-2 gap-2 pt-2">
-                    <div className="p-2 rounded bg-[#141619]/40 border border-[#2A2D35]/50">
-                      <div className="text-[#E58E26]">Frontend</div>
-                      <div className="text-[#F0F1F3] mt-0.5">React / Next.js / Astro</div>
-                    </div>
-                    <div className="p-2 rounded bg-[#141619]/40 border border-[#2A2D35]/50">
-                      <div className="text-[#E58E26]">Styling</div>
-                      <div className="text-[#F0F1F3] mt-0.5">Tailwind v4 / Clean CSS</div>
-                    </div>
-                    <div className="p-2 rounded bg-[#141619]/40 border border-[#2A2D35]/50">
-                      <div className="text-[#E58E26]">Backend / DB</div>
-                      <div className="text-[#F0F1F3] mt-0.5">Supabase / Node / PostgreSQL</div>
-                    </div>
-                    <div className="p-2 rounded bg-[#141619]/40 border border-[#2A2D35]/50">
-                      <div className="text-[#E58E26]">Pipes</div>
-                      <div className="text-[#F0F1F3] mt-0.5">Make / Stripe / Resend</div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Single deliberate motion: blinking cursor prompt */}
-              <div className="pt-4 flex items-center gap-1 text-[#8A919E]">
-                <span className="text-[#E58E26]">&gt;</span>
-                <span>status: ready for deployment</span>
-                <span className="inline-block w-2 h-3.5 bg-[#E58E26] animate-[pulse_1s_steps(2,start)_infinite]"></span>
-              </div>
-            </div>
-
-            {/* Inspector bottom metadata bar */}
-            <div className="px-4 py-2 bg-[#141619]/60 border-t border-[#2A2D35]/50 flex items-center justify-between text-[11px] text-[#8A919E]">
-              <span>branch: production</span>
-              <span className="text-emerald-400 font-medium">zero dependencies pending</span>
-            </div>
-
-          </div>
-          </Card3D>
-        </div>
 
       </div>
     </section>

@@ -140,9 +140,9 @@ export default function HeroScene3D() {
     // SECTION B: 3D HOLOGRAPHIC ARCHITECTURE CORE (Original Place)
     // =========================================================
     const coreGroup = new THREE.Group();
-    // Default desktop placement: peeking out from frosted glass terminal
-    coreGroup.position.set(7.5, 1.2, -2);
-    coreGroup.scale.set(0.95, 0.95, 0.95);
+    // Default desktop placement
+    coreGroup.position.set(9.5, 1.5, -2);
+    coreGroup.scale.set(1.0, 1.0, 1.0);
     scene.add(coreGroup);
 
     // 1. Ambient Glow Aura
@@ -485,9 +485,9 @@ export default function HeroScene3D() {
         coreGroup.scale.set(0.72, 0.72, 0.72);
         camera.position.set(0, 15, 44);
       } else {
-        // Desktop: Positioned to peek out stunningly from the left edge of the glassmorphic terminal
-        coreGroup.position.set(7.5, 1.2, -2);
-        coreGroup.scale.set(0.95, 0.95, 0.95);
+        // Desktop: Right side hero feature
+        coreGroup.position.set(9.5, 1.5, -2);
+        coreGroup.scale.set(1.0, 1.0, 1.0);
         camera.position.set(0, 14, 42);
       }
 
