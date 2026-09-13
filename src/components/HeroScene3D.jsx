@@ -20,7 +20,8 @@ export default function HeroScene3D() {
       0.1,
       1000
     );
-    camera.position.set(0, 14, 42);
+    // Start the camera far away for a dramatic cinematic zoom-in on page load
+    camera.position.set(0, 40, 180); 
     camera.lookAt(0, 0, 0);
 
     const renderer = new THREE.WebGLRenderer({
@@ -404,6 +405,7 @@ export default function HeroScene3D() {
     coreGroup.add(shockwaveMesh);
     let shockwaveActive = false;
     let shockwaveScale = 0.5;
+    let quantumRippleRadius = 0;
 
     // Hyperdrive State
     let isHyperdrive = false;
@@ -464,6 +466,7 @@ export default function HeroScene3D() {
     const onClick = () => {
       shockwaveActive = true;
       shockwaveScale = 0.5;
+      quantumRippleRadius = 0; // Trigger the massive grid ripple
       shockwaveMesh.scale.set(0.5, 0.5, 0.5);
       shockwaveMat.opacity = 0.95;
 
@@ -526,8 +529,17 @@ export default function HeroScene3D() {
           const pointX = positions[idx * 3];
           const pointZ = positions[idx * 3 + 2];
           const dist = Math.sqrt(Math.pow(pointX - mouseWorldX, 2) + Math.pow(pointZ - mouseWorldZ, 2));
+          
           if (dist < 15) {
-            ripple = -(15 - dist) * 0.3; // Push the wave down (parting the sea)
+            ripple = -(15 - dist) * 0.3; // Gentle mouse parting
+          }
+          
+          // Explosive Quantum Ripple from Click
+          if (shockwaveActive) {
+            const swDist = Math.abs(Math.sqrt(Math.pow(pointX, 2) + Math.pow(pointZ, 2)) - quantumRippleRadius);
+            if (swDist < 5) {
+               ripple += Math.sin((5 - swDist) * Math.PI / 5) * 6.0 * shockwaveMat.opacity; // Massive vertical displacement
+            }
           }
 
           positions[idx * 3 + 1] = baseHeights[idx] + w1 + w2 + w3 + ripple;
@@ -661,13 +673,18 @@ export default function HeroScene3D() {
 
       const targetCamX = baseCameraPos.x - normalizedMouseX * 4.0;
       const targetCamY = baseCameraPos.y - normalizedMouseY * 4.0;
+      
+      // Dramatic Cinematic Swoop on Load
+      // We use a slow lerp for Z to make the entrance feel powerful
       camera.position.x = THREE.MathUtils.lerp(camera.position.x, targetCamX, 0.05);
       camera.position.y = THREE.MathUtils.lerp(camera.position.y, targetCamY, 0.05);
+      camera.position.z = THREE.MathUtils.lerp(camera.position.z, baseCameraPos.z, Math.min(0.02 + elapsedTime * 0.005, 0.08));
       camera.lookAt(0, 0, 0);
 
       // Pulse Click Effect
       if (shockwaveActive) {
         shockwaveScale += delta * 20;
+        quantumRippleRadius += delta * 60; // Expands very fast across the grid
         shockwaveMesh.scale.set(shockwaveScale, shockwaveScale, shockwaveScale);
         shockwaveMat.opacity -= delta * 1.4;
 
