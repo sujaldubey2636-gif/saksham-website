@@ -19,7 +19,7 @@ export default function HeroScene3D() {
       0.1,
       1000
     );
-    camera.position.set(11, 4, 36);
+    camera.position.set(0, 2, 34);
 
     const renderer = new THREE.WebGLRenderer({
       alpha: true,
@@ -38,9 +38,10 @@ export default function HeroScene3D() {
     const COLOR_AMBER = new THREE.Color(0xe58e26);
     const COLOR_TEAL = new THREE.Color(0x4cd7f6);
 
-    // Root Group
+    // Root Group: Centered in 3D background depth
     const coreGroup = new THREE.Group();
-    coreGroup.position.set(11, 0, 0);
+    coreGroup.position.set(0, 1, -12);
+    coreGroup.scale.set(0.8, 0.8, 0.8);
     scene.add(coreGroup);
 
     // --- 1. Ambient Glow Aura (Optimized Low-Res Texture) ---
@@ -360,9 +361,9 @@ export default function HeroScene3D() {
       coreGroup.rotation.y = currentRotationY;
 
       // Optical parallax
-      camera.position.x = THREE.MathUtils.lerp(camera.position.x, 11 + mouseParallaxX, 0.05);
-      camera.position.y = THREE.MathUtils.lerp(camera.position.y, 4 - mouseParallaxY, 0.05);
-      camera.lookAt(coreGroup.position.x * 0.7, 0, 0);
+      camera.position.x = THREE.MathUtils.lerp(camera.position.x, mouseParallaxX, 0.05);
+      camera.position.y = THREE.MathUtils.lerp(camera.position.y, 2 - mouseParallaxY, 0.05);
+      camera.lookAt(0, 0, 0);
 
       // Core pulse
       const breath = Math.sin(elapsedTime * 2.0) * 0.05 + 1;
@@ -417,14 +418,17 @@ export default function HeroScene3D() {
       camera.aspect = width / height;
 
       if (width < 768) {
-        coreGroup.position.set(0, -2, -6);
-        camera.position.set(0, 3, 38);
+        coreGroup.position.set(0, -2, -10);
+        coreGroup.scale.set(0.65, 0.65, 0.65);
+        camera.position.set(0, 2, 36);
       } else if (width < 1024) {
-        coreGroup.position.set(6, 0, -2);
-        camera.position.set(7, 4, 38);
+        coreGroup.position.set(0, 0, -10);
+        coreGroup.scale.set(0.75, 0.75, 0.75);
+        camera.position.set(0, 2, 34);
       } else {
-        coreGroup.position.set(11, 0, 0);
-        camera.position.set(11, 4, 36);
+        coreGroup.position.set(0, 1, -12);
+        coreGroup.scale.set(0.8, 0.8, 0.8);
+        camera.position.set(0, 2, 34);
       }
 
       camera.updateProjectionMatrix();

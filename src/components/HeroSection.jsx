@@ -71,9 +71,9 @@ export default function HeroSection() {
         </div>
 
         {/* Right Column: Tangible Work Inspector (5 cols) */}
-        <div className="lg:col-span-5 w-full pointer-events-auto">
+        <div className="lg:col-span-5 w-full pointer-events-auto relative z-20">
           <Card3D maxTilt={10} glare={true} scale={1.02}>
-            <div className="w-full rounded-lg bg-[#1A1C21] border border-[#2A2D35] overflow-hidden shadow-2xl font-mono text-xs">
+            <div className="w-full rounded-lg bg-[#141619] border border-[#2A2D35] overflow-hidden shadow-2xl shadow-black/90 font-mono text-xs">
             
             {/* Window header */}
             <div className="flex items-center justify-between px-4 py-2.5 bg-[#141619] border-b border-[#2A2D35]">
