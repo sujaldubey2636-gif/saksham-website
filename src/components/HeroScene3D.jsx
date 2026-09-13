@@ -177,6 +177,7 @@ export default function HeroScene3D() {
       wireframe: true,
       transparent: true,
       opacity: 0.45,
+      blending: THREE.AdditiveBlending, // Makes the lines glow when overlapping
     });
     const outerCoreMesh = new THREE.Mesh(outerCoreGeo, outerCoreMat);
     coreGroup.add(outerCoreMesh);
@@ -187,9 +188,34 @@ export default function HeroScene3D() {
       wireframe: true,
       transparent: true,
       opacity: 0.75,
+      blending: THREE.AdditiveBlending, // Neon energy effect
     });
     const innerCoreMesh = new THREE.Mesh(innerCoreGeo, innerCoreMat);
     coreGroup.add(innerCoreMesh);
+
+    // 2.5 High-Performance Stardust Particle Field
+    const stardustGeo = new THREE.BufferGeometry();
+    const stardustCount = 200;
+    const stardustPos = new Float32Array(stardustCount * 3);
+    for (let i = 0; i < stardustCount * 3; i += 3) {
+      // Generate points randomly inside a spherical volume
+      const r = 4 + Math.random() * 8; 
+      const theta = Math.random() * 2 * Math.PI;
+      const phi = Math.acos((Math.random() * 2) - 1);
+      stardustPos[i] = r * Math.sin(phi) * Math.cos(theta);
+      stardustPos[i + 1] = r * Math.sin(phi) * Math.sin(theta);
+      stardustPos[i + 2] = r * Math.cos(phi);
+    }
+    stardustGeo.setAttribute('position', new THREE.BufferAttribute(stardustPos, 3));
+    const stardustMat = new THREE.PointsMaterial({
+      color: 0x4cd7f6,
+      size: 0.08,
+      transparent: true,
+      opacity: 0.6,
+      blending: THREE.AdditiveBlending,
+    });
+    const stardustMesh = new THREE.Points(stardustGeo, stardustMat);
+    coreGroup.add(stardustMesh);
 
     const nucleusGeo = new THREE.SphereGeometry(0.7, 12, 12);
     const nucleusMat = new THREE.MeshBasicMaterial({
@@ -454,8 +480,16 @@ export default function HeroScene3D() {
       // 3. Core Pulsing & Internal Ring Rotation
       const breath = Math.sin(elapsedTime * 2.2) * 0.06 + 1;
       innerCoreMesh.scale.set(breath, breath, breath);
+      
+      // Dynamic color shifting for the inner core (Orange to slightly Yellow)
+      innerCoreMesh.material.color.setHSL(0.08 + Math.sin(elapsedTime * 0.5) * 0.03, 0.8, 0.5);
+
       outerCoreMesh.rotation.y += 0.005;
       outerCoreMesh.rotation.x += 0.003;
+      
+      // Stardust counter-rotation
+      stardustMesh.rotation.y -= 0.002;
+      stardustMesh.rotation.z += 0.001;
 
       ring1.rotation.z += 0.010;
       ring2.rotation.y -= 0.008;
