@@ -129,9 +129,9 @@ export default function HeroScene3D() {
     waveLineGeo.setIndex(lineIndices);
 
     const waveLineMat = new THREE.LineBasicMaterial({
-      color: 0x2a2d35,
+      color: 0x4cd7f6, // Bright Cyan Tron-grid
       transparent: true,
-      opacity: 0.22,
+      opacity: 0.18,
       blending: THREE.AdditiveBlending,
     });
     const waveLines = new THREE.LineSegments(waveLineGeo, waveLineMat);
@@ -194,6 +194,40 @@ export default function HeroScene3D() {
     });
     const innerCoreMesh = new THREE.Mesh(innerCoreGeo, innerCoreMat);
     coreGroup.add(innerCoreMesh);
+
+    // Quantum Layering: Dodecahedron inside the Icosahedron
+    const quantumGeo = new THREE.DodecahedronGeometry(3.1, 0);
+    const quantumMat = new THREE.MeshBasicMaterial({
+      color: 0x4cd7f6,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.35,
+      blending: THREE.AdditiveBlending,
+    });
+    const quantumMesh = new THREE.Mesh(quantumGeo, quantumMat);
+    coreGroup.add(quantumMesh);
+
+    // Data Swarm Nucleus (Replaces solid ball)
+    const swarmCount = 200;
+    const swarmGeo = new THREE.BufferGeometry();
+    const swarmPos = new Float32Array(swarmCount * 3);
+    const swarmOrigins = new Float32Array(swarmCount * 3);
+    for (let i = 0; i < swarmCount * 3; i++) {
+      const val = (Math.random() - 0.5) * 2.5; // Spread within the inner core
+      swarmPos[i] = val;
+      swarmOrigins[i] = val;
+    }
+    swarmGeo.setAttribute('position', new THREE.BufferAttribute(swarmPos, 3));
+    swarmGeo.setAttribute('origin', new THREE.BufferAttribute(swarmOrigins, 3));
+    const swarmMat = new THREE.PointsMaterial({
+      color: 0xffffff,
+      size: 0.12,
+      transparent: true,
+      opacity: 0.9,
+      blending: THREE.AdditiveBlending,
+    });
+    const swarmMesh = new THREE.Points(swarmGeo, swarmMat);
+    coreGroup.add(swarmMesh);
 
     // 2.5 High-Performance Stardust Particle Field
     const stardustGeo = new THREE.BufferGeometry();
@@ -524,6 +558,26 @@ export default function HeroScene3D() {
           }
         }
       }
+      // Magnetic Mouse Pull for Stardust
+      const mouseStarX = mouseParallaxX * 3;
+      const mouseStarY = mouseParallaxY * 3;
+      for (let i = 0; i < stardustCount; i++) {
+        const px = starPos[i*3];
+        const py = starPos[i*3+1];
+        // Calculate distance in 2D space relative to camera view
+        const distToMouse = Math.sqrt(Math.pow(px - mouseStarX, 2) + Math.pow(py - mouseStarY, 2));
+        if (distToMouse < 4) {
+           // Magnetic Pull
+           starPos[i*3] = THREE.MathUtils.lerp(px, mouseStarX, 0.02 * hyperdriveSpeed);
+           starPos[i*3+1] = THREE.MathUtils.lerp(py, mouseStarY, 0.02 * hyperdriveSpeed);
+        } else {
+           // Spring back outward slightly to create continuous swarming
+           starPos[i*3] += (Math.random() - 0.5) * 0.01;
+           starPos[i*3+1] += (Math.random() - 0.5) * 0.01;
+        }
+      }
+      stardustGeo.attributes.position.needsUpdate = true;
+
       stardustLinesGeo.setDrawRange(0, lineIdx / 3);
       stardustLinesGeo.attributes.position.needsUpdate = true;
 
@@ -534,10 +588,12 @@ export default function HeroScene3D() {
       if (!isHyperdrive) {
         outerCoreMesh.material.color.setHex(0x4cd7f6);
         outerCoreMesh.material.opacity = 0.45;
+        quantumMat.color.setHSL(0.55 + Math.sin(elapsedTime * 0.3) * 0.1, 0.8, 0.5);
       } else {
-        // Hyperdrive Blue Glow
+        // Hyperdrive Deep Blue/Violet
         outerCoreMesh.material.color.setHex(0x2288ff);
         outerCoreMesh.material.opacity = 0.8;
+        quantumMat.color.setHex(0x8844ff); // Shifts to purple/violet!
       }
 
       if (!isDragging) {
@@ -558,6 +614,20 @@ export default function HeroScene3D() {
       
       // Dynamic color shifting for the inner core
       innerCoreMesh.material.color.setHSL(0.08 + Math.sin(elapsedTime * 0.5) * 0.03, 0.8, 0.5);
+
+      // Quantum Geometry Layering Rotation
+      quantumMesh.rotation.y -= 0.007 * hyperdriveSpeed;
+      quantumMesh.rotation.z += 0.004 * hyperdriveSpeed;
+      quantumMesh.rotation.x += 0.002 * hyperdriveSpeed;
+
+      // Data Swarm Nucleus Animation (Buzzing)
+      const swarmP = swarmGeo.attributes.position.array;
+      const swarmO = swarmGeo.attributes.origin.array;
+      for (let i = 0; i < swarmCount * 3; i++) {
+         swarmP[i] = swarmO[i] + Math.sin(elapsedTime * 15 + i) * 0.15;
+      }
+      swarmGeo.attributes.position.needsUpdate = true;
+      swarmMesh.rotation.y -= 0.01 * hyperdriveSpeed;
 
       outerCoreMesh.rotation.y += 0.005 * hyperdriveSpeed;
       outerCoreMesh.rotation.x += 0.003 * hyperdriveSpeed;
@@ -684,6 +754,10 @@ export default function HeroScene3D() {
       outerCoreMat.dispose();
       innerCoreGeo.dispose();
       innerCoreMat.dispose();
+      quantumGeo.dispose();
+      quantumMat.dispose();
+      swarmGeo.dispose();
+      swarmMat.dispose();
       stardustGeo.dispose();
       stardustMat.dispose();
       stardustLinesGeo.dispose();
