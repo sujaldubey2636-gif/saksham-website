@@ -25,13 +25,13 @@ export default function HeroScene3D() {
 
     const renderer = new THREE.WebGLRenderer({
       alpha: true,
-      antialias: true,
+      antialias: false, // Disabled for extreme performance
       powerPreference: 'high-performance',
       precision: 'mediump',
     });
 
-    // Cap pixel ratio to 1.25 for rock-solid 60 FPS across all GPUs
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.25));
+    // Cap pixel ratio to 1.0 for rock-solid 60 FPS across all GPUs (especially mobile)
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.0));
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setClearColor(0x000000, 0);
     container.appendChild(renderer.domElement);
@@ -44,8 +44,8 @@ export default function HeroScene3D() {
     // =========================================================
     // SECTION A: 3D FLOWING PARTICLE TERRAIN WAVES (Moving Dots)
     // =========================================================
-    const cols = 55;
-    const rows = 38;
+    const cols = 45;
+    const rows = 30;
     const count = cols * rows;
     const separation = 1.8;
 
@@ -197,7 +197,7 @@ export default function HeroScene3D() {
 
     // 2.5 High-Performance Stardust Particle Field
     const stardustGeo = new THREE.BufferGeometry();
-    const stardustCount = 200;
+    const stardustCount = 120;
     const stardustPos = new Float32Array(stardustCount * 3);
     for (let i = 0; i < stardustCount * 3; i += 3) {
       // Generate points randomly inside a spherical volume
