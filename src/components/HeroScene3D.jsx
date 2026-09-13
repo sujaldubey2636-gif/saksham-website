@@ -1,8 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+﻿import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 
 export default function HeroScene3D() {
   const containerRef = useRef(null);
+  const [hintVisible, setHintVisible] = useState(true);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -10,15 +11,15 @@ export default function HeroScene3D() {
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // --- Scene, Camera, Renderer ---
+    // --- 1. Scene, Camera & High-Performance Renderer ---
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(
-      55,
+      50,
       container.clientWidth / container.clientHeight,
       0.1,
       1000
     );
-    camera.position.set(0, 16, 42);
+    camera.position.set(0, 14, 42);
     camera.lookAt(0, 0, 0);
 
     const renderer = new THREE.WebGLRenderer({
@@ -28,75 +29,79 @@ export default function HeroScene3D() {
       precision: 'mediump',
     });
 
+    // Cap pixel ratio to 1.25 for rock-solid 60 FPS across all GPUs
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.25));
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setClearColor(0x000000, 0);
     container.appendChild(renderer.domElement);
 
-    // --- 3D Flowing Particle Terrain Wave Grid ---
-    const cols = 60;
-    const rows = 45;
+    // Brand Palette
+    const COLOR_AMBER = new THREE.Color(0xe58e26);
+    const COLOR_TEAL = new THREE.Color(0x4cd7f6);
+    const COLOR_MUTED = new THREE.Color(0x2a2d35);
+
+    // =========================================================
+    // SECTION A: 3D FLOWING PARTICLE TERRAIN WAVES (Moving Dots)
+    // =========================================================
+    const cols = 55;
+    const rows = 38;
     const count = cols * rows;
-    const separation = 1.75;
+    const separation = 1.8;
 
     const positions = new Float32Array(count * 3);
     const colors = new Float32Array(count * 3);
     const baseHeights = new Float32Array(count);
 
-    const amber = new THREE.Color(0xe58e26);
-    const teal = new THREE.Color(0x4cd7f6);
-    const muted = new THREE.Color(0x2a2d35);
-
-    let idx = 0;
+    let pIdx = 0;
     for (let ix = 0; ix < cols; ix++) {
       for (let iy = 0; iy < rows; iy++) {
         const x = (ix - cols / 2) * separation;
         const z = (iy - rows / 2) * separation;
-        const y = Math.sin(ix * 0.25) * 1.8 + Math.cos(iy * 0.25) * 1.8;
+        const y = Math.sin(ix * 0.25) * 1.6 + Math.cos(iy * 0.25) * 1.6 - 4;
 
-        positions[idx * 3] = x;
-        positions[idx * 3 + 1] = y;
-        positions[idx * 3 + 2] = z;
-        baseHeights[idx] = y;
+        positions[pIdx * 3] = x;
+        positions[pIdx * 3 + 1] = y;
+        positions[pIdx * 3 + 2] = z;
+        baseHeights[pIdx] = y;
 
         // Radiant color gradient across the grid
         const factor = (ix / cols + iy / rows) * 0.5;
         const c = new THREE.Color();
         if (factor > 0.65) {
-          c.lerpColors(amber, muted, (factor - 0.65) * 2.8);
+          c.lerpColors(COLOR_AMBER, COLOR_MUTED, (factor - 0.65) * 2.8);
         } else if (factor > 0.3) {
-          c.lerpColors(teal, amber, (factor - 0.3) * 2.8);
+          c.lerpColors(COLOR_TEAL, COLOR_AMBER, (factor - 0.3) * 2.8);
         } else {
-          c.lerpColors(muted, teal, factor * 3.3);
+          c.lerpColors(COLOR_MUTED, COLOR_TEAL, factor * 3.3);
         }
 
-        colors[idx * 3] = c.r;
-        colors[idx * 3 + 1] = c.g;
-        colors[idx * 3 + 2] = c.b;
+        colors[pIdx * 3] = c.r;
+        colors[pIdx * 3 + 1] = c.g;
+        colors[pIdx * 3 + 2] = c.b;
 
-        idx++;
+        pIdx++;
       }
     }
 
-    const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    const waveGeometry = new THREE.BufferGeometry();
+    waveGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    waveGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
-    // Custom Particle Glow Disc Texture
+    // Glow Disc Particle Texture
     const pCanvas = document.createElement('canvas');
     pCanvas.width = 32;
     pCanvas.height = 32;
     const pCtx = pCanvas.getContext('2d');
-    const grad = pCtx.createRadialGradient(16, 16, 0, 16, 16, 16);
-    grad.addColorStop(0, 'rgba(255, 255, 255, 1)');
-    grad.addColorStop(0.3, 'rgba(229, 142, 38, 0.8)');
-    grad.addColorStop(0.7, 'rgba(76, 215, 246, 0.3)');
-    grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-    pCtx.fillStyle = grad;
+    const pGrad = pCtx.createRadialGradient(16, 16, 0, 16, 16, 16);
+    pGrad.addColorStop(0, 'rgba(255, 255, 255, 1)');
+    pGrad.addColorStop(0.35, 'rgba(229, 142, 38, 0.85)');
+    pGrad.addColorStop(0.75, 'rgba(76, 215, 246, 0.35)');
+    pGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    pCtx.fillStyle = pGrad;
     pCtx.fillRect(0, 0, 32, 32);
     const particleTexture = new THREE.CanvasTexture(pCanvas);
 
-    const material = new THREE.PointsMaterial({
+    const waveMaterial = new THREE.PointsMaterial({
       size: 1.15,
       vertexColors: true,
       map: particleTexture,
@@ -106,8 +111,8 @@ export default function HeroScene3D() {
       depthWrite: false,
     });
 
-    const particles = new THREE.Points(geometry, material);
-    scene.add(particles);
+    const waveParticles = new THREE.Points(waveGeometry, waveMaterial);
+    scene.add(waveParticles);
 
     // Connecting Network Wireframe Lines
     const lineIndices = [];
@@ -118,191 +123,429 @@ export default function HeroScene3D() {
         if (iy < rows - 1) lineIndices.push(current, ix * rows + (iy + 1));
       }
     }
-    const lineGeo = new THREE.BufferGeometry();
-    lineGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    lineGeo.setIndex(lineIndices);
+    const waveLineGeo = new THREE.BufferGeometry();
+    waveLineGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    waveLineGeo.setIndex(lineIndices);
 
-    const lineMat = new THREE.LineBasicMaterial({
+    const waveLineMat = new THREE.LineBasicMaterial({
       color: 0x2a2d35,
       transparent: true,
-      opacity: 0.25,
+      opacity: 0.22,
       blending: THREE.AdditiveBlending,
     });
-    const networkLines = new THREE.LineSegments(lineGeo, lineMat);
-    scene.add(networkLines);
+    const waveLines = new THREE.LineSegments(waveLineGeo, waveLineMat);
+    scene.add(waveLines);
 
-    // --- Ambient Floating Star Nodes ---
-    const starCount = 60;
-    const starGeo = new THREE.BufferGeometry();
-    const starPos = new Float32Array(starCount * 3);
-    const starColors = new Float32Array(starCount * 3);
+    // =========================================================
+    // SECTION B: 3D HOLOGRAPHIC ARCHITECTURE CORE (Original Place)
+    // =========================================================
+    const coreGroup = new THREE.Group();
+    // Default desktop placement: framing the right workspace
+    coreGroup.position.set(10.5, 1.5, -4);
+    coreGroup.scale.set(0.85, 0.85, 0.85);
+    scene.add(coreGroup);
 
-    for (let s = 0; s < starCount; s++) {
-      starPos[s * 3] = (Math.random() - 0.5) * 80;
-      starPos[s * 3 + 1] = Math.random() * 25 - 5;
-      starPos[s * 3 + 2] = (Math.random() - 0.5) * 60;
-
-      const isAmber = Math.random() > 0.5;
-      const c = isAmber ? amber : teal;
-      starColors[s * 3] = c.r;
-      starColors[s * 3 + 1] = c.g;
-      starColors[s * 3 + 2] = c.b;
-    }
-    starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
-    starGeo.setAttribute('color', new THREE.BufferAttribute(starColors, 3));
-
-    const starMat = new THREE.PointsMaterial({
-      size: 0.9,
-      vertexColors: true,
+    // 1. Ambient Glow Aura
+    const auraCanvas = document.createElement('canvas');
+    auraCanvas.width = 64;
+    auraCanvas.height = 64;
+    const auraCtx = auraCanvas.getContext('2d');
+    const auraGrad = auraCtx.createRadialGradient(32, 32, 0, 32, 32, 32);
+    auraGrad.addColorStop(0, 'rgba(229, 142, 38, 0.35)');
+    auraGrad.addColorStop(0.45, 'rgba(76, 215, 246, 0.15)');
+    auraGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    auraCtx.fillStyle = auraGrad;
+    auraCtx.fillRect(0, 0, 64, 64);
+    const auraTexture = new THREE.CanvasTexture(auraCanvas);
+    const auraMat = new THREE.SpriteMaterial({
+      map: auraTexture,
       transparent: true,
-      opacity: 0.7,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
     });
-    const starField = new THREE.Points(starGeo, starMat);
-    scene.add(starField);
+    const auraSprite = new THREE.Sprite(auraMat);
+    auraSprite.scale.set(16, 16, 1);
+    coreGroup.add(auraSprite);
 
-    // --- Interactive Ripple Pulse on Click ---
-    let shockwaveCenter = { x: 0, z: 0 };
-    let shockwaveRadius = 0;
+    // 2. Polyhedral Icosahedron Core
+    const outerCoreGeo = new THREE.IcosahedronGeometry(4.0, 1);
+    const outerCoreMat = new THREE.MeshBasicMaterial({
+      color: 0x4cd7f6,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.45,
+    });
+    const outerCoreMesh = new THREE.Mesh(outerCoreGeo, outerCoreMat);
+    coreGroup.add(outerCoreMesh);
+
+    const innerCoreGeo = new THREE.IcosahedronGeometry(2.3, 0);
+    const innerCoreMat = new THREE.MeshBasicMaterial({
+      color: 0xe58e26,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.75,
+    });
+    const innerCoreMesh = new THREE.Mesh(innerCoreGeo, innerCoreMat);
+    coreGroup.add(innerCoreMesh);
+
+    const nucleusGeo = new THREE.SphereGeometry(0.7, 12, 12);
+    const nucleusMat = new THREE.MeshBasicMaterial({
+      color: 0xf0f1f3,
+      transparent: true,
+      opacity: 0.9,
+    });
+    const nucleusMesh = new THREE.Mesh(nucleusGeo, nucleusMat);
+    coreGroup.add(nucleusMesh);
+
+    // 3. Kinetic Orbital Rings
+    const ring1Geo = new THREE.TorusGeometry(8.0, 0.05, 8, 48);
+    const ring1Mat = new THREE.MeshBasicMaterial({
+      color: 0xe58e26,
+      transparent: true,
+      opacity: 0.85,
+    });
+    const ring1 = new THREE.Mesh(ring1Geo, ring1Mat);
+    ring1.rotation.x = Math.PI / 3;
+    ring1.rotation.y = Math.PI / 6;
+    coreGroup.add(ring1);
+
+    const ring2Geo = new THREE.TorusGeometry(6.4, 0.04, 8, 48);
+    const ring2Mat = new THREE.MeshBasicMaterial({
+      color: 0x4cd7f6,
+      transparent: true,
+      opacity: 0.75,
+    });
+    const ring2 = new THREE.Mesh(ring2Geo, ring2Mat);
+    ring2.rotation.x = -Math.PI / 4;
+    ring2.rotation.z = Math.PI / 5;
+    coreGroup.add(ring2);
+
+    const ring3Geo = new THREE.RingGeometry(9.4, 9.6, 36);
+    const ring3Mat = new THREE.MeshBasicMaterial({
+      color: 0x2a2d35,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.45,
+      wireframe: true,
+    });
+    const ring3 = new THREE.Mesh(ring3Geo, ring3Mat);
+    ring3.rotation.x = Math.PI / 2.2;
+    coreGroup.add(ring3);
+
+    // 4. Orbiting High-DPI Micro-Nodes
+    const nodeLabels = [
+      { text: 'React UI', color: '#4cd7f6' },
+      { text: 'PostgreSQL', color: '#e58e26' },
+      { text: 'Webhooks', color: '#10b981' },
+      { text: 'APIs', color: '#f0f1f3' },
+      { text: 'Stripe Pay', color: '#e58e26' },
+    ];
+
+    const createNodeSprite = (label, colorHex) => {
+      const c = document.createElement('canvas');
+      c.width = 256;
+      c.height = 72;
+      const ctx = c.getContext('2d');
+
+      ctx.fillStyle = 'rgba(20, 22, 25, 0.92)';
+      ctx.strokeStyle = colorHex;
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.roundRect(4, 4, 248, 64, 16);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = colorHex;
+      ctx.beginPath();
+      ctx.arc(28, 36, 7, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.font = 'bold 22px "IBM Plex Mono", monospace';
+      ctx.fillStyle = '#F0F1F3';
+      ctx.fillText(label, 48, 43);
+
+      const tex = new THREE.CanvasTexture(c);
+      const sMat = new THREE.SpriteMaterial({
+        map: tex,
+        transparent: true,
+        opacity: 0.95,
+        depthWrite: false,
+      });
+      const sprite = new THREE.Sprite(sMat);
+      sprite.scale.set(4.2, 1.15, 1);
+      return sprite;
+    };
+
+    const orbitRadius = 10.8;
+    const orbitNodes = [];
+
+    nodeLabels.forEach((item, index) => {
+      const sprite = createNodeSprite(item.text, item.color);
+      const angle = (index / nodeLabels.length) * Math.PI * 2;
+      const speed = 0.35 + index * 0.05;
+      const inclination = (index % 2 === 0 ? 1 : -1) * 0.42;
+
+      coreGroup.add(sprite);
+      orbitNodes.push({
+        sprite,
+        angle,
+        speed,
+        inclination,
+        originalRadius: orbitRadius,
+        currentRadius: orbitRadius,
+      });
+    });
+
+    // 5. Interactive Shockwave Mesh
+    const shockwaveGeo = new THREE.RingGeometry(0.2, 0.6, 48);
+    const shockwaveMat = new THREE.MeshBasicMaterial({
+      color: 0xe58e26,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0,
+      blending: THREE.AdditiveBlending,
+    });
+    const shockwaveMesh = new THREE.Mesh(shockwaveGeo, shockwaveMat);
+    coreGroup.add(shockwaveMesh);
     let shockwaveActive = false;
+    let shockwaveScale = 0.5;
+
+    // =========================================================
+    // SECTION C: INTERACTION & 360° DRAG-TO-ORBIT PHYSICS
+    // =========================================================
+    let isDragging = false;
+    let pointerStartX = 0;
+    let pointerStartY = 0;
+    let rotationVelocity = { x: 0.001, y: 0.003 };
+
+    let mouseParallaxX = 0;
+    let mouseParallaxY = 0;
 
     const onPointerDown = (e) => {
-      const rect = container.getBoundingClientRect();
+      isDragging = true;
+      const clientX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
+      const clientY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
+      pointerStartX = clientX;
+      pointerStartY = clientY;
+      setHintVisible(false);
+    };
+
+    const onPointerMove = (e) => {
       const clientX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
       const clientY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
 
-      const normalizedX = ((clientX - rect.left) / rect.width) * 2 - 1;
-      const normalizedY = -((clientY - rect.top) / rect.height) * 2 + 1;
+      if (isDragging) {
+        const deltaX = clientX - pointerStartX;
+        const deltaY = clientY - pointerStartY;
 
-      shockwaveCenter.x = normalizedX * 35;
-      shockwaveCenter.z = -normalizedY * 25;
-      shockwaveRadius = 0;
+        rotationVelocity.y = deltaX * 0.005;
+        rotationVelocity.x = deltaY * 0.005;
+
+        pointerStartX = clientX;
+        pointerStartY = clientY;
+      } else {
+        const halfW = window.innerWidth / 2;
+        const halfH = window.innerHeight / 2;
+        mouseParallaxX = ((clientX - halfW) / halfW) * 4;
+        mouseParallaxY = ((clientY - halfH) / halfH) * 2.5;
+      }
+    };
+
+    const onPointerUp = () => {
+      isDragging = false;
+    };
+
+    const onClick = () => {
       shockwaveActive = true;
+      shockwaveScale = 0.5;
+      shockwaveMesh.scale.set(0.5, 0.5, 0.5);
+      shockwaveMat.opacity = 0.95;
+
+      orbitNodes.forEach((node) => {
+        node.currentRadius = node.originalRadius * 1.3;
+      });
     };
 
-    container.addEventListener('click', onPointerDown);
+    container.addEventListener('mousedown', onPointerDown);
+    window.addEventListener('mousemove', onPointerMove, { passive: true });
+    window.addEventListener('mouseup', onPointerUp);
+    container.addEventListener('click', onClick);
 
-    // --- Mouse Parallax ---
-    let targetCameraX = 0;
-    let targetCameraY = 16;
-    let mouseX = 0;
-    let mouseY = 0;
+    container.addEventListener('touchstart', onPointerDown, { passive: true });
+    window.addEventListener('touchmove', onPointerMove, { passive: true });
+    window.addEventListener('touchend', onPointerUp);
 
-    const onMouseMove = (e) => {
-      const halfW = window.innerWidth / 2;
-      const halfH = window.innerHeight / 2;
-      mouseX = ((e.clientX - halfW) / halfW) * 8;
-      mouseY = ((e.clientY - halfH) / halfH) * 5;
-    };
-
-    window.addEventListener('mousemove', onMouseMove, { passive: true });
-
-    // --- Reliable 60FPS Animation Loop (Never Pauses on Load) ---
+    // =========================================================
+    // SECTION D: RELIABLE 60FPS CONTINUOUS ANIMATION LOOP
+    // =========================================================
     let animationFrameId;
     let clock = new THREE.Clock();
 
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
 
-      // Only skip rendering if tab is completely hidden
+      // Only suspend when tab is hidden, never pause unexpectedly
       if (document.hidden) return;
 
       const rawDelta = clock.getDelta();
       const delta = Math.min(rawDelta, 0.04);
       const elapsedTime = clock.getElapsedTime();
-      const speed = prefersReducedMotion ? 0.25 : 0.85;
+      const waveSpeed = prefersReducedMotion ? 0.3 : 0.85;
 
-      // Smooth camera parallax
-      targetCameraX += (mouseX - targetCameraX) * 0.05;
-      targetCameraY += (16 - mouseY - targetCameraY) * 0.05;
-
-      camera.position.x = targetCameraX;
-      camera.position.y = targetCameraY;
+      // Camera parallax
+      camera.position.x = THREE.MathUtils.lerp(camera.position.x, mouseParallaxX, 0.05);
+      camera.position.y = THREE.MathUtils.lerp(camera.position.y, 14 - mouseParallaxY, 0.05);
       camera.lookAt(0, 0, 0);
 
-      // Animate wave vertices
-      const posAttr = geometry.attributes.position;
+      // 1. Undulating Particle Wave Motion (60 FPS flowing dots)
+      const posAttr = waveGeometry.attributes.position;
       const posArr = posAttr.array;
 
-      if (shockwaveActive) {
-        shockwaveRadius += delta * 35;
-        if (shockwaveRadius > 90) shockwaveActive = false;
-      }
-
-      let i = 0;
+      let idx = 0;
       for (let ix = 0; ix < cols; ix++) {
         for (let iy = 0; iy < rows; iy++) {
-          // Flowing sinusoidal harmonic wave equations
-          const wave1 = Math.sin(ix * 0.28 + elapsedTime * speed) * 2.2;
-          const wave2 = Math.cos(iy * 0.24 + elapsedTime * (speed * 0.8)) * 2.2;
-          const wave3 = Math.sin((ix + iy) * 0.14 + elapsedTime * 0.6) * 1.6;
+          const w1 = Math.sin(ix * 0.28 + elapsedTime * waveSpeed) * 2.2;
+          const w2 = Math.cos(iy * 0.24 + elapsedTime * (waveSpeed * 0.8)) * 2.2;
+          const w3 = Math.sin((ix + iy) * 0.14 + elapsedTime * 0.6) * 1.6;
 
-          let y = baseHeights[i] + wave1 + wave2 + wave3;
-
-          // Add interactive shockwave ripple
-          if (shockwaveActive) {
-            const x = posArr[i * 3];
-            const z = posArr[i * 3 + 2];
-            const dist = Math.hypot(x - shockwaveCenter.x, z - shockwaveCenter.z);
-            const waveDist = Math.abs(dist - shockwaveRadius);
-            if (waveDist < 8) {
-              const amp = Math.cos((waveDist / 8) * (Math.PI / 2)) * 3.5;
-              y += amp;
-            }
-          }
-
-          posArr[i * 3 + 1] = y;
-          i++;
+          posArr[idx * 3 + 1] = baseHeights[idx] + w1 + w2 + w3;
+          idx++;
         }
       }
-
       posAttr.needsUpdate = true;
-      lineGeo.attributes.position.needsUpdate = true;
+      waveLineGeo.attributes.position.needsUpdate = true;
 
-      // Gentle star drift
-      starField.rotation.y += 0.0006;
+      // 2. Core Group Rotation & Drag Inertia
+      coreGroup.rotation.y += rotationVelocity.y;
+      coreGroup.rotation.x += rotationVelocity.x;
+
+      if (!isDragging) {
+        rotationVelocity.x *= 0.94;
+        rotationVelocity.y = THREE.MathUtils.lerp(rotationVelocity.y, 0.003, 0.04);
+      }
+
+      // 3. Core Pulsing & Internal Ring Rotation
+      const breath = Math.sin(elapsedTime * 2.2) * 0.06 + 1;
+      innerCoreMesh.scale.set(breath, breath, breath);
+      outerCoreMesh.rotation.y += 0.005;
+      outerCoreMesh.rotation.x += 0.003;
+
+      ring1.rotation.z += 0.010;
+      ring2.rotation.y -= 0.008;
+      ring3.rotation.z += 0.004;
+
+      // 4. Orbiting Micro-Nodes Motion
+      for (let n = 0; n < orbitNodes.length; n++) {
+        const node = orbitNodes[n];
+        node.angle += node.speed * delta;
+        node.currentRadius = THREE.MathUtils.lerp(node.currentRadius, node.originalRadius, 0.06);
+
+        const nx = Math.cos(node.angle) * node.currentRadius;
+        const nz = Math.sin(node.angle) * node.currentRadius;
+        const ny = Math.sin(node.angle * 2) * (node.currentRadius * node.inclination * 0.38);
+
+        node.sprite.position.set(nx, ny, nz);
+      }
+
+      // 5. Shockwave Ripple Expansion
+      if (shockwaveActive) {
+        shockwaveScale += delta * 20;
+        shockwaveMesh.scale.set(shockwaveScale, shockwaveScale, shockwaveScale);
+        shockwaveMat.opacity -= delta * 1.4;
+
+        if (shockwaveMat.opacity <= 0) {
+          shockwaveActive = false;
+        }
+      }
 
       renderer.render(scene, camera);
     };
 
-    // Start animation immediately
+    // Launch immediately
     animate();
 
-    // --- Responsive Resize ---
+    // =========================================================
+    // SECTION E: RESPONSIVE RESIZE
+    // =========================================================
     const handleResize = () => {
       if (!container) return;
       const width = container.clientWidth;
       const height = container.clientHeight;
 
       camera.aspect = width / height;
+
       if (width < 768) {
-        camera.position.set(0, 18, 52);
+        // Mobile: Centered deeper in space so it doesn't collide with stacked elements
+        coreGroup.position.set(0, -1, -10);
+        coreGroup.scale.set(0.6, 0.6, 0.6);
+        camera.position.set(0, 16, 48);
+      } else if (width < 1024) {
+        // Tablet: Centered-right
+        coreGroup.position.set(5, 0, -6);
+        coreGroup.scale.set(0.72, 0.72, 0.72);
+        camera.position.set(0, 15, 44);
       } else {
-        camera.position.set(0, 16, 42);
+        // Desktop: Right side behind/framing terminal inspector
+        coreGroup.position.set(10.5, 1.5, -4);
+        coreGroup.scale.set(0.85, 0.85, 0.85);
+        camera.position.set(0, 14, 42);
       }
+
       camera.updateProjectionMatrix();
       renderer.setSize(width, height);
     };
 
+    handleResize();
     window.addEventListener('resize', handleResize);
 
-    // --- Cleanup ---
+    // Visibility change handler to prevent time-delta jumps
+    const onVisibilityChange = () => {
+      if (!document.hidden) {
+        clock.getDelta();
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibilityChange);
+
+    // =========================================================
+    // SECTION F: CLEANUP
+    // =========================================================
     return () => {
-      container.removeEventListener('click', onPointerDown);
-      window.removeEventListener('mousemove', onMouseMove);
+      container.removeEventListener('mousedown', onPointerDown);
+      window.removeEventListener('mousemove', onPointerMove);
+      window.removeEventListener('mouseup', onPointerUp);
+      container.removeEventListener('click', onClick);
+      container.removeEventListener('touchstart', onPointerDown);
+      window.removeEventListener('touchmove', onPointerMove);
+      window.removeEventListener('touchend', onPointerUp);
       window.removeEventListener('resize', handleResize);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+
       cancelAnimationFrame(animationFrameId);
 
-      geometry.dispose();
-      lineGeo.dispose();
-      starGeo.dispose();
-      material.dispose();
-      lineMat.dispose();
-      starMat.dispose();
+      waveGeometry.dispose();
+      waveLineGeo.dispose();
+      waveMaterial.dispose();
+      waveLineMat.dispose();
       particleTexture.dispose();
-      renderer.dispose();
 
+      outerCoreGeo.dispose();
+      outerCoreMat.dispose();
+      innerCoreGeo.dispose();
+      innerCoreMat.dispose();
+      nucleusGeo.dispose();
+      nucleusMat.dispose();
+      ring1Geo.dispose();
+      ring1Mat.dispose();
+      ring2Geo.dispose();
+      ring2Mat.dispose();
+      ring3Geo.dispose();
+      ring3Mat.dispose();
+      shockwaveGeo.dispose();
+      shockwaveMat.dispose();
+      auraTexture.dispose();
+      auraMat.dispose();
+
+      renderer.dispose();
       if (container.contains(renderer.domElement)) {
         container.removeChild(renderer.domElement);
       }
@@ -312,9 +555,15 @@ export default function HeroScene3D() {
   return (
     <div
       ref={containerRef}
-      aria-hidden="true"
-      className="absolute inset-0 z-0 pointer-events-auto overflow-hidden opacity-90"
-      title="Click to pulse 3D wave"
-    />
+      className="absolute inset-0 z-0 overflow-hidden select-none cursor-grab active:cursor-grabbing"
+      title="Click and drag to spin 3D System Core & pulse waves"
+    >
+      {hintVisible && (
+        <div className="hidden sm:flex items-center gap-2 absolute top-6 right-8 z-20 pointer-events-none px-3.5 py-1.5 rounded-full bg-[#141619]/90 border border-[#2A2D35] text-[11px] font-mono text-[#8A919E] backdrop-blur-md shadow-lg transition-opacity duration-500">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#E58E26] animate-pulse"></span>
+          <span>3D Core: Drag anywhere to spin &bull; Click to pulse</span>
+        </div>
+      )}
+    </div>
   );
 }
