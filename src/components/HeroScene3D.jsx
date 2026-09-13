@@ -1,8 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
+// Force Cache Busting - v1.0.1
 import * as THREE from 'three';
 
 export default function HeroScene3D() {
   const containerRef = useRef(null);
+  console.log("Cache Bust v2 - 3D Core Active");
 
   useEffect(() => {
     const container = containerRef.current;
