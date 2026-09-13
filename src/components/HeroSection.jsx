@@ -10,7 +10,7 @@ export default function HeroSection() {
       <div className="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center pointer-events-none">
         
         {/* Left Column: Direct Pitch (7 cols) */}
-        <div className="lg:col-span-7 flex flex-col items-start text-left pointer-events-auto">
+        <div className="lg:col-span-7 flex flex-col items-start text-left">
           
           {/* Headline: Straight talk */}
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#F0F1F3] leading-[1.08] font-['Bricolage_Grotesque',sans-serif]">
@@ -23,7 +23,7 @@ export default function HeroSection() {
           </p>
 
           {/* Primary Action + Direct Line */}
-          <div className="mt-8 flex flex-wrap items-center gap-4">
+          <div className="mt-8 flex flex-wrap items-center gap-4 pointer-events-auto">
             <a
               href="#contact-section"
               onClick={(e) => { e.preventDefault(); document.getElementById('contact-section')?.scrollIntoView({ behavior: 'smooth' }); }}
