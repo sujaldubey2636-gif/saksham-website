@@ -3,7 +3,6 @@ import * as THREE from 'three';
 
 export default function HeroScene3D() {
   const containerRef = useRef(null);
-  const [hintVisible, setHintVisible] = useState(true);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -347,7 +346,6 @@ export default function HeroScene3D() {
       const clientY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
       pointerStartX = clientX;
       pointerStartY = clientY;
-      setHintVisible(false);
     };
 
     const onPointerMove = (e) => {
@@ -590,12 +588,6 @@ export default function HeroScene3D() {
       className="absolute inset-0 z-0 overflow-hidden select-none cursor-grab active:cursor-grabbing"
       title="Click and drag to spin 3D System Core & pulse waves"
     >
-      {hintVisible && (
-        <div className="hidden sm:flex items-center gap-2 absolute top-6 right-8 z-20 pointer-events-none px-3.5 py-1.5 rounded-full bg-[#141619]/90 border border-[#2A2D35] text-[11px] font-mono text-[#8A919E] backdrop-blur-md shadow-lg transition-opacity duration-500">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#E58E26] animate-pulse"></span>
-          <span>3D Core: Drag anywhere to spin &bull; Click to pulse</span>
-        </div>
-      )}
     </div>
   );
 }
