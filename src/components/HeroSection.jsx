@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
+import HeroScene3D from './HeroScene3D';
+import Card3D from './Card3D';
 
 export default function HeroSection() {
   const [activeTab, setActiveTab] = useState('diff');
 
   return (
-    <section className="w-full min-h-[calc(100vh-4rem)] flex items-center bg-[#121316] text-[#F0F1F3] px-6 sm:px-10 lg:px-16 py-16 lg:py-24 border-b border-[#2A2D35]">
-      <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+    <section className="relative w-full min-h-[calc(100vh-4rem)] flex items-center bg-[#121316] text-[#F0F1F3] px-6 sm:px-10 lg:px-16 py-16 lg:py-24 border-b border-[#2A2D35] overflow-hidden">
+      {/* 3D WebGL Particle Terrain */}
+      <HeroScene3D />
+
+      <div className="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
         
         {/* Left Column: Direct Pitch (7 cols) */}
         <div className="lg:col-span-7 flex flex-col items-start text-left">
@@ -67,7 +72,8 @@ export default function HeroSection() {
 
         {/* Right Column: Tangible Work Inspector (5 cols) */}
         <div className="lg:col-span-5 w-full">
-          <div className="w-full rounded-lg bg-[#1A1C21] border border-[#2A2D35] overflow-hidden shadow-2xl font-mono text-xs">
+          <Card3D maxTilt={10} glare={true} scale={1.02}>
+            <div className="w-full rounded-lg bg-[#1A1C21] border border-[#2A2D35] overflow-hidden shadow-2xl font-mono text-xs">
             
             {/* Window header */}
             <div className="flex items-center justify-between px-4 py-2.5 bg-[#141619] border-b border-[#2A2D35]">
@@ -159,6 +165,7 @@ export default function HeroSection() {
             </div>
 
           </div>
+          </Card3D>
         </div>
 
       </div>

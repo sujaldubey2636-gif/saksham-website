@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Card3D from './Card3D';
 
 const PROJECTS = [
   {
@@ -84,17 +85,19 @@ export default function ProjectsSection() {
               key={project.title}
               className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start group"
             >
-              <div
-                onClick={() => setActiveProject(project)}
-                className="w-full lg:w-3/5 rounded-lg bg-[#1A1C21] border border-[#2A2D35] overflow-hidden shrink-0 cursor-pointer group-hover:border-[#E58E26]/50 transition-colors"
-              >
-                <img
-                  src={project.imageSrc}
-                  alt={project.imageAlt}
-                  className="w-full h-full aspect-video object-cover group-hover:scale-[1.01] transition-transform duration-300"
-                  loading="lazy"
-                />
-              </div>
+              <Card3D maxTilt={7} glare={true} scale={1.01} className="w-full lg:w-3/5 shrink-0">
+                <div
+                  onClick={() => setActiveProject(project)}
+                  className="w-full rounded-lg bg-[#1A1C21] border border-[#2A2D35] overflow-hidden cursor-pointer group-hover:border-[#E58E26]/50 transition-colors"
+                >
+                  <img
+                    src={project.imageSrc}
+                    alt={project.imageAlt}
+                    className="w-full h-full aspect-video object-cover group-hover:scale-[1.01] transition-transform duration-300"
+                    loading="lazy"
+                  />
+                </div>
+              </Card3D>
 
               <div className="w-full lg:w-2/5 flex flex-col items-start font-['IBM_Plex_Sans',sans-serif]">
                 <span className="text-xs font-mono text-[#276375] bg-[#276375]/15 px-2.5 py-1 rounded border border-[#276375]/30 uppercase tracking-wide">
