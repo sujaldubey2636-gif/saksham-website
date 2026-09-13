@@ -14,7 +14,7 @@ export default function HeroSection() {
           
           {/* Headline: Straight talk */}
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#F0F1F3] leading-[1.08] font-['Bricolage_Grotesque',sans-serif]">
-            I design websites, wire up databases, and automate your manual busywork.
+            We build the systems that grow your business — quietly, in the background.
           </h1>
 
           {/* Body: No-BS scope & guarantee */}
