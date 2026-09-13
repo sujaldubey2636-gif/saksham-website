@@ -279,18 +279,34 @@ export default function HeroScene3D() {
     const orbitRadius = 10.8;
     const orbitNodes = [];
 
+    // Distinct spherical orbital planes for each node to create an atom-like electron cloud
+    const axes = [
+      new THREE.Vector3(1, 1.5, 0.5).normalize(),
+      new THREE.Vector3(-1, 1.2, -0.8).normalize(),
+      new THREE.Vector3(0.5, 1, 1.5).normalize(),
+      new THREE.Vector3(-0.8, 1, 1.2).normalize(),
+      new THREE.Vector3(1.2, -0.5, 1).normalize(),
+    ];
+
     nodeLabels.forEach((item, index) => {
       const sprite = createNodeSprite(item.text, item.color);
       const angle = (index / nodeLabels.length) * Math.PI * 2;
       const speed = 0.35 + index * 0.05;
-      const inclination = (index % 2 === 0 ? 1 : -1) * 0.42;
+      
+      const axis = axes[index % axes.length];
+      
+      // Determine starting position orthogonal to axis
+      const arbitrary = new THREE.Vector3(0, 1, 0);
+      if (Math.abs(axis.y) > 0.9) arbitrary.set(1, 0, 0);
+      const startVec = new THREE.Vector3().crossVectors(axis, arbitrary).normalize();
 
       coreGroup.add(sprite);
       orbitNodes.push({
         sprite,
         angle,
         speed,
-        inclination,
+        axis,
+        startVec,
         originalRadius: orbitRadius,
         currentRadius: orbitRadius,
       });
@@ -380,6 +396,7 @@ export default function HeroScene3D() {
     // =========================================================
     let animationFrameId;
     let clock = new THREE.Clock();
+    const tempNodePos = new THREE.Vector3(); // For calculating spherical orbits
 
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
@@ -434,17 +451,17 @@ export default function HeroScene3D() {
       ring2.rotation.y -= 0.008;
       ring3.rotation.z += 0.004;
 
-      // 4. Orbiting Micro-Nodes Motion
+      // 4. Orbiting Micro-Nodes Motion (Full 3D Spherical Orbit)
       for (let n = 0; n < orbitNodes.length; n++) {
         const node = orbitNodes[n];
         node.angle += node.speed * delta;
         node.currentRadius = THREE.MathUtils.lerp(node.currentRadius, node.originalRadius, 0.06);
 
-        const nx = Math.cos(node.angle) * node.currentRadius;
-        const nz = Math.sin(node.angle) * node.currentRadius;
-        const ny = Math.sin(node.angle * 2) * (node.currentRadius * node.inclination * 0.38);
+        tempNodePos.copy(node.startVec)
+                   .applyAxisAngle(node.axis, node.angle)
+                   .multiplyScalar(node.currentRadius);
 
-        node.sprite.position.set(nx, ny, nz);
+        node.sprite.position.copy(tempNodePos);
       }
 
       // 5. Shockwave Ripple Expansion
