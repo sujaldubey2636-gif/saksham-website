@@ -27,6 +27,8 @@ export default function HeroSection() {
             <a
               href="#contact-section"
               onClick={(e) => { e.preventDefault(); document.getElementById('contact-section')?.scrollIntoView({ behavior: 'smooth' }); }}
+              onMouseEnter={() => window.triggerHyperdrive && window.triggerHyperdrive(true)}
+              onMouseLeave={() => window.triggerHyperdrive && window.triggerHyperdrive(false)}
               className="inline-flex items-center justify-center px-5 py-3 rounded text-sm font-medium bg-[#E58E26]/20 backdrop-blur-md border border-[#E58E26]/50 text-[#E58E26] hover:bg-[#E58E26]/30 transition-colors font-mono tracking-tight shadow-[0_0_15px_rgba(229,142,38,0.15)]"
             >
               Discuss a project &rarr;

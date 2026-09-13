@@ -217,6 +217,20 @@ export default function HeroScene3D() {
     const stardustMesh = new THREE.Points(stardustGeo, stardustMat);
     coreGroup.add(stardustMesh);
 
+    // Neural Constellation Lines (dynamically drawn each frame)
+    const stardustLinesGeo = new THREE.BufferGeometry();
+    // Maximum 100 points means 100*99/2 lines max. We'll allocate for 1000 lines.
+    const stardustLinesPos = new Float32Array(1000 * 6);
+    stardustLinesGeo.setAttribute('position', new THREE.BufferAttribute(stardustLinesPos, 3));
+    const stardustLinesMat = new THREE.LineBasicMaterial({
+      color: 0x4cd7f6,
+      transparent: true,
+      opacity: 0.15,
+      blending: THREE.AdditiveBlending,
+    });
+    const stardustLinesMesh = new THREE.LineSegments(stardustLinesGeo, stardustLinesMat);
+    coreGroup.add(stardustLinesMesh);
+
     const nucleusGeo = new THREE.SphereGeometry(0.7, 12, 12);
     const nucleusMat = new THREE.MeshBasicMaterial({
       color: 0xf0f1f3,
@@ -355,6 +369,13 @@ export default function HeroScene3D() {
     let shockwaveActive = false;
     let shockwaveScale = 0.5;
 
+    // Hyperdrive State
+    let isHyperdrive = false;
+    let hyperdriveSpeed = 1.0;
+    window.triggerHyperdrive = (state) => {
+      isHyperdrive = state;
+    };
+
     // =========================================================
     // SECTION C: INTERACTION & 360° DRAG-TO-ORBIT PHYSICS
     // =========================================================
@@ -365,6 +386,8 @@ export default function HeroScene3D() {
 
     let mouseParallaxX = 0;
     let mouseParallaxY = 0;
+    let normalizedMouseX = 0;
+    let normalizedMouseY = 0;
 
     const onPointerDown = (e) => {
       isDragging = true;
@@ -378,6 +401,11 @@ export default function HeroScene3D() {
       const clientX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
       const clientY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
 
+      const halfW = window.innerWidth / 2;
+      const halfH = window.innerHeight / 2;
+      normalizedMouseX = (clientX / window.innerWidth) * 2 - 1;
+      normalizedMouseY = -(clientY / window.innerHeight) * 2 + 1;
+
       if (isDragging) {
         const deltaX = clientX - pointerStartX;
         const deltaY = clientY - pointerStartY;
@@ -388,8 +416,6 @@ export default function HeroScene3D() {
         pointerStartX = clientX;
         pointerStartY = clientY;
       } else {
-        const halfW = window.innerWidth / 2;
-        const halfH = window.innerHeight / 2;
         mouseParallaxX = ((clientX - halfW) / halfW) * 4;
         mouseParallaxY = ((clientY - halfH) / halfH) * 2.5;
       }
@@ -440,65 +466,111 @@ export default function HeroScene3D() {
       // Camera parallax
       camera.position.x = THREE.MathUtils.lerp(camera.position.x, mouseParallaxX, 0.05);
       camera.position.y = THREE.MathUtils.lerp(camera.position.y, 14 - mouseParallaxY, 0.05);
-      camera.lookAt(0, 0, 0);
 
-      // 1. Undulating Particle Wave Motion (60 FPS flowing dots)
-      const posAttr = waveGeometry.attributes.position;
-      const posArr = posAttr.array;
+      // Hyperdrive Logic
+      hyperdriveSpeed = THREE.MathUtils.lerp(hyperdriveSpeed, isHyperdrive ? 4.0 : 1.0, 0.05);
 
+      // 1. Dynamic Wave Terrain with Mouse Ripple Physics
+      const positions = waveGeometry.attributes.position.array;
+      const dynamicWaveSpeed = waveSpeed * hyperdriveSpeed;
       let idx = 0;
+      
+      // Calculate approximate world pos of mouse on the wave plane
+      const mouseWorldX = normalizedMouseX * 30;
+      const mouseWorldZ = normalizedMouseY * 30;
+
       for (let ix = 0; ix < cols; ix++) {
         for (let iy = 0; iy < rows; iy++) {
-          const w1 = Math.sin(ix * 0.28 + elapsedTime * waveSpeed) * 2.2;
-          const w2 = Math.cos(iy * 0.24 + elapsedTime * (waveSpeed * 0.8)) * 2.2;
-          const w3 = Math.sin((ix + iy) * 0.14 + elapsedTime * 0.6) * 1.6;
+          const w1 = Math.sin(ix * 0.28 + elapsedTime * dynamicWaveSpeed) * 2.2;
+          const w2 = Math.cos(iy * 0.24 + elapsedTime * (dynamicWaveSpeed * 0.8)) * 2.2;
+          const w3 = Math.sin((ix + iy) * 0.14 + elapsedTime * 0.6 * hyperdriveSpeed) * 1.6;
 
-          posArr[idx * 3 + 1] = baseHeights[idx] + w1 + w2 + w3;
+          let ripple = 0;
+          const pointX = positions[idx * 3];
+          const pointZ = positions[idx * 3 + 2];
+          const dist = Math.sqrt(Math.pow(pointX - mouseWorldX, 2) + Math.pow(pointZ - mouseWorldZ, 2));
+          if (dist < 15) {
+            ripple = -(15 - dist) * 0.3; // Push the wave down (parting the sea)
+          }
+
+          positions[idx * 3 + 1] = baseHeights[idx] + w1 + w2 + w3 + ripple;
           idx++;
         }
       }
-      posAttr.needsUpdate = true;
+      waveGeometry.attributes.position.needsUpdate = true;
       waveLineGeo.attributes.position.needsUpdate = true;
 
+      // Neural Constellation Networking (Draw lines between close stardust particles)
+      const starPos = stardustGeo.attributes.position.array;
+      let lineIdx = 0;
+      // Fast nearest neighbor check (only checking a subset to save CPU, it creates a nice flicker effect)
+      for (let i = 0; i < stardustCount; i += 2) {
+        for (let j = i + 2; j < stardustCount; j += 2) {
+          if (lineIdx >= 1000 * 6) break;
+          const dx = starPos[i*3] - starPos[j*3];
+          const dy = starPos[i*3+1] - starPos[j*3+1];
+          const dz = starPos[i*3+2] - starPos[j*3+2];
+          const distSq = dx*dx + dy*dy + dz*dz;
+          if (distSq < 16) { // threshold distance
+            stardustLinesPos[lineIdx++] = starPos[i*3];
+            stardustLinesPos[lineIdx++] = starPos[i*3+1];
+            stardustLinesPos[lineIdx++] = starPos[i*3+2];
+            stardustLinesPos[lineIdx++] = starPos[j*3];
+            stardustLinesPos[lineIdx++] = starPos[j*3+1];
+            stardustLinesPos[lineIdx++] = starPos[j*3+2];
+          }
+        }
+      }
+      stardustLinesGeo.setDrawRange(0, lineIdx / 3);
+      stardustLinesGeo.attributes.position.needsUpdate = true;
+
       // 2. Core Group Floating, Rotation & Drag Inertia
-      coreGroup.rotation.y += rotationVelocity.y;
-      coreGroup.rotation.x += rotationVelocity.x;
+      coreGroup.rotation.y += rotationVelocity.y * hyperdriveSpeed;
+      coreGroup.rotation.x += rotationVelocity.x * hyperdriveSpeed;
+
+      if (!isHyperdrive) {
+        outerCoreMesh.material.color.setHex(0x4cd7f6);
+        outerCoreMesh.material.opacity = 0.45;
+      } else {
+        // Hyperdrive Blue Glow
+        outerCoreMesh.material.color.setHex(0x2288ff);
+        outerCoreMesh.material.opacity = 0.8;
+      }
 
       if (!isDragging) {
-        // Complex 3D tumbling so the ball rotates all over its 3D surface
-        rotationVelocity.x = THREE.MathUtils.lerp(rotationVelocity.x, Math.sin(elapsedTime * 0.4) * 0.003, 0.02);
-        rotationVelocity.y = THREE.MathUtils.lerp(rotationVelocity.y, 0.004 + Math.cos(elapsedTime * 0.25) * 0.002, 0.02);
-        coreGroup.rotation.z += Math.sin(elapsedTime * 0.3) * 0.0015;
+        rotationVelocity.x = THREE.MathUtils.lerp(rotationVelocity.x, Math.sin(elapsedTime * 0.4) * 0.003 * hyperdriveSpeed, 0.02);
+        rotationVelocity.y = THREE.MathUtils.lerp(rotationVelocity.y, 0.004 + Math.cos(elapsedTime * 0.25) * 0.002 * hyperdriveSpeed, 0.02);
+        coreGroup.rotation.z += Math.sin(elapsedTime * 0.3) * 0.0015 * hyperdriveSpeed;
       }
 
       // Smoothly float the entire ball all over the screen (Lissajous curve)
-      const floatSpeed = 0.3;
+      const floatSpeed = 0.3 * hyperdriveSpeed;
       coreGroup.position.x = basePosition.x + Math.sin(elapsedTime * floatSpeed) * floatRange.x;
       coreGroup.position.y = basePosition.y + Math.cos(elapsedTime * floatSpeed * 0.7) * floatRange.y;
       coreGroup.position.z = basePosition.z + Math.sin(elapsedTime * floatSpeed * 1.1) * floatRange.z;
 
       // 3. Core Pulsing & Internal Ring Rotation
-      const breath = Math.sin(elapsedTime * 2.2) * 0.06 + 1;
+      const breath = Math.sin(elapsedTime * 2.2 * hyperdriveSpeed) * 0.06 + 1;
       innerCoreMesh.scale.set(breath, breath, breath);
       
-      // Dynamic color shifting for the inner core (Orange to slightly Yellow)
+      // Dynamic color shifting for the inner core
       innerCoreMesh.material.color.setHSL(0.08 + Math.sin(elapsedTime * 0.5) * 0.03, 0.8, 0.5);
 
-      outerCoreMesh.rotation.y += 0.005;
-      outerCoreMesh.rotation.x += 0.003;
+      outerCoreMesh.rotation.y += 0.005 * hyperdriveSpeed;
+      outerCoreMesh.rotation.x += 0.003 * hyperdriveSpeed;
       
-      // Stardust counter-rotation
-      stardustMesh.rotation.y -= 0.002;
-      stardustMesh.rotation.z += 0.001;
+      stardustMesh.rotation.y -= 0.002 * hyperdriveSpeed;
+      stardustMesh.rotation.z += 0.001 * hyperdriveSpeed;
+      stardustLinesMesh.rotation.copy(stardustMesh.rotation);
 
-      ring1.rotation.z += 0.010;
-      ring2.rotation.y -= 0.008;
-      ring3.rotation.z += 0.004;
+      ring1.rotation.z += 0.010 * hyperdriveSpeed;
+      ring2.rotation.y -= 0.008 * hyperdriveSpeed;
+      ring3.rotation.z += 0.004 * hyperdriveSpeed;
 
-      // 4. Orbiting Micro-Nodes Motion (Full 3D Spherical Orbit)
+      // 4. Orbiting Micro-Nodes Motion
       for (let n = 0; n < orbitNodes.length; n++) {
         const node = orbitNodes[n];
-        node.angle += node.speed * delta;
+        node.angle += node.speed * delta * hyperdriveSpeed;
         node.currentRadius = THREE.MathUtils.lerp(node.currentRadius, node.originalRadius, 0.06);
 
         tempNodePos.copy(node.startVec)
@@ -508,7 +580,19 @@ export default function HeroScene3D() {
         node.sprite.position.copy(tempNodePos);
       }
 
-      // 5. Shockwave Ripple Expansion
+      // Deep Space Parallax Camera
+      // Base camera target
+      if (window.innerWidth < 768) baseCameraPos.set(0, 16, 48);
+      else if (window.innerWidth < 1024) baseCameraPos.set(0, 15, 44);
+      else baseCameraPos.set(0, 14, 42);
+
+      const targetCamX = baseCameraPos.x - normalizedMouseX * 4.0;
+      const targetCamY = baseCameraPos.y - normalizedMouseY * 4.0;
+      camera.position.x = THREE.MathUtils.lerp(camera.position.x, targetCamX, 0.05);
+      camera.position.y = THREE.MathUtils.lerp(camera.position.y, targetCamY, 0.05);
+      camera.lookAt(0, 0, 0);
+
+      // Pulse Click Effect
       if (shockwaveActive) {
         shockwaveScale += delta * 20;
         shockwaveMesh.scale.set(shockwaveScale, shockwaveScale, shockwaveScale);
@@ -574,6 +658,8 @@ export default function HeroScene3D() {
     // SECTION F: CLEANUP
     // =========================================================
     return () => {
+      cancelAnimationFrame(animationFrameId);
+      window.triggerHyperdrive = undefined;
       container.removeEventListener('mousedown', onPointerDown);
       window.removeEventListener('mousemove', onPointerMove);
       window.removeEventListener('mouseup', onPointerUp);
@@ -584,18 +670,21 @@ export default function HeroScene3D() {
       window.removeEventListener('resize', handleResize);
       document.removeEventListener('visibilitychange', onVisibilityChange);
 
-      cancelAnimationFrame(animationFrameId);
-
+      // Cleanup
+      scene.clear();
       waveGeometry.dispose();
-      waveLineGeo.dispose();
       waveMaterial.dispose();
-      waveLineMat.dispose();
       particleTexture.dispose();
-
+      waveLineGeo.dispose();
+      waveLineMat.dispose();
       outerCoreGeo.dispose();
       outerCoreMat.dispose();
       innerCoreGeo.dispose();
       innerCoreMat.dispose();
+      stardustGeo.dispose();
+      stardustMat.dispose();
+      stardustLinesGeo.dispose();
+      stardustLinesMat.dispose();
       nucleusGeo.dispose();
       nucleusMat.dispose();
       ring1Geo.dispose();
