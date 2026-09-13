@@ -23,6 +23,21 @@ export default function HeroScene3D() {
     camera.position.set(0, 14, 42);
     camera.lookAt(0, 0, 0);
 
+    // Deep Space Fog for infinite scale
+    scene.fog = new THREE.FogExp2(0x121316, 0.015);
+
+    // Dynamic Lighting for 3D Volume
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+    scene.add(ambientLight);
+    
+    const blueSpotLight = new THREE.DirectionalLight(0x4cd7f6, 1.5);
+    blueSpotLight.position.set(15, 20, 10);
+    scene.add(blueSpotLight);
+    
+    const amberSpotLight = new THREE.DirectionalLight(0xe58e26, 1.0);
+    amberSpotLight.position.set(-15, -10, 15);
+    scene.add(amberSpotLight);
+
     const renderer = new THREE.WebGLRenderer({
       alpha: true,
       antialias: false, // Disabled for extreme performance
@@ -150,27 +165,42 @@ export default function HeroScene3D() {
     coreGroup.scale.set(1.0, 1.0, 1.0);
     scene.add(coreGroup);
 
-    // 1. Ambient Glow Aura
+    // 1. Cinematic Ambient Bloom (Volumetric Halo)
     const auraCanvas = document.createElement('canvas');
-    auraCanvas.width = 64;
-    auraCanvas.height = 64;
+    auraCanvas.width = 128;
+    auraCanvas.height = 128;
     const auraCtx = auraCanvas.getContext('2d');
-    const auraGrad = auraCtx.createRadialGradient(32, 32, 0, 32, 32, 32);
-    auraGrad.addColorStop(0, 'rgba(229, 142, 38, 0.35)');
-    auraGrad.addColorStop(0.45, 'rgba(76, 215, 246, 0.15)');
+    const auraGrad = auraCtx.createRadialGradient(64, 64, 0, 64, 64, 64);
+    auraGrad.addColorStop(0, 'rgba(229, 142, 38, 0.4)');
+    auraGrad.addColorStop(0.3, 'rgba(76, 215, 246, 0.15)');
+    auraGrad.addColorStop(0.8, 'rgba(34, 136, 255, 0.05)');
     auraGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
     auraCtx.fillStyle = auraGrad;
-    auraCtx.fillRect(0, 0, 64, 64);
+    auraCtx.fillRect(0, 0, 128, 128);
     const auraTexture = new THREE.CanvasTexture(auraCanvas);
-    const auraMat = new THREE.SpriteMaterial({
+    
+    // Inner core bright bloom
+    const auraMatInner = new THREE.SpriteMaterial({
       map: auraTexture,
       transparent: true,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
     });
-    const auraSprite = new THREE.Sprite(auraMat);
-    auraSprite.scale.set(16, 16, 1);
-    coreGroup.add(auraSprite);
+    const auraSpriteInner = new THREE.Sprite(auraMatInner);
+    auraSpriteInner.scale.set(12, 12, 1);
+    coreGroup.add(auraSpriteInner);
+    
+    // Massive, ultra-soft outer cinematic halo
+    const auraMatOuter = new THREE.SpriteMaterial({
+      map: auraTexture,
+      transparent: true,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      opacity: 0.6,
+    });
+    const auraSpriteOuter = new THREE.Sprite(auraMatOuter);
+    auraSpriteOuter.scale.set(28, 28, 1);
+    coreGroup.add(auraSpriteOuter);
 
     // 2. Polyhedral Icosahedron Core
     const outerCoreGeo = new THREE.IcosahedronGeometry(4.0, 1);
@@ -185,6 +215,18 @@ export default function HeroScene3D() {
     coreGroup.add(outerCoreMesh);
 
     const innerCoreGeo = new THREE.IcosahedronGeometry(2.3, 0);
+    
+    // The tangible, physical metallic heart of the core
+    const innerCoreSolidMat = new THREE.MeshStandardMaterial({
+      color: 0x1A1C21,
+      metalness: 0.9,
+      roughness: 0.2,
+      flatShading: true, // Gives it crisp geometric facets
+    });
+    const innerCoreSolidMesh = new THREE.Mesh(innerCoreGeo, innerCoreSolidMat);
+    coreGroup.add(innerCoreSolidMesh);
+
+    // The neon energy wireframe wrapping it
     const innerCoreMat = new THREE.MeshBasicMaterial({
       color: 0xe58e26,
       wireframe: true,
@@ -233,48 +275,44 @@ export default function HeroScene3D() {
     const stardustLinesMesh = new THREE.LineSegments(stardustLinesGeo, stardustLinesMat);
     coreGroup.add(stardustLinesMesh);
 
-    const nucleusGeo = new THREE.SphereGeometry(0.7, 12, 12);
-    const nucleusMat = new THREE.MeshBasicMaterial({
+    const nucleusGeo = new THREE.SphereGeometry(0.7, 16, 16);
+    const nucleusMat = new THREE.MeshStandardMaterial({
       color: 0xf0f1f3,
-      transparent: true,
-      opacity: 0.9,
+      metalness: 1.0,
+      roughness: 0.1,
     });
     const nucleusMesh = new THREE.Mesh(nucleusGeo, nucleusMat);
     coreGroup.add(nucleusMesh);
 
     // 3. Kinetic Orbital Rings
-    const ring1Geo = new THREE.TorusGeometry(8.0, 0.05, 8, 48);
-    const ring1Mat = new THREE.MeshBasicMaterial({
+    const ring1Geo = new THREE.TorusGeometry(8.0, 0.08, 12, 64);
+    const ring1Mat = new THREE.MeshStandardMaterial({
       color: 0xe58e26,
-      transparent: true,
-      opacity: 0.85,
+      metalness: 0.8,
+      roughness: 0.3,
     });
     const ring1 = new THREE.Mesh(ring1Geo, ring1Mat);
     ring1.rotation.x = Math.PI / 3;
-    ring1.rotation.y = Math.PI / 6;
     coreGroup.add(ring1);
 
-    const ring2Geo = new THREE.TorusGeometry(6.4, 0.04, 8, 48);
-    const ring2Mat = new THREE.MeshBasicMaterial({
+    const ring2Geo = new THREE.TorusGeometry(6.5, 0.04, 12, 64);
+    const ring2Mat = new THREE.MeshStandardMaterial({
       color: 0x4cd7f6,
-      transparent: true,
-      opacity: 0.75,
+      metalness: 0.6,
+      roughness: 0.4,
     });
     const ring2 = new THREE.Mesh(ring2Geo, ring2Mat);
-    ring2.rotation.x = -Math.PI / 4;
-    ring2.rotation.z = Math.PI / 5;
+    ring2.rotation.y = Math.PI / 4;
     coreGroup.add(ring2);
 
-    const ring3Geo = new THREE.RingGeometry(9.4, 9.6, 36);
-    const ring3Mat = new THREE.MeshBasicMaterial({
-      color: 0x2a2d35,
-      side: THREE.DoubleSide,
-      transparent: true,
-      opacity: 0.45,
-      wireframe: true,
+    const ring3Geo = new THREE.TorusGeometry(5.0, 0.03, 12, 64);
+    const ring3Mat = new THREE.MeshStandardMaterial({
+      color: 0x8a919e,
+      metalness: 0.5,
+      roughness: 0.6,
     });
     const ring3 = new THREE.Mesh(ring3Geo, ring3Mat);
-    ring3.rotation.x = Math.PI / 2.2;
+    ring3.rotation.z = Math.PI / 6;
     coreGroup.add(ring3);
 
     // 4. Orbiting High-DPI Micro-Nodes
@@ -301,9 +339,12 @@ export default function HeroScene3D() {
       ctx.stroke();
 
       ctx.fillStyle = colorHex;
+      ctx.shadowColor = colorHex;
+      ctx.shadowBlur = 15;
       ctx.beginPath();
-      ctx.arc(28, 36, 7, 0, Math.PI * 2);
+      ctx.arc(28, 36, 8, 0, Math.PI * 2);
       ctx.fill();
+      ctx.shadowBlur = 0; // Reset shadow for text
 
       ctx.font = 'bold 22px "IBM Plex Mono", monospace';
       ctx.fillStyle = '#F0F1F3';
@@ -555,6 +596,7 @@ export default function HeroScene3D() {
       // 3. Core Pulsing & Internal Ring Rotation
       const breath = Math.sin(elapsedTime * 2.2 * hyperdriveSpeed) * 0.06 + 1;
       innerCoreMesh.scale.set(breath, breath, breath);
+      innerCoreSolidMesh.scale.set(breath, breath, breath); // Pulse the physical core too
       
       // Dynamic color shifting for the inner core
       innerCoreMesh.material.color.setHSL(0.08 + Math.sin(elapsedTime * 0.5) * 0.03, 0.8, 0.5);
