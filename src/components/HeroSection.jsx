@@ -41,21 +41,7 @@ export default function HeroSection() {
             </a>
           </div>
 
-          {/* Real, Grounded Stats Strip */}
-          <div className="mt-14 pt-6 border-t border-[#2A2D35] w-full grid grid-cols-3 gap-6 font-mono">
-            <div>
-              <div className="text-2xl font-bold text-[#F0F1F3]">7</div>
-              <div className="text-xs text-[#8A919E] mt-1">ships this year</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-[#F0F1F3]">0</div>
-              <div className="text-xs text-[#8A919E] mt-1">account managers</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-[#E58E26]">100%</div>
-              <div className="text-xs text-[#8A919E] mt-1">code ownership</div>
-            </div>
-          </div>
+
 
         </div>
 
