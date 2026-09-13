@@ -137,11 +137,15 @@ export default function HeroScene3D() {
     scene.add(waveLines);
 
     // =========================================================
-    // SECTION B: 3D HOLOGRAPHIC ARCHITECTURE CORE (Original Place)
+    // SECTION B: 3D HOLOGRAPHIC ARCHITECTURE CORE
     // =========================================================
     const coreGroup = new THREE.Group();
-    // Default desktop placement
-    coreGroup.position.set(9.5, 1.5, -2);
+    
+    // Config for floating all over the page
+    let basePosition = new THREE.Vector3(0, 1.5, -2);
+    let floatRange = new THREE.Vector3(12, 5, 3);
+
+    coreGroup.position.copy(basePosition);
     coreGroup.scale.set(1.0, 1.0, 1.0);
     scene.add(coreGroup);
 
@@ -432,14 +436,22 @@ export default function HeroScene3D() {
       posAttr.needsUpdate = true;
       waveLineGeo.attributes.position.needsUpdate = true;
 
-      // 2. Core Group Rotation & Drag Inertia
+      // 2. Core Group Floating, Rotation & Drag Inertia
       coreGroup.rotation.y += rotationVelocity.y;
       coreGroup.rotation.x += rotationVelocity.x;
 
       if (!isDragging) {
-        rotationVelocity.x *= 0.94;
-        rotationVelocity.y = THREE.MathUtils.lerp(rotationVelocity.y, 0.003, 0.04);
+        // Complex 3D tumbling so the ball rotates all over its 3D surface
+        rotationVelocity.x = THREE.MathUtils.lerp(rotationVelocity.x, Math.sin(elapsedTime * 0.4) * 0.003, 0.02);
+        rotationVelocity.y = THREE.MathUtils.lerp(rotationVelocity.y, 0.004 + Math.cos(elapsedTime * 0.25) * 0.002, 0.02);
+        coreGroup.rotation.z += Math.sin(elapsedTime * 0.3) * 0.0015;
       }
+
+      // Smoothly float the entire ball all over the screen (Lissajous curve)
+      const floatSpeed = 0.3;
+      coreGroup.position.x = basePosition.x + Math.sin(elapsedTime * floatSpeed) * floatRange.x;
+      coreGroup.position.y = basePosition.y + Math.cos(elapsedTime * floatSpeed * 0.7) * floatRange.y;
+      coreGroup.position.z = basePosition.z + Math.sin(elapsedTime * floatSpeed * 1.1) * floatRange.z;
 
       // 3. Core Pulsing & Internal Ring Rotation
       const breath = Math.sin(elapsedTime * 2.2) * 0.06 + 1;
@@ -492,18 +504,21 @@ export default function HeroScene3D() {
       camera.aspect = width / height;
 
       if (width < 768) {
-        // Mobile: Centered deeper in space so it doesn't collide with stacked elements
-        coreGroup.position.set(0, -1, -10);
+        // Mobile: Narrower float range
+        basePosition.set(0, 3, -10);
+        floatRange.set(4, 5, 2);
         coreGroup.scale.set(0.6, 0.6, 0.6);
         camera.position.set(0, 16, 48);
       } else if (width < 1024) {
-        // Tablet: Centered-right
-        coreGroup.position.set(5, 0, -6);
+        // Tablet: Medium float range
+        basePosition.set(0, 2, -6);
+        floatRange.set(8, 6, 4);
         coreGroup.scale.set(0.72, 0.72, 0.72);
         camera.position.set(0, 15, 44);
       } else {
-        // Desktop: Right side hero feature
-        coreGroup.position.set(9.5, 1.5, -2);
+        // Desktop: Float majestically across the entire screen
+        basePosition.set(0, 1.5, -2);
+        floatRange.set(13, 5.5, 4);
         coreGroup.scale.set(1.0, 1.0, 1.0);
         camera.position.set(0, 14, 42);
       }
