@@ -73,10 +73,10 @@ export default function HeroSection() {
         {/* Right Column: Tangible Work Inspector (5 cols) */}
         <div className="lg:col-span-5 w-full pointer-events-auto relative z-20">
           <Card3D maxTilt={10} glare={true} scale={1.02}>
-            <div className="w-full rounded-lg bg-[#141619] border border-[#2A2D35] overflow-hidden shadow-2xl shadow-black/90 font-mono text-xs">
+            <div className="w-full rounded-lg bg-[#141619]/50 backdrop-blur-md border border-[#2A2D35]/50 overflow-hidden shadow-2xl shadow-black/90 font-mono text-xs">
             
             {/* Window header */}
-            <div className="flex items-center justify-between px-4 py-2.5 bg-[#141619] border-b border-[#2A2D35]">
+            <div className="flex items-center justify-between px-4 py-2.5 bg-[#141619]/60 border-b border-[#2A2D35]/50">
               <div className="flex items-center gap-1.5">
                 <span className="w-2.5 h-2.5 rounded-full bg-[#2A2D35]"></span>
                 <span className="w-2.5 h-2.5 rounded-full bg-[#2A2D35]"></span>
@@ -90,7 +90,7 @@ export default function HeroSection() {
                   onClick={() => setActiveTab('diff')}
                   className={`px-2 py-0.5 rounded transition-colors ${
                     activeTab === 'diff'
-                      ? 'bg-[#2A2D35] text-[#F0F1F3]'
+                      ? 'bg-[#2A2D35]/80 text-[#F0F1F3]'
                       : 'text-[#8A919E] hover:text-[#F0F1F3]'
                   }`}
                 >
@@ -101,7 +101,7 @@ export default function HeroSection() {
                   onClick={() => setActiveTab('stack')}
                   className={`px-2 py-0.5 rounded transition-colors ${
                     activeTab === 'stack'
-                      ? 'bg-[#2A2D35] text-[#F0F1F3]'
+                      ? 'bg-[#2A2D35]/80 text-[#F0F1F3]'
                       : 'text-[#8A919E] hover:text-[#F0F1F3]'
                   }`}
                 >
@@ -130,7 +130,7 @@ export default function HeroSection() {
                     - 1,530 lines (unneeded plugins &amp; legacy scripts)
                   </div>
                   
-                  <div className="pt-3 border-t border-[#2A2D35] text-[11px] text-[#8A919E]">
+                  <div className="pt-3 border-t border-[#2A2D35]/50 text-[11px] text-[#8A919E]">
                     Bundle size: <span className="text-[#F0F1F3]">26.8 kB</span> &bull; TTFB: <span className="text-emerald-400">42ms</span>
                   </div>
                 </div>
@@ -138,19 +138,19 @@ export default function HeroSection() {
                 <div className="space-y-2">
                   <div className="text-[#F0F1F3] font-bold">Production Stack Choice:</div>
                   <div className="grid grid-cols-2 gap-2 pt-2">
-                    <div className="p-2 rounded bg-[#141619] border border-[#2A2D35]">
+                    <div className="p-2 rounded bg-[#141619]/40 border border-[#2A2D35]/50">
                       <div className="text-[#E58E26]">Frontend</div>
                       <div className="text-[#F0F1F3] mt-0.5">React / Next.js / Astro</div>
                     </div>
-                    <div className="p-2 rounded bg-[#141619] border border-[#2A2D35]">
+                    <div className="p-2 rounded bg-[#141619]/40 border border-[#2A2D35]/50">
                       <div className="text-[#E58E26]">Styling</div>
                       <div className="text-[#F0F1F3] mt-0.5">Tailwind v4 / Clean CSS</div>
                     </div>
-                    <div className="p-2 rounded bg-[#141619] border border-[#2A2D35]">
+                    <div className="p-2 rounded bg-[#141619]/40 border border-[#2A2D35]/50">
                       <div className="text-[#E58E26]">Backend / DB</div>
                       <div className="text-[#F0F1F3] mt-0.5">Supabase / Node / PostgreSQL</div>
                     </div>
-                    <div className="p-2 rounded bg-[#141619] border border-[#2A2D35]">
+                    <div className="p-2 rounded bg-[#141619]/40 border border-[#2A2D35]/50">
                       <div className="text-[#E58E26]">Pipes</div>
                       <div className="text-[#F0F1F3] mt-0.5">Make / Stripe / Resend</div>
                     </div>
@@ -167,7 +167,7 @@ export default function HeroSection() {
             </div>
 
             {/* Inspector bottom metadata bar */}
-            <div className="px-4 py-2 bg-[#141619] border-t border-[#2A2D35] flex items-center justify-between text-[11px] text-[#8A919E]">
+            <div className="px-4 py-2 bg-[#141619]/60 border-t border-[#2A2D35]/50 flex items-center justify-between text-[11px] text-[#8A919E]">
               <span>branch: production</span>
               <span className="text-emerald-400 font-medium">zero dependencies pending</span>
             </div>
