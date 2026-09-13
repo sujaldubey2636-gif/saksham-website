@@ -26,13 +26,13 @@ export default function HeroScene3D() {
 
     const renderer = new THREE.WebGLRenderer({
       alpha: true,
-      antialias: false, // Disabled for extreme performance
+      antialias: true, // Enabled for buttery smooth glowing lines
       powerPreference: 'high-performance',
-      precision: 'mediump',
+      precision: 'highp', // Higher precision for smoother gradients
     });
 
-    // Cap pixel ratio to 1.0 for rock-solid 60 FPS across all GPUs (especially mobile)
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.0));
+    // Cap pixel ratio to 2.0 to balance extreme smoothness with performance
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2.0));
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setClearColor(0x000000, 0);
     container.appendChild(renderer.domElement);
@@ -579,9 +579,9 @@ export default function HeroScene3D() {
         // Calculate distance in 2D space relative to camera view
         const distToMouse = Math.sqrt(Math.pow(px - mouseStarX, 2) + Math.pow(py - mouseStarY, 2));
         if (distToMouse < 4) {
-           // Magnetic Pull
-           starPos[i*3] = THREE.MathUtils.lerp(px, mouseStarX, 0.02 * hyperdriveSpeed);
-           starPos[i*3+1] = THREE.MathUtils.lerp(py, mouseStarY, 0.02 * hyperdriveSpeed);
+           // Ultra-smooth Magnetic Pull
+           starPos[i*3] = THREE.MathUtils.lerp(px, mouseStarX, 0.008 * hyperdriveSpeed);
+           starPos[i*3+1] = THREE.MathUtils.lerp(py, mouseStarY, 0.008 * hyperdriveSpeed);
         } else {
            // Spring back outward slightly to create continuous swarming
            starPos[i*3] += (Math.random() - 0.5) * 0.01;
@@ -609,8 +609,8 @@ export default function HeroScene3D() {
       }
 
       if (!isDragging) {
-        rotationVelocity.x = THREE.MathUtils.lerp(rotationVelocity.x, Math.sin(elapsedTime * 0.4) * 0.003 * hyperdriveSpeed, 0.02);
-        rotationVelocity.y = THREE.MathUtils.lerp(rotationVelocity.y, 0.004 + Math.cos(elapsedTime * 0.25) * 0.002 * hyperdriveSpeed, 0.02);
+        rotationVelocity.x = THREE.MathUtils.lerp(rotationVelocity.x, Math.sin(elapsedTime * 0.4) * 0.003 * hyperdriveSpeed, 0.008);
+        rotationVelocity.y = THREE.MathUtils.lerp(rotationVelocity.y, 0.004 + Math.cos(elapsedTime * 0.25) * 0.002 * hyperdriveSpeed, 0.008);
         coreGroup.rotation.z += Math.sin(elapsedTime * 0.3) * 0.0015 * hyperdriveSpeed;
       }
 
@@ -675,10 +675,10 @@ export default function HeroScene3D() {
       const targetCamY = baseCameraPos.y - normalizedMouseY * 4.0;
       
       // Dramatic Cinematic Swoop on Load
-      // We use a slow lerp for Z to make the entrance feel powerful
-      camera.position.x = THREE.MathUtils.lerp(camera.position.x, targetCamX, 0.05);
-      camera.position.y = THREE.MathUtils.lerp(camera.position.y, targetCamY, 0.05);
-      camera.position.z = THREE.MathUtils.lerp(camera.position.z, baseCameraPos.z, Math.min(0.02 + elapsedTime * 0.005, 0.08));
+      // We use an ultra-smooth lerp to make the camera glide effortlessly
+      camera.position.x = THREE.MathUtils.lerp(camera.position.x, targetCamX, 0.015);
+      camera.position.y = THREE.MathUtils.lerp(camera.position.y, targetCamY, 0.015);
+      camera.position.z = THREE.MathUtils.lerp(camera.position.z, baseCameraPos.z, Math.min(0.01 + elapsedTime * 0.003, 0.04));
       camera.lookAt(0, 0, 0);
 
       // Pulse Click Effect
