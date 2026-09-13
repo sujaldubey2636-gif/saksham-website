@@ -12,14 +12,6 @@ export default function HeroSection() {
         {/* Left Column: Direct Pitch (7 cols) */}
         <div className="lg:col-span-7 flex flex-col items-start text-left pointer-events-auto">
           
-          {/* Status line: honest availability */}
-          <div className="flex items-center gap-2 text-xs font-mono text-[#8A919E] mb-6">
-            <span className="inline-block w-2 h-2 rounded-full bg-[#E58E26]"></span>
-            <span>building right now</span>
-            <span className="text-[#2A2D35]">•</span>
-            <span>next opening: october</span>
-          </div>
-
           {/* Headline: Straight talk */}
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#F0F1F3] leading-[1.08] font-['Bricolage_Grotesque',sans-serif]">
             I design websites, wire up databases, and automate your manual busywork.
