@@ -10,10 +10,10 @@ export default function HeroSection() {
       {/* 3D WebGL Particle Terrain */}
       <HeroScene3D />
 
-      <div className="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+      <div className="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center pointer-events-none">
         
         {/* Left Column: Direct Pitch (7 cols) */}
-        <div className="lg:col-span-7 flex flex-col items-start text-left">
+        <div className="lg:col-span-7 flex flex-col items-start text-left pointer-events-auto">
           
           {/* Status line: honest availability */}
           <div className="flex items-center gap-2 text-xs font-mono text-[#8A919E] mb-6">
@@ -71,7 +71,7 @@ export default function HeroSection() {
         </div>
 
         {/* Right Column: Tangible Work Inspector (5 cols) */}
-        <div className="lg:col-span-5 w-full">
+        <div className="lg:col-span-5 w-full pointer-events-auto">
           <Card3D maxTilt={10} glare={true} scale={1.02}>
             <div className="w-full rounded-lg bg-[#1A1C21] border border-[#2A2D35] overflow-hidden shadow-2xl font-mono text-xs">
             
