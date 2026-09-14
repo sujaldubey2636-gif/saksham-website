@@ -509,6 +509,9 @@ export default function HeroScene3D() {
     // SECTION D: RELIABLE 60FPS CONTINUOUS ANIMATION LOOP
     // =========================================================
     let animationFrameId;
+    let customTime = 0;
+    let globalTimeScale = 1.0;
+    let warpSpeedMultiplier = 15.0; // Warp speed intro
     let clock = new THREE.Clock();
     const tempNodePos = new THREE.Vector3(); // For calculating spherical orbits
     const baseCameraPos = new THREE.Vector3(0, 14, 42);
@@ -521,7 +524,27 @@ export default function HeroScene3D() {
 
       const rawDelta = clock.getDelta();
       const delta = Math.min(rawDelta, 0.04);
-      const elapsedTime = clock.getElapsedTime();
+      
+      // Cinematic 1: Warp Speed Intro
+      if (warpSpeedMultiplier > 1.0) {
+          warpSpeedMultiplier = THREE.MathUtils.lerp(warpSpeedMultiplier, 1.0, 0.04);
+      }
+      
+      // Cinematic 2: Bullet-Time Hover
+      coreGroup.updateMatrixWorld();
+      tempNodePos.set(0, 0, 0).applyMatrix4(coreGroup.matrixWorld).project(camera);
+      const dx = tempNodePos.x - normalizedMouseX;
+      const dy = tempNodePos.y - normalizedMouseY;
+      const distToCore = Math.sqrt(dx*dx + dy*dy);
+      const isHoveringCore = distToCore < 0.25;
+      
+      const targetTimeScale = isHoveringCore ? 0.08 : 1.0;
+      globalTimeScale = THREE.MathUtils.lerp(globalTimeScale, targetTimeScale, 0.08);
+      
+      const activeDelta = delta * globalTimeScale * warpSpeedMultiplier;
+      customTime += activeDelta;
+      
+      const elapsedTime = customTime; // Use scaled time everywhere
       const waveSpeed = prefersReducedMotion ? 0.3 : 0.85;
 
       // Camera parallax
@@ -645,11 +668,7 @@ export default function HeroScene3D() {
       }
       
       // 2. Magnetic Hover Expansion
-      coreGroup.updateMatrixWorld();
-      tempNodePos.set(0, 0, 0).applyMatrix4(coreGroup.matrixWorld).project(camera);
-      const dx = tempNodePos.x - normalizedMouseX;
-      const dy = tempNodePos.y - normalizedMouseY;
-      const distToCore = Math.sqrt(dx*dx + dy*dy);
+      // (Calculated above for bullet-time)
       
       // If mouse is near the core on screen, expand!
       const hoverScale = (distToCore < 0.25) ? 1.15 : 1.0;
@@ -743,8 +762,10 @@ export default function HeroScene3D() {
       else if (window.innerWidth < 1024) baseCameraPos.set(0, 15, 44);
       else baseCameraPos.set(0, 14, 42);
 
-      const targetCamX = baseCameraPos.x - normalizedMouseX * 4.0;
-      const targetCamY = baseCameraPos.y - normalizedMouseY * 4.0;
+      // Cinematic 3: Deep-Space Layered Parallax (Hologram Effect)
+      // By significantly increasing the camera movement, the layers visually separate based on Z depth!
+      const targetCamX = baseCameraPos.x - normalizedMouseX * 12.0;
+      const targetCamY = baseCameraPos.y - normalizedMouseY * 12.0;
       
       // Dramatic Cinematic Swoop on Load
       // We use an ultra-smooth lerp to make the camera glide effortlessly
