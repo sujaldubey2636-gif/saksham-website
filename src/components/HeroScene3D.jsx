@@ -460,9 +460,13 @@ export default function HeroScene3D() {
         voxelPositions[i*3] = tx; voxelPositions[i*3+1] = ty; voxelPositions[i*3+2] = tz;
         const vSpeed = 5.0 + Math.random() * 15.0;
         const norm = Math.sqrt(tx*tx + ty*ty + tz*tz) || 1;
-        voxelVelocities[i*3] = (tx/norm + (Math.random()-0.5)) * vSpeed;
-        voxelVelocities[i*3+1] = (ty/norm + (Math.random()-0.5)) * vSpeed;
-        voxelVelocities[i*3+2] = (tz/norm + (Math.random()-0.5)) * vSpeed;
+        // Magnetic Swirl (cross product) for orbital explosion
+        const swirlX = tz / norm;
+        const swirlZ = -tx / norm;
+        
+        voxelVelocities[i*3] = (tx/norm * 0.5 + swirlX * 1.2) * vSpeed;
+        voxelVelocities[i*3+1] = (ty/norm * 0.5 + (Math.random()-0.5)) * vSpeed;
+        voxelVelocities[i*3+2] = (tz/norm * 0.5 + swirlZ * 1.2) * vSpeed;
         voxelRotations[i*3] = Math.random() * Math.PI; voxelRotations[i*3+1] = Math.random(); voxelRotations[i*3+2] = Math.random();
         voxelDummy.position.set(tx, ty, tz);
         voxelDummy.updateMatrix();
@@ -473,8 +477,7 @@ export default function HeroScene3D() {
     coreGroup.add(voxelMesh);
     let voxelState = 0;
     let voxelAnimTimer = 0;
-
-
+    let nextVoxelTrigger = 10.0; // Starts first trigger at 10 seconds
     // 6. Targeted Hyper-Comet
     const cometGeo = new THREE.BufferGeometry();
     const cometPositions = new Float32Array([0,0,0, 0,0,0]);
@@ -789,10 +792,22 @@ export default function HeroScene3D() {
       ring3.scale.set(nextScale, nextScale, nextScale);
       
       
-      // DIGITAL VOXELIZATION ANIMATION
-      const autoVoxelTime = customTime % 15.0;
-      let shouldVoxelize = autoVoxelTime < 4.0;
+      // DIGITAL VOXELIZATION ANIMATION - Smart Autonomous Timer
+      let shouldVoxelize = false;
       
+      // Countdown the trigger
+      nextVoxelTrigger -= activeDelta;
+      
+      if (nextVoxelTrigger <= 0) {
+          // Trigger the explosion! It lasts for 4 seconds
+          shouldVoxelize = true;
+          // If we've held the explosion for 4 seconds, reset the timer to a random interval between 8 and 20s
+          if (nextVoxelTrigger <= -4.0) {
+              nextVoxelTrigger = 8.0 + Math.random() * 12.0; 
+              shouldVoxelize = false; // Turn off explosion
+          }
+      }
+
       if (manualVoxelTimer > 0) {
           manualVoxelTimer -= activeDelta;
           shouldVoxelize = true;
@@ -832,15 +847,37 @@ export default function HeroScene3D() {
                   voxelMesh.setMatrixAt(i, voxelDummy.matrix);
               }
           } else {
-              // IMPLODE (2 to 4 sec)
-              const lerpFactor = 0.15;
+              // IMPLODE (2 to 4 sec) - LAYER BY LAYER ORGANIC REASSEMBLY
+              const implodeProgress = (progress - 0.5) * 2.0; // 0.0 to 1.0
+              
               for(let i=0; i<voxelCount; i++) {
-                  voxelPositions[i*3] = THREE.MathUtils.lerp(voxelPositions[i*3], voxelTargets[i*3], lerpFactor);
-                  voxelPositions[i*3+1] = THREE.MathUtils.lerp(voxelPositions[i*3+1], voxelTargets[i*3+1], lerpFactor);
-                  voxelPositions[i*3+2] = THREE.MathUtils.lerp(voxelPositions[i*3+2], voxelTargets[i*3+2], lerpFactor);
+                  let startImplode = false;
+                  // Inner core builds first, then outer core, then rings
+                  if (i < 250 && implodeProgress > 0.0) startImplode = true;
+                  else if (i >= 250 && i < 500 && implodeProgress > 0.3) startImplode = true;
+                  else if (i >= 500 && implodeProgress > 0.6) startImplode = true;
+                  
+                  if (startImplode) {
+                      const lerpFactor = 0.15;
+                      voxelPositions[i*3] = THREE.MathUtils.lerp(voxelPositions[i*3], voxelTargets[i*3], lerpFactor);
+                      voxelPositions[i*3+1] = THREE.MathUtils.lerp(voxelPositions[i*3+1], voxelTargets[i*3+1], lerpFactor);
+                      voxelPositions[i*3+2] = THREE.MathUtils.lerp(voxelPositions[i*3+2], voxelTargets[i*3+2], lerpFactor);
+                      
+                      // Smoothly rotate back to 0 so it aligns perfectly
+                      voxelRotations[i*3] = THREE.MathUtils.lerp(voxelRotations[i*3], 0, lerpFactor);
+                      voxelRotations[i*3+1] = THREE.MathUtils.lerp(voxelRotations[i*3+1], 0, lerpFactor);
+                      voxelRotations[i*3+2] = THREE.MathUtils.lerp(voxelRotations[i*3+2], 0, lerpFactor);
+                  } else {
+                      // Drift slowly in zero-g while waiting for their turn to assemble
+                      voxelPositions[i*3] += voxelVelocities[i*3] * activeDelta * 0.1;
+                      voxelPositions[i*3+1] += voxelVelocities[i*3+1] * activeDelta * 0.1;
+                      voxelPositions[i*3+2] += voxelVelocities[i*3+2] * activeDelta * 0.1;
+                      voxelRotations[i*3] += 0.02; 
+                      voxelRotations[i*3+1] += 0.02;
+                  }
                   
                   voxelDummy.position.set(voxelPositions[i*3], voxelPositions[i*3+1], voxelPositions[i*3+2]);
-                  voxelDummy.rotation.set(0,0,0);
+                  voxelDummy.rotation.set(voxelRotations[i*3], voxelRotations[i*3+1], voxelRotations[i*3+2]);
                   voxelDummy.updateMatrix();
                   voxelMesh.setMatrixAt(i, voxelDummy.matrix);
               }
