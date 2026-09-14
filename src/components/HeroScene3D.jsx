@@ -741,19 +741,23 @@ export default function HeroScene3D() {
       ring2.scale.set(nextScale, nextScale, nextScale);
       ring3.scale.set(nextScale, nextScale, nextScale);
       
+      // Autonomous Holographic Slice (triggers for 3 seconds every 15 seconds)
+      const isAutoSliced = (customTime % 15.0) < 3.0;
+      const effectivelySliced = isSliced || isAutoSliced;
+
       // Extra spin when hovering
-      const hoverSpin = (distToCore < 0.25 && !isSliced) ? 2.0 : 1.0;
-      const sliceSlowdown = isSliced ? 0.1 : 1.0; // 90% slower when sliced so you can see details
+      const hoverSpin = (distToCore < 0.25 && !effectivelySliced) ? 2.0 : 1.0;
+      const sliceSlowdown = effectivelySliced ? 0.1 : 1.0; // 90% slower when sliced so you can see details
 
       // 3. Holographic Slice Logic
       const targetOffsets = {
-        nucleus: isSliced ? 4.5 : 0.0,
-        innerCore: isSliced ? 2.5 : 0.0,
+        nucleus: effectivelySliced ? 4.5 : 0.0,
+        innerCore: effectivelySliced ? 2.5 : 0.0,
         outerCore: 0.0,
-        quantum: isSliced ? -2.5 : 0.0,
-        ring1: isSliced ? -4.5 : 0.0,
-        ring2: isSliced ? -6.0 : 0.0,
-        ring3: isSliced ? -7.5 : 0.0
+        quantum: effectivelySliced ? -2.5 : 0.0,
+        ring1: effectivelySliced ? -4.5 : 0.0,
+        ring2: effectivelySliced ? -6.0 : 0.0,
+        ring3: effectivelySliced ? -7.5 : 0.0
       };
 
       nucleusMesh.position.y = THREE.MathUtils.lerp(nucleusMesh.position.y, targetOffsets.nucleus, 0.06);
