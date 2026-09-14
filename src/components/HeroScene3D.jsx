@@ -235,22 +235,42 @@ export default function HeroScene3D() {
     const stardustGeo = new THREE.BufferGeometry();
     const stardustCount = 120;
     const stardustPos = new Float32Array(stardustCount * 3);
+    const stardustOrigins = new Float32Array(stardustCount * 3);
+    const stardustColors = new Float32Array(stardustCount * 3);
+    
     for (let i = 0; i < stardustCount * 3; i += 3) {
       // Generate points randomly inside a spherical volume
       const r = 4 + Math.random() * 8; 
       const theta = Math.random() * 2 * Math.PI;
       const phi = Math.acos((Math.random() * 2) - 1);
-      stardustPos[i] = r * Math.sin(phi) * Math.cos(theta);
-      stardustPos[i + 1] = r * Math.sin(phi) * Math.sin(theta);
-      stardustPos[i + 2] = r * Math.cos(phi);
+      
+      const x = r * Math.sin(phi) * Math.cos(theta);
+      const y = r * Math.sin(phi) * Math.sin(theta);
+      const z = r * Math.cos(phi);
+      
+      stardustPos[i] = x;
+      stardustPos[i + 1] = y;
+      stardustPos[i + 2] = z;
+      
+      stardustOrigins[i] = x;
+      stardustOrigins[i + 1] = y;
+      stardustOrigins[i + 2] = z;
+      
+      // Default Cyan color
+      stardustColors[i] = 0.3;     // R
+      stardustColors[i + 1] = 0.84; // G
+      stardustColors[i + 2] = 0.96; // B
     }
     stardustGeo.setAttribute('position', new THREE.BufferAttribute(stardustPos, 3));
+    stardustGeo.setAttribute('origin', new THREE.BufferAttribute(stardustOrigins, 3));
+    stardustGeo.setAttribute('color', new THREE.BufferAttribute(stardustColors, 3));
+    
     const stardustMat = new THREE.PointsMaterial({
-      color: 0x4cd7f6,
       size: 0.08,
       transparent: true,
-      opacity: 0.6,
+      opacity: 0.8,
       blending: THREE.AdditiveBlending,
+      vertexColors: true, // Enables the heatmap color shift
     });
     const stardustMesh = new THREE.Points(stardustGeo, stardustMat);
     coreGroup.add(stardustMesh);
@@ -395,6 +415,7 @@ export default function HeroScene3D() {
     let shockwaveActive = false;
     let shockwaveScale = 0.5;
     let quantumRippleRadius = 0;
+    let starScatterIntensity = 0;
 
     // Hyperdrive State
     let isHyperdrive = false;
@@ -456,6 +477,7 @@ export default function HeroScene3D() {
       shockwaveActive = true;
       shockwaveScale = 0.5;
       quantumRippleRadius = 0; // Trigger the massive grid ripple
+      starScatterIntensity = 1.0; // Trigger Big Bang scatter
       shockwaveMesh.scale.set(0.5, 0.5, 0.5);
       shockwaveMat.opacity = 0.95;
 
@@ -539,28 +561,61 @@ export default function HeroScene3D() {
       waveLineGeo.attributes.position.needsUpdate = true;
 
       // Neural Constellation lines removed to drastically improve mobile CPU scrolling performance
-      // Magnetic Mouse Pull for Stardust
+      // Magnetic Mouse Pull, Heatmap, and Big Bang Scatter
       const mouseStarX = mouseParallaxX * 3;
       const mouseStarY = mouseParallaxY * 3;
+      const starPos = stardustGeo.attributes.position.array;
+      const starOrigins = stardustGeo.attributes.origin.array;
+      const starCols = stardustGeo.attributes.color.array;
+      
       for (let i = 0; i < stardustCount; i++) {
-        const px = starPos[i*3];
-        const py = starPos[i*3+1];
+        let px = starPos[i*3];
+        let py = starPos[i*3+1];
+        let pz = starPos[i*3+2];
+        
+        // Big Bang Scatter
+        if (starScatterIntensity > 0) {
+           px += px * starScatterIntensity * 0.1;
+           py += py * starScatterIntensity * 0.1;
+           pz += pz * starScatterIntensity * 0.1;
+        }
+
         // Calculate distance in 2D space relative to camera view
         const distToMouse = Math.sqrt(Math.pow(px - mouseStarX, 2) + Math.pow(py - mouseStarY, 2));
-        if (distToMouse < 4) {
+        
+        if (distToMouse < 5) {
            // Ultra-smooth Magnetic Pull
-           starPos[i*3] = THREE.MathUtils.lerp(px, mouseStarX, 0.008 * hyperdriveSpeed);
-           starPos[i*3+1] = THREE.MathUtils.lerp(py, mouseStarY, 0.008 * hyperdriveSpeed);
+           px = THREE.MathUtils.lerp(px, mouseStarX, 0.008 * hyperdriveSpeed);
+           py = THREE.MathUtils.lerp(py, mouseStarY, 0.008 * hyperdriveSpeed);
+           
+           // Heatmap: Shift to Amber (0.9, 0.55, 0.15)
+           starCols[i*3] = THREE.MathUtils.lerp(starCols[i*3], 0.9, 0.1);
+           starCols[i*3+1] = THREE.MathUtils.lerp(starCols[i*3+1], 0.55, 0.1);
+           starCols[i*3+2] = THREE.MathUtils.lerp(starCols[i*3+2], 0.15, 0.1);
         } else {
-           // Spring back outward slightly to create continuous swarming
-           starPos[i*3] += (Math.random() - 0.5) * 0.01;
-           starPos[i*3+1] += (Math.random() - 0.5) * 0.01;
+           // Spring back toward origin
+           px = THREE.MathUtils.lerp(px, starOrigins[i*3], 0.02);
+           py = THREE.MathUtils.lerp(py, starOrigins[i*3+1], 0.02);
+           pz = THREE.MathUtils.lerp(pz, starOrigins[i*3+2], 0.02);
+           
+           // Heatmap: Shift back to Cyan (0.3, 0.84, 0.96)
+           starCols[i*3] = THREE.MathUtils.lerp(starCols[i*3], 0.3, 0.05);
+           starCols[i*3+1] = THREE.MathUtils.lerp(starCols[i*3+1], 0.84, 0.05);
+           starCols[i*3+2] = THREE.MathUtils.lerp(starCols[i*3+2], 0.96, 0.05);
         }
+        
+        starPos[i*3] = px;
+        starPos[i*3+1] = py;
+        starPos[i*3+2] = pz;
       }
+      
+      if (starScatterIntensity > 0) {
+         starScatterIntensity *= 0.92; // Decay the scatter
+         if (starScatterIntensity < 0.01) starScatterIntensity = 0;
+      }
+      
       stardustGeo.attributes.position.needsUpdate = true;
-
-      stardustLinesGeo.setDrawRange(0, lineIdx / 3);
-      stardustLinesGeo.attributes.position.needsUpdate = true;
+      stardustGeo.attributes.color.needsUpdate = true;
 
       // 2. Core Group Floating, Rotation & Drag Inertia
       coreGroup.rotation.y += rotationVelocity.y * hyperdriveSpeed;
