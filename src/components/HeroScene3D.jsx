@@ -627,20 +627,52 @@ export default function HeroScene3D() {
       stardustGeo.attributes.position.needsUpdate = true;
       stardustGeo.attributes.color.needsUpdate = true;
 
-      // 2. Core Group Floating, Rotation & Drag Inertia
-      coreGroup.rotation.y += rotationVelocity.y * hyperdriveSpeed;
-      coreGroup.rotation.x += rotationVelocity.x * hyperdriveSpeed;
+      // 1. Friction Heatmap (Spin to Heat)
+      const spinSpeed = Math.abs(rotationVelocity.x) + Math.abs(rotationVelocity.y);
+      const heatRatio = Math.max(0, Math.min((spinSpeed - 0.005) * 15, 1.0));
+      const colorCyan = new THREE.Color(0x4cd7f6);
+      const colorAmber = new THREE.Color(0xe58e26);
 
       if (!isHyperdrive) {
-        outerCoreMesh.material.color.setHex(0x4cd7f6);
-        outerCoreMesh.material.opacity = 0.45;
-        quantumMat.color.setHSL(0.55 + Math.sin(elapsedTime * 0.3) * 0.1, 0.8, 0.5);
+        outerCoreMesh.material.color.lerpColors(colorCyan, colorAmber, heatRatio);
+        outerCoreMesh.material.opacity = 0.45 + (heatRatio * 0.3); // Glows brighter when hot
+        quantumMat.color.setHSL(0.55 + Math.sin(elapsedTime * 0.3) * 0.1 - (heatRatio * 0.4), 0.8, 0.5);
       } else {
         // Hyperdrive Deep Blue/Violet
         outerCoreMesh.material.color.setHex(0x2288ff);
         outerCoreMesh.material.opacity = 0.8;
-        quantumMat.color.setHex(0x8844ff); // Shifts to purple/violet!
+        quantumMat.color.setHex(0x8844ff);
       }
+      
+      // 2. Magnetic Hover Expansion
+      coreGroup.updateMatrixWorld();
+      tempNodePos.set(0, 0, 0).applyMatrix4(coreGroup.matrixWorld).project(camera);
+      const dx = tempNodePos.x - normalizedMouseX;
+      const dy = tempNodePos.y - normalizedMouseY;
+      const distToCore = Math.sqrt(dx*dx + dy*dy);
+      
+      // If mouse is near the core on screen, expand!
+      const hoverScale = (distToCore < 0.25) ? 1.15 : 1.0;
+      const currentScale = outerCoreMesh.scale.x;
+      const nextScale = THREE.MathUtils.lerp(currentScale, hoverScale, 0.08);
+      
+      outerCoreMesh.scale.set(nextScale, nextScale, nextScale);
+      quantumMesh.scale.set(nextScale, nextScale, nextScale);
+      ring1.scale.set(nextScale, nextScale, nextScale);
+      ring2.scale.set(nextScale, nextScale, nextScale);
+      ring3.scale.set(nextScale, nextScale, nextScale);
+      
+      // Extra spin when hovering
+      const hoverSpin = (distToCore < 0.25) ? 2.0 : 1.0;
+
+      // 3. The "Tracking Eye" Nucleus
+      // Nucleus slightly moves towards the mouse relative to the core
+      nucleusMesh.position.x = THREE.MathUtils.lerp(nucleusMesh.position.x, -dx * 2.0, 0.1);
+      nucleusMesh.position.y = THREE.MathUtils.lerp(nucleusMesh.position.y, -dy * 2.0, 0.1);
+      
+      // Core Group Floating, Rotation & Drag Inertia
+      coreGroup.rotation.y += rotationVelocity.y * hyperdriveSpeed * hoverSpin;
+      coreGroup.rotation.x += rotationVelocity.x * hyperdriveSpeed * hoverSpin;
 
       if (!isDragging) {
         rotationVelocity.x = THREE.MathUtils.lerp(rotationVelocity.x, Math.sin(elapsedTime * 0.4) * 0.003 * hyperdriveSpeed, 0.008);
