@@ -125,6 +125,7 @@ export default {
         'ping-slow': 'ping 2s cubic-bezier(0, 0, 0.2, 1) infinite',
         'float':     'float 6s ease-in-out infinite',
         'glow-pulse': 'glowPulse 3s ease-in-out infinite',
+        'fade-in':   'fadeIn 1.5s ease-in-out forwards',
       },
       keyframes: {
         float: {
@@ -134,6 +135,10 @@ export default {
         glowPulse: {
           '0%, 100%': { opacity: '0.6' },
           '50%':       { opacity: '1' },
+        },
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
         },
       },
     },

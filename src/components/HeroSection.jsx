@@ -1,11 +1,17 @@
-import React from 'react';
-import HeroScene3D from './HeroScene3D';
+import React, { Suspense, lazy } from 'react';
+
+// Lazy load the massive Three.js bundle so the main page HTML loads instantly without a black screen glitch
+const HeroScene3D = lazy(() => import('./HeroScene3D'));
 
 export default function HeroSection() {
   return (
     <section className="relative w-full min-h-[calc(100vh-4rem)] flex items-center bg-[#121316] text-[#F0F1F3] px-6 sm:px-10 lg:px-16 py-16 lg:py-24 border-b border-[#2A2D35] overflow-hidden">
       {/* 3D WebGL Particle Terrain */}
-      <HeroScene3D />
+      <Suspense fallback={<div className="absolute inset-0 z-0 bg-[#121316]"></div>}>
+        <div className="absolute inset-0 z-0 animate-fade-in">
+          <HeroScene3D />
+        </div>
+      </Suspense>
 
       <div className="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center pointer-events-none">
         
