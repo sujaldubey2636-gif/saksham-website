@@ -847,33 +847,42 @@ export default function HeroScene3D() {
                   voxelMesh.setMatrixAt(i, voxelDummy.matrix);
               }
           } else {
-              // IMPLODE (2 to 4 sec) - LAYER BY LAYER ORGANIC REASSEMBLY
+              // IMPLODE (2 to 4 sec) - LIQUID GRAVITY & LOCK-IN GLOW
               const implodeProgress = (progress - 0.5) * 2.0; // 0.0 to 1.0
               
               for(let i=0; i<voxelCount; i++) {
                   let startImplode = false;
-                  // Inner core builds first, then outer core, then rings
-                  if (i < 250 && implodeProgress > 0.0) startImplode = true;
-                  else if (i >= 250 && i < 500 && implodeProgress > 0.3) startImplode = true;
-                  else if (i >= 500 && implodeProgress > 0.6) startImplode = true;
+                  let localProgress = 0;
+                  
+                  if (i < 250 && implodeProgress > 0.0) {
+                      startImplode = true;
+                      localProgress = implodeProgress / 1.0;
+                  } else if (i >= 250 && i < 500 && implodeProgress > 0.3) {
+                      startImplode = true;
+                      localProgress = (implodeProgress - 0.3) / 0.7;
+                  } else if (i >= 500 && implodeProgress > 0.6) {
+                      startImplode = true;
+                      localProgress = (implodeProgress - 0.6) / 0.4;
+                  }
                   
                   if (startImplode) {
-                      const lerpFactor = 0.15;
+                      // LIQUID GRAVITY EASING: Starts extremely slow, smoothly accelerates to lock-in
+                      const lerpFactor = Math.pow(localProgress, 2.5) * 0.35;
+                      
                       voxelPositions[i*3] = THREE.MathUtils.lerp(voxelPositions[i*3], voxelTargets[i*3], lerpFactor);
                       voxelPositions[i*3+1] = THREE.MathUtils.lerp(voxelPositions[i*3+1], voxelTargets[i*3+1], lerpFactor);
                       voxelPositions[i*3+2] = THREE.MathUtils.lerp(voxelPositions[i*3+2], voxelTargets[i*3+2], lerpFactor);
                       
-                      // Smoothly rotate back to 0 so it aligns perfectly
                       voxelRotations[i*3] = THREE.MathUtils.lerp(voxelRotations[i*3], 0, lerpFactor);
                       voxelRotations[i*3+1] = THREE.MathUtils.lerp(voxelRotations[i*3+1], 0, lerpFactor);
                       voxelRotations[i*3+2] = THREE.MathUtils.lerp(voxelRotations[i*3+2], 0, lerpFactor);
                   } else {
-                      // Drift slowly in zero-g while waiting for their turn to assemble
-                      voxelPositions[i*3] += voxelVelocities[i*3] * activeDelta * 0.1;
-                      voxelPositions[i*3+1] += voxelVelocities[i*3+1] * activeDelta * 0.1;
-                      voxelPositions[i*3+2] += voxelVelocities[i*3+2] * activeDelta * 0.1;
-                      voxelRotations[i*3] += 0.02; 
-                      voxelRotations[i*3+1] += 0.02;
+                      // Majestic slow drift in zero-gravity
+                      voxelPositions[i*3] += voxelVelocities[i*3] * activeDelta * 0.05;
+                      voxelPositions[i*3+1] += voxelVelocities[i*3+1] * activeDelta * 0.05;
+                      voxelPositions[i*3+2] += voxelVelocities[i*3+2] * activeDelta * 0.05;
+                      voxelRotations[i*3] += 0.01; 
+                      voxelRotations[i*3+1] += 0.01;
                   }
                   
                   voxelDummy.position.set(voxelPositions[i*3], voxelPositions[i*3+1], voxelPositions[i*3+2]);
@@ -881,10 +890,21 @@ export default function HeroScene3D() {
                   voxelDummy.updateMatrix();
                   voxelMesh.setMatrixAt(i, voxelDummy.matrix);
               }
+              
+              // LOCK-IN GLOW: Flash pure blinding white exactly as the pieces snap together
+              if (implodeProgress > 0.85) {
+                  const flash = (implodeProgress - 0.85) * 6.66; // Scales 0 to 1
+                  voxelMat.color.r = THREE.MathUtils.lerp(0.30, 1.0, flash);
+                  voxelMat.color.g = THREE.MathUtils.lerp(0.84, 1.0, flash);
+                  voxelMat.color.b = THREE.MathUtils.lerp(0.96, 1.0, flash);
+              } else {
+                  // Random glitch colors before lock-in
+                  if (Math.random() > 0.8) voxelMat.color.setHex(Math.random() > 0.5 ? 0x4cd7f6 : 0xe58e26);
+              }
           }
           voxelMesh.instanceMatrix.needsUpdate = true;
           
-          if (Math.random() > 0.8) voxelMat.color.setHex(Math.random() > 0.5 ? 0x4cd7f6 : 0xe58e26);
+          
       }
 
       // Restore normal hover Spin
