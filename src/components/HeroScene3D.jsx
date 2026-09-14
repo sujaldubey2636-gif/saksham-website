@@ -490,7 +490,7 @@ export default function HeroScene3D() {
       isDragging = false;
     };
 
-    let isSliced = false;
+    let manualVoxelTimer = 0;
     let lastClickTime = 0;
 
     const onClick = () => {
@@ -505,7 +505,7 @@ export default function HeroScene3D() {
           const dx = tempNodePos.x - normalizedMouseX;
           const dy = tempNodePos.y - normalizedMouseY;
           if (Math.sqrt(dx*dx + dy*dy) < 0.4) {
-             isSliced = !isSliced;
+             manualVoxelTimer = 4.0; // 4 seconds of voxel glitch
              return; // Stop comet/shockwave if slicing
           }
       }
@@ -741,44 +741,81 @@ export default function HeroScene3D() {
       ring2.scale.set(nextScale, nextScale, nextScale);
       ring3.scale.set(nextScale, nextScale, nextScale);
       
-      // Autonomous Holographic Slice (triggers for 3 seconds every 15 seconds)
-      const isAutoSliced = (customTime % 15.0) < 3.0;
-      const effectivelySliced = isSliced || isAutoSliced;
+      
+      // DIGITAL VOXELIZATION ANIMATION
+      const autoVoxelTime = customTime % 15.0;
+      let shouldVoxelize = autoVoxelTime < 4.0;
+      
+      if (manualVoxelTimer > 0) {
+          manualVoxelTimer -= activeDelta;
+          shouldVoxelize = true;
+      }
 
-      // Extra spin when hovering
-      const hoverSpin = (distToCore < 0.25 && !effectivelySliced) ? 2.0 : 1.0;
-      const sliceSlowdown = effectivelySliced ? 0.1 : 1.0; // 90% slower when sliced so you can see details
+      if (shouldVoxelize && voxelState === 0) {
+         voxelState = 1;
+         voxelAnimTimer = 0;
+         coreGroup.children.forEach(c => {
+            if (c !== voxelMesh && c !== shockwaveMesh) c.visible = false;
+         });
+         voxelMesh.visible = true;
+         for(let i=0; i<voxelCount*3; i++) voxelPositions[i] = voxelTargets[i];
+      } else if (!shouldVoxelize && voxelState !== 0) {
+         voxelState = 0;
+         coreGroup.children.forEach(c => c.visible = true);
+         voxelMesh.visible = false;
+         voxelMat.color.setHex(0x4cd7f6);
+      }
+      
+      if (voxelState > 0) {
+          voxelAnimTimer += activeDelta;
+          let progress = voxelAnimTimer / 4.0;
+          
+          if (progress < 0.5) {
+              // EXPLODE (0 to 2 sec)
+              const expFactor = activeDelta * Math.max(0, 1.0 - progress * 2.0);
+              for(let i=0; i<voxelCount; i++) {
+                  voxelPositions[i*3] += voxelVelocities[i*3] * expFactor;
+                  voxelPositions[i*3+1] += voxelVelocities[i*3+1] * expFactor;
+                  voxelPositions[i*3+2] += voxelVelocities[i*3+2] * expFactor;
+                  voxelRotations[i*3] += 0.05; voxelRotations[i*3+1] += 0.05;
+                  
+                  voxelDummy.position.set(voxelPositions[i*3], voxelPositions[i*3+1], voxelPositions[i*3+2]);
+                  voxelDummy.rotation.set(voxelRotations[i*3], voxelRotations[i*3+1], voxelRotations[i*3+2]);
+                  voxelDummy.updateMatrix();
+                  voxelMesh.setMatrixAt(i, voxelDummy.matrix);
+              }
+          } else {
+              // IMPLODE (2 to 4 sec)
+              const lerpFactor = 0.15;
+              for(let i=0; i<voxelCount; i++) {
+                  voxelPositions[i*3] = THREE.MathUtils.lerp(voxelPositions[i*3], voxelTargets[i*3], lerpFactor);
+                  voxelPositions[i*3+1] = THREE.MathUtils.lerp(voxelPositions[i*3+1], voxelTargets[i*3+1], lerpFactor);
+                  voxelPositions[i*3+2] = THREE.MathUtils.lerp(voxelPositions[i*3+2], voxelTargets[i*3+2], lerpFactor);
+                  
+                  voxelDummy.position.set(voxelPositions[i*3], voxelPositions[i*3+1], voxelPositions[i*3+2]);
+                  voxelDummy.rotation.set(0,0,0);
+                  voxelDummy.updateMatrix();
+                  voxelMesh.setMatrixAt(i, voxelDummy.matrix);
+              }
+          }
+          voxelMesh.instanceMatrix.needsUpdate = true;
+          
+          if (Math.random() > 0.8) voxelMat.color.setHex(Math.random() > 0.5 ? 0x4cd7f6 : 0xe58e26);
+      }
 
-      // 3. Holographic Slice Logic
-      const targetOffsets = {
-        nucleus: effectivelySliced ? 4.5 : 0.0,
-        innerCore: effectivelySliced ? 2.5 : 0.0,
-        outerCore: 0.0,
-        quantum: effectivelySliced ? -2.5 : 0.0,
-        ring1: effectivelySliced ? -4.5 : 0.0,
-        ring2: effectivelySliced ? -6.0 : 0.0,
-        ring3: effectivelySliced ? -7.5 : 0.0
-      };
+      // Restore normal hover Spin
+      const hoverSpin = (distToCore < 0.25) ? 2.0 : 1.0;
+      nucleusMesh.position.set(0,0,0);
 
-      nucleusMesh.position.y = THREE.MathUtils.lerp(nucleusMesh.position.y, targetOffsets.nucleus, 0.06);
-      innerCoreMesh.position.y = THREE.MathUtils.lerp(innerCoreMesh.position.y, targetOffsets.innerCore, 0.06);
-      outerCoreMesh.position.y = THREE.MathUtils.lerp(outerCoreMesh.position.y, targetOffsets.outerCore, 0.06);
-      quantumMesh.position.y = THREE.MathUtils.lerp(quantumMesh.position.y, targetOffsets.quantum, 0.06);
-      ring1.position.y = THREE.MathUtils.lerp(ring1.position.y, targetOffsets.ring1, 0.06);
-      ring2.position.y = THREE.MathUtils.lerp(ring2.position.y, targetOffsets.ring2, 0.06);
-      ring3.position.y = THREE.MathUtils.lerp(ring3.position.y, targetOffsets.ring3, 0.06);
-
-      // Keep them centered on X and Z
-      nucleusMesh.position.x = 0; nucleusMesh.position.z = 0;
       
       // Core Group Floating, Rotation & Drag Inertia
-      coreGroup.rotation.y += rotationVelocity.y * hyperdriveSpeed * hoverSpin * sliceSlowdown;
-      coreGroup.rotation.x += rotationVelocity.x * hyperdriveSpeed * hoverSpin * sliceSlowdown;
+      coreGroup.rotation.y += rotationVelocity.y * hyperdriveSpeed * hoverSpin;
+      coreGroup.rotation.x += rotationVelocity.x * hyperdriveSpeed * hoverSpin;
 
       if (!isDragging) {
         rotationVelocity.x = THREE.MathUtils.lerp(rotationVelocity.x, Math.sin(elapsedTime * 0.4) * 0.003 * hyperdriveSpeed, 0.008);
         rotationVelocity.y = THREE.MathUtils.lerp(rotationVelocity.y, 0.004 + Math.cos(elapsedTime * 0.25) * 0.002 * hyperdriveSpeed, 0.008);
-        coreGroup.rotation.z += Math.sin(elapsedTime * 0.3) * 0.0015 * hyperdriveSpeed * sliceSlowdown;
+        coreGroup.rotation.z += Math.sin(elapsedTime * 0.3) * 0.0015 * hyperdriveSpeed;
       }
 
       // Smoothly float the entire ball all over the screen (Lissajous curve) + Scroll Influence
@@ -791,8 +828,8 @@ export default function HeroScene3D() {
       coreGroup.position.z = basePosition.z + Math.sin(elapsedTime * floatSpeed * 1.1) * floatRange.z + (currentScrollY * 0.005);
       
       // Scroll-driven rotation (makes it feel deeply integrated with the page)
-      coreGroup.rotation.x += currentScrollY * 0.00005 * sliceSlowdown;
-      coreGroup.rotation.z -= currentScrollY * 0.00002 * sliceSlowdown;
+      coreGroup.rotation.x += currentScrollY * 0.00005;
+      coreGroup.rotation.z -= currentScrollY * 0.00002;
 
       // 3. Core Pulsing & Internal Ring Rotation
       const breath = Math.sin(elapsedTime * 2.2 * hyperdriveSpeed) * 0.06 + 1;
@@ -802,9 +839,9 @@ export default function HeroScene3D() {
       innerCoreMesh.material.color.setHSL(0.08 + Math.sin(elapsedTime * 0.5) * 0.03, 0.8, 0.5);
 
       // Quantum Geometry Layering Rotation
-      quantumMesh.rotation.y -= 0.007 * hyperdriveSpeed * sliceSlowdown;
-      quantumMesh.rotation.z += 0.004 * hyperdriveSpeed * sliceSlowdown;
-      quantumMesh.rotation.x += 0.002 * hyperdriveSpeed * sliceSlowdown;
+      quantumMesh.rotation.y -= 0.007 * hyperdriveSpeed;
+      quantumMesh.rotation.z += 0.004 * hyperdriveSpeed;
+      quantumMesh.rotation.x += 0.002 * hyperdriveSpeed;
 
       // Data Swarm Nucleus Animation (Buzzing)
       const swarmP = swarmGeo.attributes.position.array;
@@ -813,17 +850,17 @@ export default function HeroScene3D() {
          swarmP[i] = swarmO[i] + Math.sin(elapsedTime * 15 + i) * 0.15;
       }
       swarmGeo.attributes.position.needsUpdate = true;
-      swarmMesh.rotation.y -= 0.01 * hyperdriveSpeed * sliceSlowdown;
+      swarmMesh.rotation.y -= 0.01 * hyperdriveSpeed;
 
-      outerCoreMesh.rotation.y += 0.005 * hyperdriveSpeed * sliceSlowdown;
-      outerCoreMesh.rotation.x += 0.003 * hyperdriveSpeed * sliceSlowdown;
+      outerCoreMesh.rotation.y += 0.005 * hyperdriveSpeed;
+      outerCoreMesh.rotation.x += 0.003 * hyperdriveSpeed;
       
       stardustMesh.rotation.y -= 0.002 * hyperdriveSpeed;
       stardustMesh.rotation.z += 0.001 * hyperdriveSpeed;
 
-      ring1.rotation.z += 0.010 * hyperdriveSpeed * sliceSlowdown;
-      ring2.rotation.y -= 0.008 * hyperdriveSpeed * sliceSlowdown;
-      ring3.rotation.z += 0.004 * hyperdriveSpeed * sliceSlowdown;
+      ring1.rotation.z += 0.010 * hyperdriveSpeed;
+      ring2.rotation.y -= 0.008 * hyperdriveSpeed;
+      ring3.rotation.z += 0.004 * hyperdriveSpeed;
 
       // 4. Orbiting Micro-Nodes Motion
       for (let n = 0; n < orbitNodes.length; n++) {
