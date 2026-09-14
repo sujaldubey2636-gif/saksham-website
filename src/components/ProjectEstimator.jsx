@@ -52,7 +52,7 @@ const ProjectEstimator = ({ onSelectScope }) => {
           Select your requirements below to calculate deliverables, sprint turnaround, and handoff terms in real time.
         </p>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mt-12 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mt-12 items-start animate-on-scroll delay-100">
           {/* Left Controls (7 cols) */}
           <div className="lg:col-span-7 flex flex-col gap-8 font-['IBM_Plex_Sans',sans-serif]">
             {/* Group 1 */}
@@ -60,7 +60,7 @@ const ProjectEstimator = ({ onSelectScope }) => {
               <label className="text-xs font-mono text-[#F0F1F3] mb-3 block">
                 1. SELECT PROJECT SPECIFICATION
               </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 animate-on-scroll delay-100">
                 {types.map((type) => (
                   <button
                     key={type.title}
@@ -84,7 +84,7 @@ const ProjectEstimator = ({ onSelectScope }) => {
               <label className="text-xs font-mono text-[#F0F1F3] mb-3 block">
                 2. DESIRED DELIVERY PACE
               </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 animate-on-scroll delay-100">
                 {timelines.map((t) => (
                   <button
                     key={t.title}
@@ -108,7 +108,7 @@ const ProjectEstimator = ({ onSelectScope }) => {
               <label className="text-xs font-mono text-[#F0F1F3] mb-3 block">
                 3. STARTING MATERIAL
               </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 animate-on-scroll delay-100">
                 {points.map((p) => (
                   <button
                     key={p.title}

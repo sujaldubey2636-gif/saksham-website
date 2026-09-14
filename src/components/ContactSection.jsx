@@ -60,7 +60,7 @@ export default function ContactSection({ selectedScope }) {
 
   return (
     <section id="contact-section" className="py-24 lg:py-32 px-6 sm:px-10 lg:px-16 bg-[#121316]">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 animate-on-scroll delay-100">
         
         {/* Left Side (5 cols) */}
         <div className="lg:col-span-5 flex flex-col text-left">
@@ -129,7 +129,7 @@ export default function ContactSection({ selectedScope }) {
               </div>
             ) : (
               <div className="flex flex-col gap-5">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 animate-on-scroll delay-100">
                   <div>
                     <label htmlFor="contact-name" className="text-xs font-mono text-[#F0F1F3] mb-1.5 block">
                       Your Name <span className="text-[#E58E26]">*</span>

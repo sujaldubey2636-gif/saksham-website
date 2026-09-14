@@ -32,7 +32,7 @@ const TestimonialsSection = () => {
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12 animate-on-scroll delay-100">
           {testimonials.map((t) => (
             <div
               key={t.name}

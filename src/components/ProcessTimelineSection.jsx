@@ -36,7 +36,7 @@ const ProcessTimelineSection = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 animate-on-scroll delay-100">
         {steps.map((step) => (
           <div key={step.num} className="flex flex-col">
             <span className="text-4xl font-['Bricolage_Grotesque',sans-serif] font-bold text-[#2A2D35] mb-4">

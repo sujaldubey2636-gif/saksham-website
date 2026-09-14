@@ -63,7 +63,7 @@ export default function BeforeAfterSection() {
                   <div className="text-4xl sm:text-5xl font-bold text-emerald-400">0.4s</div>
                   <div className="text-xs text-[#8A919E] mt-0.5">Sub-second First Contentful Paint</div>
                 </div>
-                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-[#2A2D35]">
+                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-[#2A2D35] animate-on-scroll delay-100">
                   <div>
                     <div className="text-lg font-bold text-emerald-400">99/100</div>
                     <div className="text-[11px] text-[#8A919E]">PageSpeed Score</div>
@@ -99,7 +99,7 @@ export default function BeforeAfterSection() {
                   <div className="text-4xl sm:text-5xl font-bold text-rose-400">3.8s</div>
                   <div className="text-xs text-[#8A919E] mt-0.5">Severe mobile visitor drop-off</div>
                 </div>
-                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-rose-950/60">
+                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-rose-950/60 animate-on-scroll delay-100">
                   <div>
                     <div className="text-lg font-bold text-rose-400">41/100</div>
                     <div className="text-[11px] text-[#8A919E]">PageSpeed Score</div>

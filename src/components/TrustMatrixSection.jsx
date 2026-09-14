@@ -13,7 +13,7 @@ const TrustMatrixSection = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-on-scroll delay-100">
         {/* Team SAKSHAM */}
         <div className="bg-[#1A1C21] border border-[#E58E26]/20 rounded-xl p-8 flex flex-col gap-6">
           <div>

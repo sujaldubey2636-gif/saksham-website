@@ -26,7 +26,7 @@ export default function ServicesSection() {
   return (
     <section id="services-section" className="py-24 lg:py-32 px-6 sm:px-10 lg:px-16 bg-[#121316] border-b border-[#2A2D35]">
       <div className="max-w-7xl mx-auto">
-        <header className="mb-16">
+        <header className="mb-16 animate-on-scroll">
           <span className="text-xs font-mono text-[#E58E26] uppercase tracking-wider mb-4 block">
             // WHAT WE BUILD
           </span>
@@ -38,7 +38,7 @@ export default function ServicesSection() {
           </p>
         </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-on-scroll delay-100">
           {services.map((s, idx) => (
             <Card3D key={idx} maxTilt={8} glare={true} scale={1.02} className="h-full">
               <article className="h-full bg-[#1A1C21] border border-[#2A2D35] rounded-xl p-8 flex flex-col justify-between hover:border-[#E58E26]/40 transition-colors">

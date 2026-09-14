@@ -31,7 +31,7 @@ const WhySakhamSection = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-on-scroll delay-100">
         {guarantees.map((item) => (
           <div key={item.title} className="flex flex-col">
             <span className="material-symbols-outlined text-3xl text-[#8A919E] mb-4">

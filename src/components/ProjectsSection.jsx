@@ -67,7 +67,7 @@ export default function ProjectsSection() {
       className="py-24 lg:py-32 px-6 sm:px-10 lg:px-16 bg-[#121316] border-b border-[#2A2D35]"
     >
       <div className="max-w-7xl mx-auto">
-        <header className="mb-16 md:mb-20">
+        <header className="mb-16 md:mb-20 animate-on-scroll">
           <div className="flex items-center gap-2 text-xs font-mono text-[#E58E26] mb-3">
             <span>// RECENT SHIPS</span>
           </div>
