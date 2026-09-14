@@ -26,13 +26,13 @@ export default function HeroScene3D() {
 
     const renderer = new THREE.WebGLRenderer({
       alpha: true,
-      antialias: true, // Enabled for buttery smooth glowing lines
+      antialias: false, // Disabled to completely eliminate scrolling lag
       powerPreference: 'high-performance',
-      precision: 'highp', // Higher precision for smoother gradients
+      precision: 'lowp', // Lowest precision for maximum speed on mobile
     });
 
-    // Cap pixel ratio to 2.0 to balance extreme smoothness with performance
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2.0));
+    // Hard-cap pixel ratio to 1.0. This guarantees a locked 60FPS on almost all devices.
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.0));
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setClearColor(0x000000, 0);
     container.appendChild(renderer.domElement);
@@ -45,8 +45,9 @@ export default function HeroScene3D() {
     // =========================================================
     // SECTION A: 3D FLOWING PARTICLE TERRAIN WAVES (Moving Dots)
     // =========================================================
-    const cols = 45;
-    const rows = 30;
+    // Reduced grid density (35x22) to drastically cut down CPU math in the animate loop
+    const cols = 35;
+    const rows = 22;
     const count = cols * rows;
     const separation = 1.8;
 
@@ -254,19 +255,7 @@ export default function HeroScene3D() {
     const stardustMesh = new THREE.Points(stardustGeo, stardustMat);
     coreGroup.add(stardustMesh);
 
-    // Neural Constellation Lines (dynamically drawn each frame)
-    const stardustLinesGeo = new THREE.BufferGeometry();
-    // Maximum 100 points means 100*99/2 lines max. We'll allocate for 1000 lines.
-    const stardustLinesPos = new Float32Array(1000 * 6);
-    stardustLinesGeo.setAttribute('position', new THREE.BufferAttribute(stardustLinesPos, 3));
-    const stardustLinesMat = new THREE.LineBasicMaterial({
-      color: 0x4cd7f6,
-      transparent: true,
-      opacity: 0.15,
-      blending: THREE.AdditiveBlending,
-    });
-    const stardustLinesMesh = new THREE.LineSegments(stardustLinesGeo, stardustLinesMat);
-    coreGroup.add(stardustLinesMesh);
+    // Neural Constellation Lines removed for performance
 
     const nucleusGeo = new THREE.SphereGeometry(0.7, 12, 12);
     const nucleusMat = new THREE.MeshBasicMaterial({
@@ -549,27 +538,7 @@ export default function HeroScene3D() {
       waveGeometry.attributes.position.needsUpdate = true;
       waveLineGeo.attributes.position.needsUpdate = true;
 
-      // Neural Constellation Networking (Draw lines between close stardust particles)
-      const starPos = stardustGeo.attributes.position.array;
-      let lineIdx = 0;
-      // Fast nearest neighbor check (only checking a subset to save CPU, it creates a nice flicker effect)
-      for (let i = 0; i < stardustCount; i += 2) {
-        for (let j = i + 2; j < stardustCount; j += 2) {
-          if (lineIdx >= 1000 * 6) break;
-          const dx = starPos[i*3] - starPos[j*3];
-          const dy = starPos[i*3+1] - starPos[j*3+1];
-          const dz = starPos[i*3+2] - starPos[j*3+2];
-          const distSq = dx*dx + dy*dy + dz*dz;
-          if (distSq < 16) { // threshold distance
-            stardustLinesPos[lineIdx++] = starPos[i*3];
-            stardustLinesPos[lineIdx++] = starPos[i*3+1];
-            stardustLinesPos[lineIdx++] = starPos[i*3+2];
-            stardustLinesPos[lineIdx++] = starPos[j*3];
-            stardustLinesPos[lineIdx++] = starPos[j*3+1];
-            stardustLinesPos[lineIdx++] = starPos[j*3+2];
-          }
-        }
-      }
+      // Neural Constellation lines removed to drastically improve mobile CPU scrolling performance
       // Magnetic Mouse Pull for Stardust
       const mouseStarX = mouseParallaxX * 3;
       const mouseStarY = mouseParallaxY * 3;
@@ -646,7 +615,6 @@ export default function HeroScene3D() {
       
       stardustMesh.rotation.y -= 0.002 * hyperdriveSpeed;
       stardustMesh.rotation.z += 0.001 * hyperdriveSpeed;
-      stardustLinesMesh.rotation.copy(stardustMesh.rotation);
 
       ring1.rotation.z += 0.010 * hyperdriveSpeed;
       ring2.rotation.y -= 0.008 * hyperdriveSpeed;
@@ -777,8 +745,6 @@ export default function HeroScene3D() {
       swarmMat.dispose();
       stardustGeo.dispose();
       stardustMat.dispose();
-      stardustLinesGeo.dispose();
-      stardustLinesMat.dispose();
       nucleusGeo.dispose();
       nucleusMat.dispose();
       ring1Geo.dispose();
