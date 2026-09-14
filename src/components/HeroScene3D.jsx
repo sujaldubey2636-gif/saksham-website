@@ -490,7 +490,26 @@ export default function HeroScene3D() {
       isDragging = false;
     };
 
+    let isSliced = false;
+    let lastClickTime = 0;
+
     const onClick = () => {
+      const currentTime = performance.now();
+      const isDoubleClick = (currentTime - lastClickTime) < 400; // 400ms threshold
+      lastClickTime = currentTime;
+
+      if (isDoubleClick) {
+          // Check if hovering near core to trigger Holographic Slice
+          coreGroup.updateMatrixWorld();
+          tempNodePos.set(0, 0, 0).applyMatrix4(coreGroup.matrixWorld).project(camera);
+          const dx = tempNodePos.x - normalizedMouseX;
+          const dy = tempNodePos.y - normalizedMouseY;
+          if (Math.sqrt(dx*dx + dy*dy) < 0.4) {
+             isSliced = !isSliced;
+             return; // Stop comet/shockwave if slicing
+          }
+      }
+
       shockwaveActive = true;
       shockwaveScale = 0.5;
       quantumRippleRadius = 0; // Trigger the massive grid ripple
@@ -723,19 +742,39 @@ export default function HeroScene3D() {
       ring3.scale.set(nextScale, nextScale, nextScale);
       
       // Extra spin when hovering
-      const hoverSpin = (distToCore < 0.25) ? 2.0 : 1.0;
+      const hoverSpin = (distToCore < 0.25 && !isSliced) ? 2.0 : 1.0;
+      const sliceSlowdown = isSliced ? 0.1 : 1.0; // 90% slower when sliced so you can see details
 
-      // 3. Nucleus remains perfectly centered and isolated
-      nucleusMesh.position.set(0, 0, 0);
+      // 3. Holographic Slice Logic
+      const targetOffsets = {
+        nucleus: isSliced ? 4.5 : 0.0,
+        innerCore: isSliced ? 2.5 : 0.0,
+        outerCore: 0.0,
+        quantum: isSliced ? -2.5 : 0.0,
+        ring1: isSliced ? -4.5 : 0.0,
+        ring2: isSliced ? -6.0 : 0.0,
+        ring3: isSliced ? -7.5 : 0.0
+      };
+
+      nucleusMesh.position.y = THREE.MathUtils.lerp(nucleusMesh.position.y, targetOffsets.nucleus, 0.06);
+      innerCoreMesh.position.y = THREE.MathUtils.lerp(innerCoreMesh.position.y, targetOffsets.innerCore, 0.06);
+      outerCoreMesh.position.y = THREE.MathUtils.lerp(outerCoreMesh.position.y, targetOffsets.outerCore, 0.06);
+      quantumMesh.position.y = THREE.MathUtils.lerp(quantumMesh.position.y, targetOffsets.quantum, 0.06);
+      ring1.position.y = THREE.MathUtils.lerp(ring1.position.y, targetOffsets.ring1, 0.06);
+      ring2.position.y = THREE.MathUtils.lerp(ring2.position.y, targetOffsets.ring2, 0.06);
+      ring3.position.y = THREE.MathUtils.lerp(ring3.position.y, targetOffsets.ring3, 0.06);
+
+      // Keep them centered on X and Z
+      nucleusMesh.position.x = 0; nucleusMesh.position.z = 0;
       
       // Core Group Floating, Rotation & Drag Inertia
-      coreGroup.rotation.y += rotationVelocity.y * hyperdriveSpeed * hoverSpin;
-      coreGroup.rotation.x += rotationVelocity.x * hyperdriveSpeed * hoverSpin;
+      coreGroup.rotation.y += rotationVelocity.y * hyperdriveSpeed * hoverSpin * sliceSlowdown;
+      coreGroup.rotation.x += rotationVelocity.x * hyperdriveSpeed * hoverSpin * sliceSlowdown;
 
       if (!isDragging) {
         rotationVelocity.x = THREE.MathUtils.lerp(rotationVelocity.x, Math.sin(elapsedTime * 0.4) * 0.003 * hyperdriveSpeed, 0.008);
         rotationVelocity.y = THREE.MathUtils.lerp(rotationVelocity.y, 0.004 + Math.cos(elapsedTime * 0.25) * 0.002 * hyperdriveSpeed, 0.008);
-        coreGroup.rotation.z += Math.sin(elapsedTime * 0.3) * 0.0015 * hyperdriveSpeed;
+        coreGroup.rotation.z += Math.sin(elapsedTime * 0.3) * 0.0015 * hyperdriveSpeed * sliceSlowdown;
       }
 
       // Smoothly float the entire ball all over the screen (Lissajous curve) + Scroll Influence
@@ -748,8 +787,8 @@ export default function HeroScene3D() {
       coreGroup.position.z = basePosition.z + Math.sin(elapsedTime * floatSpeed * 1.1) * floatRange.z + (currentScrollY * 0.005);
       
       // Scroll-driven rotation (makes it feel deeply integrated with the page)
-      coreGroup.rotation.x += currentScrollY * 0.00005;
-      coreGroup.rotation.z -= currentScrollY * 0.00002;
+      coreGroup.rotation.x += currentScrollY * 0.00005 * sliceSlowdown;
+      coreGroup.rotation.z -= currentScrollY * 0.00002 * sliceSlowdown;
 
       // 3. Core Pulsing & Internal Ring Rotation
       const breath = Math.sin(elapsedTime * 2.2 * hyperdriveSpeed) * 0.06 + 1;
@@ -759,9 +798,9 @@ export default function HeroScene3D() {
       innerCoreMesh.material.color.setHSL(0.08 + Math.sin(elapsedTime * 0.5) * 0.03, 0.8, 0.5);
 
       // Quantum Geometry Layering Rotation
-      quantumMesh.rotation.y -= 0.007 * hyperdriveSpeed;
-      quantumMesh.rotation.z += 0.004 * hyperdriveSpeed;
-      quantumMesh.rotation.x += 0.002 * hyperdriveSpeed;
+      quantumMesh.rotation.y -= 0.007 * hyperdriveSpeed * sliceSlowdown;
+      quantumMesh.rotation.z += 0.004 * hyperdriveSpeed * sliceSlowdown;
+      quantumMesh.rotation.x += 0.002 * hyperdriveSpeed * sliceSlowdown;
 
       // Data Swarm Nucleus Animation (Buzzing)
       const swarmP = swarmGeo.attributes.position.array;
@@ -770,17 +809,17 @@ export default function HeroScene3D() {
          swarmP[i] = swarmO[i] + Math.sin(elapsedTime * 15 + i) * 0.15;
       }
       swarmGeo.attributes.position.needsUpdate = true;
-      swarmMesh.rotation.y -= 0.01 * hyperdriveSpeed;
+      swarmMesh.rotation.y -= 0.01 * hyperdriveSpeed * sliceSlowdown;
 
-      outerCoreMesh.rotation.y += 0.005 * hyperdriveSpeed;
-      outerCoreMesh.rotation.x += 0.003 * hyperdriveSpeed;
+      outerCoreMesh.rotation.y += 0.005 * hyperdriveSpeed * sliceSlowdown;
+      outerCoreMesh.rotation.x += 0.003 * hyperdriveSpeed * sliceSlowdown;
       
       stardustMesh.rotation.y -= 0.002 * hyperdriveSpeed;
       stardustMesh.rotation.z += 0.001 * hyperdriveSpeed;
 
-      ring1.rotation.z += 0.010 * hyperdriveSpeed;
-      ring2.rotation.y -= 0.008 * hyperdriveSpeed;
-      ring3.rotation.z += 0.004 * hyperdriveSpeed;
+      ring1.rotation.z += 0.010 * hyperdriveSpeed * sliceSlowdown;
+      ring2.rotation.y -= 0.008 * hyperdriveSpeed * sliceSlowdown;
+      ring3.rotation.z += 0.004 * hyperdriveSpeed * sliceSlowdown;
 
       // 4. Orbiting Micro-Nodes Motion
       for (let n = 0; n < orbitNodes.length; n++) {
