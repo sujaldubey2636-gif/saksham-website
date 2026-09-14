@@ -16,7 +16,7 @@ export default function HeroScene3D() {
     const scene = new THREE.Scene();
     
     // Add Depth Fog to make distant objects fade into the background smoothly
-    scene.fog = new THREE.FogExp2(0x121316, 0.025);
+    scene.fog = new THREE.FogExp2(0x121316, 0.012);
     
     const camera = new THREE.PerspectiveCamera(
       50,
