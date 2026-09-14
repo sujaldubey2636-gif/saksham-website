@@ -428,6 +428,53 @@ export default function HeroScene3D() {
       isHyperdrive = state;
     };
 
+    
+    // --- DIGITAL VOXELIZATION CORE ---
+    const voxelCount = 800;
+    const voxelGeo = new THREE.BoxGeometry(0.12, 0.12, 0.12);
+    const voxelMat = new THREE.MeshBasicMaterial({ color: 0x4cd7f6, transparent: true, opacity: 0.9, wireframe: false });
+    const voxelMesh = new THREE.InstancedMesh(voxelGeo, voxelMat, voxelCount);
+    
+    const voxelTargets = new Float32Array(voxelCount * 3);
+    const voxelVelocities = new Float32Array(voxelCount * 3);
+    const voxelPositions = new Float32Array(voxelCount * 3);
+    const voxelRotations = new Float32Array(voxelCount * 3);
+    const voxelDummy = new THREE.Object3D();
+
+    for (let i = 0; i < voxelCount; i++) {
+        let r, theta, phi, tx, ty, tz;
+        if (i < 250) {
+            r = 1.2; // Inner Core
+            theta = Math.random() * Math.PI * 2; phi = Math.acos((Math.random() * 2) - 1);
+            tx = r * Math.sin(phi) * Math.cos(theta); ty = r * Math.sin(phi) * Math.sin(theta); tz = r * Math.cos(phi);
+        } else if (i < 500) {
+            r = 2.2; // Outer Core
+            theta = Math.random() * Math.PI * 2; phi = Math.acos((Math.random() * 2) - 1);
+            tx = r * Math.sin(phi) * Math.cos(theta); ty = r * Math.sin(phi) * Math.sin(theta); tz = r * Math.cos(phi);
+        } else {
+            r = 3.5 + Math.random() * 1.5; // Rings
+            theta = Math.random() * Math.PI * 2;
+            tx = r * Math.cos(theta); ty = (Math.random() - 0.5) * 0.5; tz = r * Math.sin(theta);
+        }
+        voxelTargets[i*3] = tx; voxelTargets[i*3+1] = ty; voxelTargets[i*3+2] = tz;
+        voxelPositions[i*3] = tx; voxelPositions[i*3+1] = ty; voxelPositions[i*3+2] = tz;
+        const vSpeed = 5.0 + Math.random() * 15.0;
+        const norm = Math.sqrt(tx*tx + ty*ty + tz*tz) || 1;
+        voxelVelocities[i*3] = (tx/norm + (Math.random()-0.5)) * vSpeed;
+        voxelVelocities[i*3+1] = (ty/norm + (Math.random()-0.5)) * vSpeed;
+        voxelVelocities[i*3+2] = (tz/norm + (Math.random()-0.5)) * vSpeed;
+        voxelRotations[i*3] = Math.random() * Math.PI; voxelRotations[i*3+1] = Math.random(); voxelRotations[i*3+2] = Math.random();
+        voxelDummy.position.set(tx, ty, tz);
+        voxelDummy.updateMatrix();
+        voxelMesh.setMatrixAt(i, voxelDummy.matrix);
+    }
+    voxelMesh.instanceMatrix.needsUpdate = true;
+    voxelMesh.visible = false;
+    coreGroup.add(voxelMesh);
+    let voxelState = 0;
+    let voxelAnimTimer = 0;
+
+
     // 6. Targeted Hyper-Comet
     const cometGeo = new THREE.BufferGeometry();
     const cometPositions = new Float32Array([0,0,0, 0,0,0]);
