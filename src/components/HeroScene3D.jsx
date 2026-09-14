@@ -428,6 +428,19 @@ export default function HeroScene3D() {
       isHyperdrive = state;
     };
 
+    // 6. Targeted Hyper-Comet
+    const cometGeo = new THREE.BufferGeometry();
+    const cometPositions = new Float32Array([0,0,0, 0,0,0]);
+    cometGeo.setAttribute('position', new THREE.BufferAttribute(cometPositions, 3));
+    const cometMat = new THREE.LineBasicMaterial({ color: 0x4cd7f6, transparent: true, opacity: 0, blending: THREE.AdditiveBlending });
+    const cometMesh = new THREE.Line(cometGeo, cometMat);
+    scene.add(cometMesh);
+
+    let cometActive = false;
+    let cometProgress = 0;
+    let cometStart = new THREE.Vector3();
+    let cometEnd = new THREE.Vector3();
+
     // =========================================================
     // SECTION C: INTERACTION & 360° DRAG-TO-ORBIT PHYSICS
     // =========================================================
@@ -488,6 +501,15 @@ export default function HeroScene3D() {
       orbitNodes.forEach((node) => {
         node.currentRadius = node.originalRadius * 1.3;
       });
+      
+      // Targeted Hyper-Comet
+      cometEnd.set(normalizedMouseX, normalizedMouseY, 0.5).unproject(camera);
+      const dir = cometEnd.clone().sub(camera.position).normalize();
+      cometEnd.copy(camera.position).add(dir.multiplyScalar(60));
+      cometStart.copy(cometEnd).add(new THREE.Vector3((Math.random()-0.5)*100, 40, (Math.random()-0.5)*40));
+      cometActive = true;
+      cometProgress = 0;
+      cometMat.opacity = 1.0;
     };
 
     container.addEventListener('mousedown', onPointerDown);
@@ -562,6 +584,13 @@ export default function HeroScene3D() {
       // Calculate approximate world pos of mouse on the wave plane
       const mouseWorldX = normalizedMouseX * 30;
       const mouseWorldZ = normalizedMouseY * 30;
+      
+      // Automatic Heartbeat Ripple
+      const beatTime = customTime % 3.0;
+      let beatRippleRadius = -1;
+      if (beatTime < 1.0) {
+          beatRippleRadius = beatTime * 50.0;
+      }
 
       for (let ix = 0; ix < cols; ix++) {
         for (let iy = 0; iy < rows; iy++) {
@@ -583,6 +612,14 @@ export default function HeroScene3D() {
             const swDist = Math.abs(Math.sqrt(Math.pow(pointX, 2) + Math.pow(pointZ, 2)) - quantumRippleRadius);
             if (swDist < 5) {
                ripple += Math.sin((5 - swDist) * Math.PI / 5) * 6.0 * shockwaveMat.opacity; // Massive vertical displacement
+            }
+          }
+          
+          // Heartbeat Ripple
+          if (beatRippleRadius > 0) {
+            const hbDist = Math.abs(Math.sqrt(Math.pow(pointX, 2) + Math.pow(pointZ, 2)) - beatRippleRadius);
+            if (hbDist < 4) {
+               ripple += Math.sin((4 - hbDist) * Math.PI / 4) * 2.0; // Soft wave
             }
           }
 
@@ -672,8 +709,12 @@ export default function HeroScene3D() {
       
       // If mouse is near the core on screen, expand!
       const hoverScale = (distToCore < 0.25) ? 1.15 : 1.0;
+      
+      // Heartbeat pulse effect
+      const corePulse = (beatTime < 0.5) ? (0.5 - beatTime) * 0.15 : 0;
+      
       const currentScale = outerCoreMesh.scale.x;
-      const nextScale = THREE.MathUtils.lerp(currentScale, hoverScale, 0.08);
+      const nextScale = THREE.MathUtils.lerp(currentScale, hoverScale + corePulse, 0.08);
       
       outerCoreMesh.scale.set(nextScale, nextScale, nextScale);
       quantumMesh.scale.set(nextScale, nextScale, nextScale);
@@ -782,6 +823,25 @@ export default function HeroScene3D() {
         if (shockwaveMat.opacity <= 0) {
           shockwaveActive = false;
         }
+      }
+
+      // Targeted Hyper-Comet Animation
+      if (cometActive) {
+          cometProgress += activeDelta * 2.5; // High speed
+          if (cometProgress > 1.0) {
+              cometActive = false;
+              cometMat.opacity = 0;
+          } else {
+              const currentPos = new THREE.Vector3().lerpVectors(cometStart, cometEnd, cometProgress);
+              const tailPos = new THREE.Vector3().lerpVectors(cometStart, cometEnd, Math.max(0, cometProgress - 0.15));
+              
+              const posArray = cometGeo.attributes.position.array;
+              posArray[0] = currentPos.x; posArray[1] = currentPos.y; posArray[2] = currentPos.z;
+              posArray[3] = tailPos.x;    posArray[4] = tailPos.y;    posArray[5] = tailPos.z;
+              cometGeo.attributes.position.needsUpdate = true;
+              
+              cometMat.opacity = 1.0 - (cometProgress * cometProgress); // smooth fade at end
+          }
       }
 
       renderer.render(scene, camera);
