@@ -14,6 +14,10 @@ export default function HeroScene3D() {
 
     // --- 1. Scene, Camera & High-Performance Renderer ---
     const scene = new THREE.Scene();
+    
+    // Add Depth Fog to make distant objects fade into the background smoothly
+    scene.fog = new THREE.FogExp2(0x121316, 0.025);
+    
     const camera = new THREE.PerspectiveCamera(
       50,
       container.clientWidth / container.clientHeight,
@@ -495,6 +499,12 @@ export default function HeroScene3D() {
     window.addEventListener('touchmove', onPointerMove, { passive: true });
     window.addEventListener('touchend', onPointerUp);
 
+    let currentScrollY = 0;
+    const onScroll = () => {
+       currentScrollY = window.scrollY;
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+
     // =========================================================
     // SECTION D: RELIABLE 60FPS CONTINUOUS ANIMATION LOOP
     // =========================================================
@@ -638,11 +648,18 @@ export default function HeroScene3D() {
         coreGroup.rotation.z += Math.sin(elapsedTime * 0.3) * 0.0015 * hyperdriveSpeed;
       }
 
-      // Smoothly float the entire ball all over the screen (Lissajous curve)
+      // Smoothly float the entire ball all over the screen (Lissajous curve) + Scroll Influence
       const floatSpeed = 0.3 * hyperdriveSpeed;
+      // The Apple effect: As you scroll, the 3D core dives down and spins
+      const scrollOffset = currentScrollY * 0.012;
+      
       coreGroup.position.x = basePosition.x + Math.sin(elapsedTime * floatSpeed) * floatRange.x;
-      coreGroup.position.y = basePosition.y + Math.cos(elapsedTime * floatSpeed * 0.7) * floatRange.y;
-      coreGroup.position.z = basePosition.z + Math.sin(elapsedTime * floatSpeed * 1.1) * floatRange.z;
+      coreGroup.position.y = basePosition.y + Math.cos(elapsedTime * floatSpeed * 0.7) * floatRange.y - scrollOffset;
+      coreGroup.position.z = basePosition.z + Math.sin(elapsedTime * floatSpeed * 1.1) * floatRange.z + (currentScrollY * 0.005);
+      
+      // Scroll-driven rotation (makes it feel deeply integrated with the page)
+      coreGroup.rotation.x += currentScrollY * 0.00005;
+      coreGroup.rotation.z -= currentScrollY * 0.00002;
 
       // 3. Core Pulsing & Internal Ring Rotation
       const breath = Math.sin(elapsedTime * 2.2 * hyperdriveSpeed) * 0.06 + 1;
