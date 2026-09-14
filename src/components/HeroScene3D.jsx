@@ -684,10 +684,8 @@ export default function HeroScene3D() {
       // Extra spin when hovering
       const hoverSpin = (distToCore < 0.25) ? 2.0 : 1.0;
 
-      // 3. The "Tracking Eye" Nucleus
-      // Nucleus slightly moves towards the mouse relative to the core
-      nucleusMesh.position.x = THREE.MathUtils.lerp(nucleusMesh.position.x, -dx * 2.0, 0.1);
-      nucleusMesh.position.y = THREE.MathUtils.lerp(nucleusMesh.position.y, -dy * 2.0, 0.1);
+      // 3. Nucleus remains perfectly centered and isolated
+      nucleusMesh.position.set(0, 0, 0);
       
       // Core Group Floating, Rotation & Drag Inertia
       coreGroup.rotation.y += rotationVelocity.y * hyperdriveSpeed * hoverSpin;
