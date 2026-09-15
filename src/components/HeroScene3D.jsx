@@ -847,42 +847,47 @@ export default function HeroScene3D() {
                   voxelMesh.setMatrixAt(i, voxelDummy.matrix);
               }
           } else {
-              // IMPLODE (2 to 4 sec) - LIQUID GRAVITY & LOCK-IN GLOW
+              // IMPLODE (2 to 4 sec) - TRUE SPRING PHYSICS & LOCK-IN GLOW
               const implodeProgress = (progress - 0.5) * 2.0; // 0.0 to 1.0
               
               for(let i=0; i<voxelCount; i++) {
                   let startImplode = false;
-                  let localProgress = 0;
                   
-                  if (i < 250 && implodeProgress > 0.0) {
-                      startImplode = true;
-                      localProgress = implodeProgress / 1.0;
-                  } else if (i >= 250 && i < 500 && implodeProgress > 0.3) {
-                      startImplode = true;
-                      localProgress = (implodeProgress - 0.3) / 0.7;
-                  } else if (i >= 500 && implodeProgress > 0.6) {
-                      startImplode = true;
-                      localProgress = (implodeProgress - 0.6) / 0.4;
-                  }
+                  if (i < 250 && implodeProgress > 0.0) startImplode = true;
+                  else if (i >= 250 && i < 500 && implodeProgress > 0.2) startImplode = true;
+                  else if (i >= 500 && implodeProgress > 0.4) startImplode = true;
                   
                   if (startImplode) {
-                      // LIQUID GRAVITY EASING: Starts extremely slow, smoothly accelerates to lock-in
-                      const lerpFactor = Math.pow(localProgress, 2.5) * 0.35;
+                      // BUTTERY SMOOTH SPRING PHYSICS
+                      const stiffness = 80.0; 
+                      const friction = 0.82; // Retains 82% of velocity (creates smooth, heavy damping)
                       
-                      voxelPositions[i*3] = THREE.MathUtils.lerp(voxelPositions[i*3], voxelTargets[i*3], lerpFactor);
-                      voxelPositions[i*3+1] = THREE.MathUtils.lerp(voxelPositions[i*3+1], voxelTargets[i*3+1], lerpFactor);
-                      voxelPositions[i*3+2] = THREE.MathUtils.lerp(voxelPositions[i*3+2], voxelTargets[i*3+2], lerpFactor);
+                      // Pull towards target
+                      voxelVelocities[i*3] += (voxelTargets[i*3] - voxelPositions[i*3]) * stiffness * activeDelta;
+                      voxelVelocities[i*3+1] += (voxelTargets[i*3+1] - voxelPositions[i*3+1]) * stiffness * activeDelta;
+                      voxelVelocities[i*3+2] += (voxelTargets[i*3+2] - voxelPositions[i*3+2]) * stiffness * activeDelta;
                       
-                      voxelRotations[i*3] = THREE.MathUtils.lerp(voxelRotations[i*3], 0, lerpFactor);
-                      voxelRotations[i*3+1] = THREE.MathUtils.lerp(voxelRotations[i*3+1], 0, lerpFactor);
-                      voxelRotations[i*3+2] = THREE.MathUtils.lerp(voxelRotations[i*3+2], 0, lerpFactor);
+                      // Apply damping friction so it settles beautifully without shaking
+                      voxelVelocities[i*3] *= friction;
+                      voxelVelocities[i*3+1] *= friction;
+                      voxelVelocities[i*3+2] *= friction;
+                      
+                      // Update position using true velocity
+                      voxelPositions[i*3] += voxelVelocities[i*3] * activeDelta;
+                      voxelPositions[i*3+1] += voxelVelocities[i*3+1] * activeDelta;
+                      voxelPositions[i*3+2] += voxelVelocities[i*3+2] * activeDelta;
+                      
+                      // Smooth rotation settling
+                      voxelRotations[i*3] = THREE.MathUtils.lerp(voxelRotations[i*3], 0, 0.15);
+                      voxelRotations[i*3+1] = THREE.MathUtils.lerp(voxelRotations[i*3+1], 0, 0.15);
+                      voxelRotations[i*3+2] = THREE.MathUtils.lerp(voxelRotations[i*3+2], 0, 0.15);
                   } else {
                       // Majestic slow drift in zero-gravity
                       voxelPositions[i*3] += voxelVelocities[i*3] * activeDelta * 0.05;
                       voxelPositions[i*3+1] += voxelVelocities[i*3+1] * activeDelta * 0.05;
                       voxelPositions[i*3+2] += voxelVelocities[i*3+2] * activeDelta * 0.05;
-                      voxelRotations[i*3] += 0.01; 
-                      voxelRotations[i*3+1] += 0.01;
+                      voxelRotations[i*3] += 0.02; 
+                      voxelRotations[i*3+1] += 0.02;
                   }
                   
                   voxelDummy.position.set(voxelPositions[i*3], voxelPositions[i*3+1], voxelPositions[i*3+2]);
