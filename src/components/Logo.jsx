@@ -8,7 +8,7 @@ export default function Logo({ size = 'md', variant = 'horizontal', className = 
     sm: 'h-6 sm:h-7',
     md: 'h-8 sm:h-9',
     lg: 'h-10 sm:h-11',
-    xl: 'h-12 sm:h-14',
+    custom: 'h-full', // Fills the height of the parent wrapper
   };
 
   const sources = {
