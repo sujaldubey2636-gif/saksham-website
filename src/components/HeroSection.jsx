@@ -25,7 +25,7 @@ export default function HeroSection() {
 
           {/* Body: No-BS scope & guarantee */}
           <p className="mt-6 text-base sm:text-lg text-[#8A919E] max-w-xl leading-relaxed font-['IBM_Plex_Sans',sans-serif]">
-            No account managers, no 40-page slide decks, and no outsourcing to random subcontractors. You work directly with me, you review working code every 3 days, and everything is pushed to your own GitHub on day one.
+            No account managers, no 40-page slide decks, and no outsourcing to random subcontractors. You work directly with me, you review working code every 3 days, and everything is pushed to your own GitHub.
           </p>
 
           {/* Primary Action + Direct Line */}
