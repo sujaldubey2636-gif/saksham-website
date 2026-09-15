@@ -1052,8 +1052,8 @@ export default function HeroScene3D() {
       }
 
       // Parallax Starfield shift
-      bgStarMesh.position.x = THREE.MathUtils.lerp(bgStarMesh.position.x, -mouseParallaxX * 0.5, 0.05);
-      bgStarMesh.position.y = THREE.MathUtils.lerp(bgStarMesh.position.y, mouseParallaxY * 0.5, 0.05);
+      bgStarMesh.position.x = THREE.MathUtils.lerp(bgStarMesh.position.x, -normalizedMouseX * 15.0, 0.02);
+      bgStarMesh.position.y = THREE.MathUtils.lerp(bgStarMesh.position.y, normalizedMouseY * 15.0, 0.02);
 
       // Autonomous Meteor Shower
       if (!meteorActive) {
