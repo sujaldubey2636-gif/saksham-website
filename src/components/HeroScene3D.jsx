@@ -829,7 +829,23 @@ export default function HeroScene3D() {
             if (c !== voxelMesh && c !== shockwaveMesh) c.visible = false;
          });
          voxelMesh.visible = true;
-         for(let i=0; i<voxelCount*3; i++) voxelPositions[i] = voxelTargets[i];
+         for(let i=0; i<voxelCount; i++) {
+             voxelPositions[i*3] = voxelTargets[i*3];
+             voxelPositions[i*3+1] = voxelTargets[i*3+1];
+             voxelPositions[i*3+2] = voxelTargets[i*3+2];
+             
+             const tx = voxelTargets[i*3];
+             const ty = voxelTargets[i*3+1];
+             const tz = voxelTargets[i*3+2];
+             const vSpeed = 5.0 + Math.random() * 15.0;
+             const norm = Math.sqrt(tx*tx + ty*ty + tz*tz) || 1;
+             const swirlX = tz / norm;
+             const swirlZ = -tx / norm;
+             
+             voxelVelocities[i*3] = (tx/norm * 0.5 + swirlX * 1.2) * vSpeed;
+             voxelVelocities[i*3+1] = (ty/norm * 0.5 + (Math.random()-0.5)) * vSpeed;
+             voxelVelocities[i*3+2] = (tz/norm * 0.5 + swirlZ * 1.2) * vSpeed;
+         }
       } else if (!shouldVoxelize && voxelState !== 0) {
          voxelState = 0;
          coreGroup.children.forEach(c => c.visible = true);
