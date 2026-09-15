@@ -1051,6 +1051,46 @@ export default function HeroScene3D() {
         }
       }
 
+      // Parallax Starfield shift
+      bgStarMesh.position.x = THREE.MathUtils.lerp(bgStarMesh.position.x, -mouseParallaxX * 0.5, 0.05);
+      bgStarMesh.position.y = THREE.MathUtils.lerp(bgStarMesh.position.y, mouseParallaxY * 0.5, 0.05);
+
+      // Autonomous Meteor Shower
+      if (!meteorActive) {
+          nextMeteorTimer -= activeDelta;
+          if (nextMeteorTimer <= 0) {
+              meteorActive = true;
+              meteorProgress = 0;
+              nextMeteorTimer = 1.0 + Math.random() * 3.0; // Meteors happen every 1 to 4 seconds
+              
+              // Start high up and far away, either left or right
+              const startX = (Math.random() > 0.5 ? 60 : -60) + (Math.random() - 0.5) * 40;
+              meteorStart.set(startX, 40 + Math.random() * 30, -30 - Math.random() * 40);
+              
+              // Streak downwards and across
+              const endX = startX > 0 ? -80 : 80;
+              meteorEnd.copy(meteorStart).add(new THREE.Vector3(endX, -80 - Math.random() * 40, 20));
+          }
+      } else {
+          meteorProgress += activeDelta * 1.8; // Very fast streak
+          if (meteorProgress > 1.0) {
+              meteorActive = false;
+              meteorMat.opacity = 0;
+          } else {
+              const currentPos = new THREE.Vector3().lerpVectors(meteorStart, meteorEnd, meteorProgress);
+              const tailLength = 0.25; // 25% of the streak is visible tail
+              const tailPos = new THREE.Vector3().lerpVectors(meteorStart, meteorEnd, Math.max(0, meteorProgress - tailLength));
+              
+              const posArray = meteorGeo.attributes.position.array;
+              posArray[0] = currentPos.x; posArray[1] = currentPos.y; posArray[2] = currentPos.z;
+              posArray[3] = tailPos.x;    posArray[4] = tailPos.y;    posArray[5] = tailPos.z;
+              meteorGeo.attributes.position.needsUpdate = true;
+              
+              // Fade in and out smoothly
+              meteorMat.opacity = Math.sin(meteorProgress * Math.PI) * 1.5;
+          }
+      }
+
       // Targeted Hyper-Comet Animation
       if (cometActive) {
           cometProgress += activeDelta * 2.5; // High speed
