@@ -143,6 +143,46 @@ export default function HeroScene3D() {
     const waveLines = new THREE.LineSegments(waveLineGeo, waveLineMat);
     scene.add(waveLines);
 
+    // Deep Space Background Stars (Parallax Starfield)
+    const bgStarCount = 2000;
+    const bgStarGeo = new THREE.BufferGeometry();
+    const bgStarPos = new Float32Array(bgStarCount * 3);
+    for (let i = 0; i < bgStarCount * 3; i += 3) {
+        bgStarPos[i] = (Math.random() - 0.5) * 250; // X spread
+        bgStarPos[i+1] = (Math.random() - 0.5) * 150; // Y spread
+        bgStarPos[i+2] = -20 - Math.random() * 100; // Z spread (far background)
+    }
+    bgStarGeo.setAttribute('position', new THREE.BufferAttribute(bgStarPos, 3));
+    const bgStarMat = new THREE.PointsMaterial({
+        color: 0xffffff,
+        size: 0.18,
+        transparent: true,
+        opacity: 0.45,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+    });
+    const bgStarMesh = new THREE.Points(bgStarGeo, bgStarMat);
+    scene.add(bgStarMesh);
+
+    // Autonomous Meteor
+    const meteorGeo = new THREE.BufferGeometry();
+    meteorGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(6), 3));
+    const meteorMat = new THREE.LineBasicMaterial({
+        color: 0x4cd7f6,
+        transparent: true,
+        opacity: 0,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+    });
+    const meteorMesh = new THREE.Line(meteorGeo, meteorMat);
+    scene.add(meteorMesh);
+    
+    let meteorActive = false;
+    let meteorProgress = 0;
+    let nextMeteorTimer = 2.0;
+    const meteorStart = new THREE.Vector3();
+    const meteorEnd = new THREE.Vector3();
+
     // =========================================================
     // SECTION B: 3D HOLOGRAPHIC ARCHITECTURE CORE
     // =========================================================
