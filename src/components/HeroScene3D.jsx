@@ -888,8 +888,8 @@ export default function HeroScene3D() {
                       // Physics requires a strictly bounded timestep to prevent math explosion
                       const physicsDelta = Math.min(activeDelta, 0.03); 
                       
-                      const stiffness = 200.0; 
-                      const friction = 0.85; // Heavy damping, creates buttery settling
+                      const stiffness = 30.0; // Extremely soft, magnetic pull
+                      const friction = 0.88; // Glides smoothly into place
                       
                       // Pull towards target
                       voxelVelocities[i*3] += (voxelTargets[i*3] - voxelPositions[i*3]) * stiffness * physicsDelta;
