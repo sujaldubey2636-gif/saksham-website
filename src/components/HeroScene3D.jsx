@@ -185,7 +185,8 @@ export default function HeroScene3D() {
       wireframe: true,
       transparent: true,
       opacity: 0.45,
-      blending: THREE.AdditiveBlending, // Makes the lines glow when overlapping
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
     });
     const outerCoreMesh = new THREE.Mesh(outerCoreGeo, outerCoreMat);
     coreGroup.add(outerCoreMesh);
@@ -196,7 +197,8 @@ export default function HeroScene3D() {
       wireframe: true,
       transparent: true,
       opacity: 0.75,
-      blending: THREE.AdditiveBlending, // Neon energy effect
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
     });
     const innerCoreMesh = new THREE.Mesh(innerCoreGeo, innerCoreMat);
     coreGroup.add(innerCoreMesh);
@@ -209,6 +211,7 @@ export default function HeroScene3D() {
       transparent: true,
       opacity: 0.35,
       blending: THREE.AdditiveBlending,
+      depthWrite: false,
     });
     const quantumMesh = new THREE.Mesh(quantumGeo, quantumMat);
     coreGroup.add(quantumMesh);
@@ -283,9 +286,11 @@ export default function HeroScene3D() {
 
     const nucleusGeo = new THREE.SphereGeometry(0.7, 12, 12);
     const nucleusMat = new THREE.MeshBasicMaterial({
-      color: 0xf0f1f3,
+      color: 0xffffff,
       transparent: true,
       opacity: 0.9,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
     });
     const nucleusMesh = new THREE.Mesh(nucleusGeo, nucleusMat);
     coreGroup.add(nucleusMesh);
@@ -296,6 +301,8 @@ export default function HeroScene3D() {
       color: 0xe58e26,
       transparent: true,
       opacity: 0.85,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
     });
     const ring1 = new THREE.Mesh(ring1Geo, ring1Mat);
     ring1.rotation.x = Math.PI / 3;
@@ -307,6 +314,8 @@ export default function HeroScene3D() {
       color: 0x4cd7f6,
       transparent: true,
       opacity: 0.75,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
     });
     const ring2 = new THREE.Mesh(ring2Geo, ring2Mat);
     ring2.rotation.x = -Math.PI / 4;
@@ -315,11 +324,11 @@ export default function HeroScene3D() {
 
     const ring3Geo = new THREE.RingGeometry(9.4, 9.6, 36);
     const ring3Mat = new THREE.MeshBasicMaterial({
-      color: 0x2a2d35,
-      side: THREE.DoubleSide,
+      color: 0x4cd7f6,
       transparent: true,
-      opacity: 0.45,
-      wireframe: true,
+      opacity: 0.25,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
     });
     const ring3 = new THREE.Mesh(ring3Geo, ring3Mat);
     ring3.rotation.x = Math.PI / 2.2;
@@ -432,7 +441,7 @@ export default function HeroScene3D() {
     // --- DIGITAL VOXELIZATION CORE ---
     const voxelCount = 800;
     const voxelGeo = new THREE.BoxGeometry(0.12, 0.12, 0.12);
-    const voxelMat = new THREE.MeshBasicMaterial({ color: 0x4cd7f6, transparent: true, opacity: 0.9, wireframe: false });
+    const voxelMat = new THREE.MeshBasicMaterial({ color: 0x4cd7f6, transparent: true, opacity: 0.9, wireframe: false, blending: THREE.AdditiveBlending, depthWrite: false });
     const voxelMesh = new THREE.InstancedMesh(voxelGeo, voxelMat, voxelCount);
     
     const voxelTargets = new Float32Array(voxelCount * 3);
