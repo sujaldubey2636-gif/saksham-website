@@ -6,7 +6,7 @@ export default function Footer() {
     <footer className="w-full px-6 sm:px-10 lg:px-16 py-12 border-t border-[#2A2D35] bg-[#121316]">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
         <div className="flex items-center gap-4">
-          <Logo size="sm" variant="horizontal" />
+          <Logo size="lg" variant="horizontal" />
           <span className="text-xs text-[#8A919E] border-l border-[#2A2D35] pl-4 font-mono">
             © {new Date().getFullYear()} Team SAKSHAM
           </span>

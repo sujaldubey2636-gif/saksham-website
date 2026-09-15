@@ -26,7 +26,7 @@ export default function Navbar() {
     >
       <div className="h-16 px-6 sm:px-10 lg:px-16 max-w-7xl mx-auto flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2 group">
-          <Logo size="md" className="transition-opacity group-hover:opacity-80" />
+          <Logo size="xl" className="transition-opacity group-hover:opacity-80" />
         </Link>
 
         <nav className="hidden lg:flex items-center gap-8 text-sm font-mono">
