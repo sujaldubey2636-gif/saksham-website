@@ -441,7 +441,7 @@ export default function HeroScene3D() {
     // --- DIGITAL VOXELIZATION CORE ---
     const voxelCount = 800;
     const voxelGeo = new THREE.BoxGeometry(0.12, 0.12, 0.12);
-    const voxelMat = new THREE.MeshBasicMaterial({ color: 0x4cd7f6, transparent: true, opacity: 0.9, wireframe: false, blending: THREE.AdditiveBlending, depthWrite: false });
+    const voxelMat = new THREE.MeshBasicMaterial({ color: 0x4cd7f6, transparent: true, opacity: 0.9, wireframe: false });
     const voxelMesh = new THREE.InstancedMesh(voxelGeo, voxelMat, voxelCount);
     
     const voxelTargets = new Float32Array(voxelCount * 3);
@@ -843,7 +843,8 @@ export default function HeroScene3D() {
           
           if (progress < 0.5) {
               // EXPLODE (0 to 2 sec)
-              const expFactor = activeDelta * Math.max(0, 1.0 - progress * 2.0);
+              const physicsDelta = Math.min(activeDelta, 0.03);
+              const expFactor = physicsDelta * Math.max(0, 1.0 - progress * 2.0);
               for(let i=0; i<voxelCount; i++) {
                   voxelPositions[i*3] += voxelVelocities[i*3] * expFactor;
                   voxelPositions[i*3+1] += voxelVelocities[i*3+1] * expFactor;
@@ -868,13 +869,16 @@ export default function HeroScene3D() {
                   
                   if (startImplode) {
                       // BUTTERY SMOOTH SPRING PHYSICS
-                      const stiffness = 80.0; 
-                      const friction = 0.82; // Retains 82% of velocity (creates smooth, heavy damping)
+                      // Physics requires a strictly bounded timestep to prevent math explosion
+                      const physicsDelta = Math.min(activeDelta, 0.03); 
+                      
+                      const stiffness = 200.0; 
+                      const friction = 0.85; // Heavy damping, creates buttery settling
                       
                       // Pull towards target
-                      voxelVelocities[i*3] += (voxelTargets[i*3] - voxelPositions[i*3]) * stiffness * activeDelta;
-                      voxelVelocities[i*3+1] += (voxelTargets[i*3+1] - voxelPositions[i*3+1]) * stiffness * activeDelta;
-                      voxelVelocities[i*3+2] += (voxelTargets[i*3+2] - voxelPositions[i*3+2]) * stiffness * activeDelta;
+                      voxelVelocities[i*3] += (voxelTargets[i*3] - voxelPositions[i*3]) * stiffness * physicsDelta;
+                      voxelVelocities[i*3+1] += (voxelTargets[i*3+1] - voxelPositions[i*3+1]) * stiffness * physicsDelta;
+                      voxelVelocities[i*3+2] += (voxelTargets[i*3+2] - voxelPositions[i*3+2]) * stiffness * physicsDelta;
                       
                       // Apply damping friction so it settles beautifully without shaking
                       voxelVelocities[i*3] *= friction;
@@ -882,9 +886,9 @@ export default function HeroScene3D() {
                       voxelVelocities[i*3+2] *= friction;
                       
                       // Update position using true velocity
-                      voxelPositions[i*3] += voxelVelocities[i*3] * activeDelta;
-                      voxelPositions[i*3+1] += voxelVelocities[i*3+1] * activeDelta;
-                      voxelPositions[i*3+2] += voxelVelocities[i*3+2] * activeDelta;
+                      voxelPositions[i*3] += voxelVelocities[i*3] * physicsDelta;
+                      voxelPositions[i*3+1] += voxelVelocities[i*3+1] * physicsDelta;
+                      voxelPositions[i*3+2] += voxelVelocities[i*3+2] * physicsDelta;
                       
                       // Smooth rotation settling
                       voxelRotations[i*3] = THREE.MathUtils.lerp(voxelRotations[i*3], 0, 0.15);
