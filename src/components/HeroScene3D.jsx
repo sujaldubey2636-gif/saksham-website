@@ -888,8 +888,8 @@ export default function HeroScene3D() {
                       // Physics requires a strictly bounded timestep to prevent math explosion
                       const physicsDelta = Math.min(activeDelta, 0.03); 
                       
-                      const stiffness = 30.0; // Extremely soft, magnetic pull
-                      const friction = 0.88; // Glides smoothly into place
+                      const stiffness = 160.0; // Strong, powerful magnetic pull
+                      const friction = 0.72; // Low friction creates a heavy, satisfying bounce/wobble
                       
                       // Pull towards target
                       voxelVelocities[i*3] += (voxelTargets[i*3] - voxelPositions[i*3]) * stiffness * physicsDelta;
@@ -925,9 +925,17 @@ export default function HeroScene3D() {
                   voxelMesh.setMatrixAt(i, voxelDummy.matrix);
               }
               
-              // LOCK-IN GLOW: Flash pure blinding white exactly as the pieces snap together
+              // LOCK-IN GLOW & SHOCKWAVE: Flash pure blinding white exactly as the pieces snap together
               if (implodeProgress > 0.85) {
-                  const flash = (implodeProgress - 0.85) * 6.66; // Scales 0 to 1
+                  const flash = Math.min(1.0, (implodeProgress - 0.85) * 6.66); // Scales 0 to 1
+                  
+                  // Trigger physical shockwave exactly upon lock-in
+                  if (flash > 0.1 && flash < 0.2 && !shockwaveActive) {
+                      shockwaveActive = true;
+                      shockwaveScale = 0.5;
+                      shockwaveMat.opacity = 0.95;
+                  }
+                  
                   voxelMat.color.r = THREE.MathUtils.lerp(0.30, 1.0, flash);
                   voxelMat.color.g = THREE.MathUtils.lerp(0.84, 1.0, flash);
                   voxelMat.color.b = THREE.MathUtils.lerp(0.96, 1.0, flash);
