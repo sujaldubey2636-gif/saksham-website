@@ -131,34 +131,6 @@ export default function BeforeAfterSection() {
 
           </div>
 
-          {/* Bottom Bar: Interactive presets */}
-          <div className="px-6 py-3 bg-[#141619] border-t border-[#2A2D35] flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-[#8A919E]">
-            <div className="flex items-center gap-2">
-              <span>View mode:</span>
-              <button
-                type="button"
-                onClick={() => setSliderPos(20)}
-                className="px-2 py-0.5 rounded bg-[#1A1C21] hover:text-[#F0F1F3] border border-[#2A2D35]"
-              >
-                Inspect SAKSHAM
-              </button>
-              <button
-                type="button"
-                onClick={() => setSliderPos(50)}
-                className="px-2 py-0.5 rounded bg-[#1A1C21] hover:text-[#F0F1F3] border border-[#2A2D35]"
-              >
-                Split 50/50
-              </button>
-              <button
-                type="button"
-                onClick={() => setSliderPos(80)}
-                className="px-2 py-0.5 rounded bg-[#1A1C21] hover:text-[#F0F1F3] border border-[#2A2D35]"
-              >
-                Inspect Legacy
-              </button>
-            </div>
-            <span className="text-[#E58E26]">&#9679; Drag anywhere on the card to inspect</span>
-          </div>
 
         </div>
 
