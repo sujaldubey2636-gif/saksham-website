@@ -59,7 +59,7 @@ export default function ContactSection({ selectedScope }) {
   );
 
   return (
-    <section id="contact-section" className="py-24 lg:py-32 px-6 sm:px-10 lg:px-16 bg-[#121316]">
+    <section id="contact-section" className="scroll-mt-24 py-24 lg:py-32 px-6 sm:px-10 lg:px-16 bg-[#121316]">
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 animate-on-scroll delay-100">
         
         {/* Left Side (5 cols) */}

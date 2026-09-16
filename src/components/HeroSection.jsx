@@ -26,23 +26,21 @@ export default function HeroSection() {
 
           {/* Primary Action + Direct Line */}
           <div className="mt-8 flex flex-wrap items-center gap-4 pointer-events-auto">
-            <a
-              href="#contact-section"
-              onClick={(e) => { e.preventDefault(); document.getElementById('contact-section')?.scrollIntoView({ behavior: 'smooth' }); }}
+            <button
+              type="button"
+              onClick={() => {
+                const el = document.getElementById('contact-section');
+                if (el) {
+                  const top = el.getBoundingClientRect().top + window.scrollY - 80;
+                  window.scrollTo({ top, behavior: 'smooth' });
+                }
+              }}
               onMouseEnter={() => window.triggerHyperdrive && window.triggerHyperdrive(true)}
               onMouseLeave={() => window.triggerHyperdrive && window.triggerHyperdrive(false)}
-              className="inline-flex items-center justify-center px-5 py-3 rounded text-sm font-medium bg-[#E58E26]/20 backdrop-blur-md border border-[#E58E26]/50 text-[#E58E26] hover:bg-[#E58E26]/30 transition-colors font-mono tracking-tight shadow-[0_0_15px_rgba(229,142,38,0.15)]"
+              className="inline-flex items-center justify-center px-5 py-3 rounded text-sm font-medium bg-[#E58E26]/20 backdrop-blur-md border border-[#E58E26]/50 text-[#E58E26] hover:bg-[#E58E26]/30 transition-colors font-mono tracking-tight shadow-[0_0_15px_rgba(229,142,38,0.15)] cursor-pointer"
             >
               Discuss a project &rarr;
-            </a>
-
-            <a
-              href="#work-section"
-              onClick={(e) => { e.preventDefault(); document.getElementById('work-section')?.scrollIntoView({ behavior: 'smooth' }); }}
-              className="inline-flex items-center justify-center px-5 py-3 rounded text-sm font-medium bg-[#1A1C21]/40 backdrop-blur-md text-[#F0F1F3] border border-[#2A2D35]/80 hover:bg-[#1A1C21]/60 hover:border-[#8A919E]/80 transition-colors font-mono"
-            >
-              Inspect recent builds
-            </a>
+            </button>
           </div>
 
           <div className="mt-12 pt-6 border-t border-[#2A2D35]/50 w-full flex items-center font-mono">
