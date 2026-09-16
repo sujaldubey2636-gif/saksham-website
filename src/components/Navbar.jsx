@@ -19,13 +19,20 @@ export default function Navbar() {
     const performScroll = () => {
       const element = document.getElementById(id);
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
+        const headerOffset = 80;
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.scrollY - headerOffset;
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
       }
     };
 
-    if (location.pathname !== '/') {
+    // Use raw window hash to be perfectly synced with the browser state
+    if (window.location.hash && window.location.hash !== '#/' && window.location.hash !== '') {
       navigate('/');
-      setTimeout(performScroll, 500); // Wait for HomePage to render
+      setTimeout(performScroll, 800); // 800ms guarantees DOM is fully painted
     } else {
       performScroll();
     }
