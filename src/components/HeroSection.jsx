@@ -7,7 +7,12 @@ export default function HeroSection() {
   return (
     <section className="relative w-full min-h-[calc(100vh-4rem)] flex items-center bg-[#121316] text-[#F0F1F3] px-6 sm:px-10 lg:px-16 py-16 lg:py-24 border-b border-[#2A2D35] overflow-hidden">
       {/* 3D WebGL Particle Terrain */}
-      <Suspense fallback={<div className="absolute inset-0 z-0 bg-[#121316]"></div>}>
+      <Suspense fallback={
+        <div className="absolute inset-0 z-0 flex flex-col items-center justify-center bg-[#121316]">
+          <div className="w-12 h-12 border-[3px] border-[#4cd7f6]/15 border-t-[#4cd7f6] rounded-full animate-spin mb-6"></div>
+          <div className="text-[#8A919E] text-sm tracking-[2px] uppercase animate-pulse">Initializing WebGL Engine</div>
+        </div>
+      }>
         <div className="absolute inset-0 z-0 animate-fade-in">
           <HeroScene3D />
         </div>
