@@ -16,25 +16,19 @@ export default function Navbar() {
   const scrollTo = (id) => (e) => {
     e.preventDefault();
     
-    const performScroll = () => {
+    if (window.location.hash !== '#/' && window.location.hash !== '') {
+      navigate('/');
+      setTimeout(() => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView();
+        }
+      }, 800);
+    } else {
       const element = document.getElementById(id);
       if (element) {
-        const headerOffset = 80;
-        const elementPosition = element.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.scrollY - headerOffset;
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: 'smooth'
-        });
+        element.scrollIntoView();
       }
-    };
-
-    // Use raw window hash to be perfectly synced with the browser state
-    if (window.location.hash && window.location.hash !== '#/' && window.location.hash !== '') {
-      navigate('/');
-      setTimeout(performScroll, 800); // 800ms guarantees DOM is fully painted
-    } else {
-      performScroll();
     }
   };
 
