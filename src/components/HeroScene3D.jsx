@@ -1155,6 +1155,16 @@ export default function HeroScene3D() {
 
     // Launch immediately
     animate();
+    // =========================================================
+    // PERFORMANCE OPTIMIZATION: Disable Frustum Culling
+    // =========================================================
+    // Since we manually update positions[] every frame, Three.js will normally burn 
+    // massive amounts of CPU trying to recalculate the BoundingSpheres for culling.
+    // By disabling it, we completely eliminate the scrolling lag on mobile and slow PCs.
+    const dynamicMeshes = [waveParticles, waveLines, swarmMesh, stardustMesh, meteorMesh, voxelMesh, bgStarMesh];
+    dynamicMeshes.forEach(m => {
+        if (m) m.frustumCulled = false;
+    });
 
     // =========================================================
     // SECTION E: RESPONSIVE RESIZE
