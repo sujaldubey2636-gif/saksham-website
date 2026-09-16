@@ -13,22 +13,20 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const scrollTo = (id) => (e) => {
-    e.preventDefault();
-    
-    if (window.location.hash !== '#/' && window.location.hash !== '') {
-      navigate('/');
-      setTimeout(() => {
-        const element = document.getElementById(id);
-        if (element) {
-          element.scrollIntoView();
-        }
-      }, 800);
-    } else {
-      const element = document.getElementById(id);
-      if (element) {
-        element.scrollIntoView();
+  const scrollTo = (id) => {
+    const doScroll = () => {
+      const el = document.getElementById(id);
+      if (el) {
+        const top = el.getBoundingClientRect().top + window.scrollY - 80;
+        window.scrollTo({ top, behavior: 'smooth' });
       }
+    };
+
+    if (location.pathname !== '/') {
+      navigate('/');
+      setTimeout(doScroll, 800);
+    } else {
+      doScroll();
     }
   };
 
@@ -61,37 +59,37 @@ export default function Navbar() {
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
               }}
-              className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap"
+              className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap cursor-pointer"
             >
               Home
             </Link>
-            <a href="#services-section" onClick={scrollTo('services-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap">
+            <button type="button" onClick={() => scrollTo('services-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap cursor-pointer">
               Services
-            </a>
-            <a href="#process-section" onClick={scrollTo('process-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap">
+            </button>
+            <button type="button" onClick={() => scrollTo('process-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap cursor-pointer">
               Process
-            </a>
+            </button>
             <Link to="/portfolio" className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap">
               Client Ships
             </Link>
-            <a href="#about-section" onClick={scrollTo('about-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap">
+            <button type="button" onClick={() => scrollTo('about-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap cursor-pointer">
               About
-            </a>
-            <a href="#faq-section" onClick={scrollTo('faq-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap">
+            </button>
+            <button type="button" onClick={() => scrollTo('faq-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap cursor-pointer">
               FAQ
-            </a>
+            </button>
           </nav>
         </div>
 
         {/* Right: CTA Button */}
         <div className="flex justify-end items-center">
-          <a
-            href="#contact-section"
-            onClick={scrollTo('contact-section')}
-            className="btn-primary text-sm whitespace-nowrap"
+          <button
+            type="button"
+            onClick={() => scrollTo('contact-section')}
+            className="btn-primary text-sm whitespace-nowrap cursor-pointer"
           >
             Get in touch
-          </a>
+          </button>
         </div>
 
       </div>
