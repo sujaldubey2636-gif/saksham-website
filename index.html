@@ -35,7 +35,48 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <style>
+        #initial-loader {
+          position: fixed;
+          top: 0; left: 0; right: 0; bottom: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          background-color: #121316;
+          z-index: 99999;
+          font-family: 'Bricolage Grotesque', sans-serif;
+        }
+        .spinner {
+          width: 48px;
+          height: 48px;
+          border: 3px solid rgba(76, 215, 246, 0.15);
+          border-top-color: #4cd7f6;
+          border-radius: 50%;
+          animation: spin 1s infinite linear;
+          margin-bottom: 24px;
+        }
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+        .loading-text {
+          color: #8A919E;
+          font-size: 14px;
+          letter-spacing: 2px;
+          text-transform: uppercase;
+          animation: pulse 2s infinite ease-in-out;
+        }
+        @keyframes pulse {
+          0%, 100% { opacity: 0.5; }
+          50% { opacity: 1; }
+        }
+      </style>
+      <div id="initial-loader">
+        <div class="spinner"></div>
+        <div class="loading-text">Initializing Systems</div>
+      </div>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
