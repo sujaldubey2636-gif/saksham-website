@@ -1,32 +1,7 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-const ALL_PROJECTS = [
-  {
-    title: 'Client Website 1',
-    category: 'E-Commerce',
-    url: 'https://example.com',
-    imageSrc: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA6iCqZYvwjKgx7qyRTFEJ1xwNqQoEd0BemwnciouQxA4mpGxW3kBefkgAVkNHtupBPrbvHH3XPhxPUYsrzitqLCl52Do1XmkY1Tbt-vejO3iczU6WDD9ccGZ6ahNaOQeEGT13OR_KDVsCsjg8pjxAxr9ej5RHTzZhL8rpvCQmqLIwhBIlCiF6VgVKVRsJZd54UBFJuZZQTt1ifsfYlP7Fr3iaFrCPn0VtD9or0QMF22TwWr6HhD_7P',
-    description: 'High-converting custom storefront designed for modern retail brands.',
-    tags: ['React', 'Tailwind', 'Shopify']
-  },
-  {
-    title: 'Client Website 2',
-    category: 'Corporate Site',
-    url: 'https://example.com',
-    imageSrc: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC9G-TwQ1GEcGHRP8HHQPO9L0XjBmhhFQKaaCQdemTy5Skq_D1nX1m3BC5Nhsd4a2mYHuwOYnmnxknMP_gFRRq_vQFab0VxUmp2Yk3wOc5HG43BMY4BUImTJhA0VnavOIWwKmmdSNPbSh4Tds8rxQUgG4qphSVNL3E9m5Vy09lNd0KXfXWF1MCT3d9BV8FqoRaCEyUMBE2SIXTY8oazKR_lJHB2ueXIyQ1VeCmC44angNiO2llUiLAi',
-    description: 'A blazing fast marketing site built to capture enterprise leads.',
-    tags: ['Next.js', 'Framer Motion']
-  },
-  {
-    title: 'Client Website 3',
-    category: 'Web App',
-    url: 'https://example.com',
-    imageSrc: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB-jbbPrfdESCP2GDAgwHSnUU2IWrJYWzdyeNOZJzZRTSh6OkzFriuO4L8P-HpIGtPzu5gJ4xAEtSJu74oSD_QwdI_SIAFRWMVHhMGGuwHePXP4xU0gBxYbbrQEIxl7aJOhf2Skz90CFBA84U_YPp5SLYY53UjrywmOE1IAiJ6vzUdvlD8JxQE9HF8fvwm-Y29Wk20DtN-vrjjvESFZ6lppXjN1Et8N9Xii2uVn1TdF30SuEQ5-yteE',
-    description: 'Complex dashboard and automation platform for logistics.',
-    tags: ['Dashboard', 'API', 'Supabase']
-  }
-];
+const ALL_PROJECTS = [];
 
 export default function PortfolioPage() {
   useEffect(() => {
@@ -50,51 +25,63 @@ export default function PortfolioPage() {
           </div>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
-          {ALL_PROJECTS.map((project, idx) => (
-            <div key={idx} className="group flex flex-col bg-[#1A1C21] border border-[#2A2D35] rounded-xl overflow-hidden hover:border-[#4cd7f6]/40 transition-colors duration-300">
-              <div className="relative aspect-video overflow-hidden bg-black">
-                <img 
-                  src={project.imageSrc} 
-                  alt={project.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#1A1C21] to-transparent opacity-60"></div>
-                <div className="absolute top-4 left-4">
-                  <span className="text-[10px] font-mono bg-black/60 backdrop-blur text-white px-2 py-1 rounded border border-white/10 uppercase tracking-widest">
-                    {project.category}
-                  </span>
-                </div>
-              </div>
-
-              <div className="p-6 sm:p-8 flex flex-col flex-grow">
-                <h3 className="text-2xl font-bold font-['Bricolage_Grotesque',sans-serif] text-white">
-                  {project.title}
-                </h3>
-                <p className="text-sm text-[#8A919E] mt-3 font-['IBM_Plex_Sans',sans-serif] flex-grow">
-                  {project.description}
-                </p>
-
-                <div className="mt-6 flex flex-wrap gap-2">
-                  {project.tags.map(tag => (
-                    <span key={tag} className="text-[11px] font-mono text-[#8A919E] bg-[#121316] border border-[#2A2D35] px-2 py-1 rounded">
-                      {tag}
+        {ALL_PROJECTS.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 text-center border border-dashed border-[#2A2D35] rounded-xl bg-[#1A1C21]/30">
+            <span className="material-symbols-outlined text-4xl text-[#8A919E] mb-4">construction</span>
+            <h3 className="text-xl font-bold font-['Bricolage_Grotesque',sans-serif] text-[#F0F1F3]">
+              Portfolio Update in Progress
+            </h3>
+            <p className="text-[#8A919E] mt-2 max-w-md font-['IBM_Plex_Sans',sans-serif]">
+              We are currently curating and uploading our latest client ships. Check back shortly to see our recent production deployments.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
+            {ALL_PROJECTS.map((project, idx) => (
+              <div key={idx} className="group flex flex-col bg-[#1A1C21] border border-[#2A2D35] rounded-xl overflow-hidden hover:border-[#4cd7f6]/40 transition-colors duration-300">
+                <div className="relative aspect-video overflow-hidden bg-black">
+                  <img 
+                    src={project.imageSrc} 
+                    alt={project.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#1A1C21] to-transparent opacity-60"></div>
+                  <div className="absolute top-4 left-4">
+                    <span className="text-[10px] font-mono bg-black/60 backdrop-blur text-white px-2 py-1 rounded border border-white/10 uppercase tracking-widest">
+                      {project.category}
                     </span>
-                  ))}
+                  </div>
                 </div>
 
-                <a 
-                  href={project.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-8 inline-flex items-center justify-center w-full bg-[#2A2D35]/50 hover:bg-[#4cd7f6] hover:text-black text-[#F0F1F3] font-mono text-xs uppercase tracking-wider py-3 rounded transition-colors duration-300"
-                >
-                  Visit Live Site &rarr;
-                </a>
+                <div className="p-6 sm:p-8 flex flex-col flex-grow">
+                  <h3 className="text-2xl font-bold font-['Bricolage_Grotesque',sans-serif] text-white">
+                    {project.title}
+                  </h3>
+                  <p className="text-sm text-[#8A919E] mt-3 font-['IBM_Plex_Sans',sans-serif] flex-grow">
+                    {project.description}
+                  </p>
+
+                  <div className="mt-6 flex flex-wrap gap-2">
+                    {project.tags.map(tag => (
+                      <span key={tag} className="text-[11px] font-mono text-[#8A919E] bg-[#121316] border border-[#2A2D35] px-2 py-1 rounded">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  <a 
+                    href={project.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-8 inline-flex items-center justify-center w-full bg-[#2A2D35]/50 hover:bg-[#4cd7f6] hover:text-black text-[#F0F1F3] font-mono text-xs uppercase tracking-wider py-3 rounded transition-colors duration-300"
+                  >
+                    Visit Live Site &rarr;
+                  </a>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
