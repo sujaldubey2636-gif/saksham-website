@@ -44,23 +44,33 @@ export default function Navbar() {
         </Link>
 
         <nav className="hidden lg:flex items-center gap-8 text-sm font-mono">
+          <Link 
+            to="/" 
+            onClick={(e) => {
+              if (location.pathname === '/') {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            }}
+            className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors"
+          >
+            Home
+          </Link>
+          <a href="#services-section" onClick={scrollTo('services-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors">
+            Services
+          </a>
+          <a href="#process-section" onClick={scrollTo('process-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors">
+            Process
+          </a>
           <Link to="/portfolio" className="text-[#4cd7f6] hover:text-[#F0F1F3] transition-colors">
             Client Ships
           </Link>
-          {[
-            { label: 'Services',  id: 'services-section' },
-            { label: 'Process',   id: 'process-section' },
-            { label: 'About',     id: 'about-section' },
-          ].map((item) => (
-            <a
-              key={item.label}
-              href={`#${item.id}`}
-              onClick={scrollTo(item.id)}
-              className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors"
-            >
-              {item.label}
-            </a>
-          ))}
+          <a href="#about-section" onClick={scrollTo('about-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors">
+            About
+          </a>
+          <a href="#faq-section" onClick={scrollTo('faq-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors">
+            FAQ
+          </a>
         </nav>
 
         <a
