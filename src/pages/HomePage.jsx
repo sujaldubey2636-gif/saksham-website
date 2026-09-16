@@ -3,7 +3,6 @@ import HeroSection from '../components/HeroSection';
 import FounderVideoSection from '../components/FounderVideoSection';
 import ServicesSection from '../components/ServicesSection';
 import BeforeAfterSection from '../components/BeforeAfterSection';
-import ProjectsSection from '../components/ProjectsSection';
 import TestimonialsSection from '../components/TestimonialsSection';
 import ProjectEstimator from '../components/ProjectEstimator';
 import ProcessTimelineSection from '../components/ProcessTimelineSection';
@@ -44,7 +43,6 @@ export default function HomePage() {
       <FounderVideoSection />
       <ServicesSection />
       <BeforeAfterSection />
-      <ProjectsSection />
       <TestimonialsSection />
       <ProjectEstimator onSelectScope={setSelectedScope} />
       <ProcessTimelineSection />
