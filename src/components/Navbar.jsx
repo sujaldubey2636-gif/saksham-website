@@ -13,20 +13,25 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const scrollTo = (id) => {
-    const doScroll = () => {
-      const el = document.getElementById(id);
-      if (el) {
-        const top = el.getBoundingClientRect().top + window.scrollY - 80;
-        window.scrollTo({ top, behavior: 'smooth' });
-      }
-    };
-
+  const handleNav = (id) => {
+    // If we're not on the homepage, go there first then scroll
     if (location.pathname !== '/') {
       navigate('/');
-      setTimeout(doScroll, 800);
+      const poll = setInterval(() => {
+        const el = document.getElementById(id);
+        if (el) {
+          clearInterval(poll);
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+      // Safety: stop polling after 5 seconds
+      setTimeout(() => clearInterval(poll), 5000);
     } else {
-      doScroll();
+      // We're already on the homepage, just scroll
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     }
   };
 
@@ -63,19 +68,19 @@ export default function Navbar() {
             >
               Home
             </Link>
-            <button type="button" onClick={() => scrollTo('services-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap cursor-pointer">
+            <button type="button" onClick={() => handleNav('services-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap cursor-pointer bg-transparent border-none p-0 font-mono text-sm">
               Services
             </button>
-            <button type="button" onClick={() => scrollTo('process-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap cursor-pointer">
+            <button type="button" onClick={() => handleNav('process-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap cursor-pointer bg-transparent border-none p-0 font-mono text-sm">
               Process
             </button>
             <Link to="/portfolio" className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap">
               Client Ships
             </Link>
-            <button type="button" onClick={() => scrollTo('about-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap cursor-pointer">
+            <button type="button" onClick={() => handleNav('about-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap cursor-pointer bg-transparent border-none p-0 font-mono text-sm">
               About
             </button>
-            <button type="button" onClick={() => scrollTo('faq-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap cursor-pointer">
+            <button type="button" onClick={() => handleNav('faq-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap cursor-pointer bg-transparent border-none p-0 font-mono text-sm">
               FAQ
             </button>
           </nav>
@@ -85,7 +90,7 @@ export default function Navbar() {
         <div className="flex justify-end items-center">
           <button
             type="button"
-            onClick={() => scrollTo('contact-section')}
+            onClick={() => handleNav('contact-section')}
             className="btn-primary text-sm whitespace-nowrap cursor-pointer"
           >
             Get in touch
