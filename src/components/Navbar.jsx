@@ -14,9 +14,11 @@ export default function Navbar() {
   }, []);
 
   const handleNav = (id) => {
-    // If we're not on the homepage, go there first then scroll
+    // Navigate home if not already there
     if (location.pathname !== '/') {
       navigate('/');
+      
+      // Poll until the element is in the DOM, then scroll
       const poll = setInterval(() => {
         const el = document.getElementById(id);
         if (el) {
@@ -24,10 +26,9 @@ export default function Navbar() {
           el.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
       }, 100);
-      // Safety: stop polling after 5 seconds
-      setTimeout(() => clearInterval(poll), 5000);
+      setTimeout(() => clearInterval(poll), 5000); // safety timeout
     } else {
-      // We're already on the homepage, just scroll
+      // Already on home, scroll immediately
       const el = document.getElementById(id);
       if (el) {
         el.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -68,33 +69,34 @@ export default function Navbar() {
             >
               Home
             </Link>
-            <button type="button" onClick={() => handleNav('services-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap cursor-pointer bg-transparent border-none p-0 font-mono text-sm">
+            
+            {/* Using <a> tags without href. This prevents HashRouter bugs completely and behaves identically to normal text links for clicking */}
+            <a onClick={() => handleNav('services-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap cursor-pointer select-none">
               Services
-            </button>
-            <button type="button" onClick={() => handleNav('process-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap cursor-pointer bg-transparent border-none p-0 font-mono text-sm">
+            </a>
+            <a onClick={() => handleNav('process-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap cursor-pointer select-none">
               Process
-            </button>
+            </a>
             <Link to="/portfolio" className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap">
               Client Ships
             </Link>
-            <button type="button" onClick={() => handleNav('about-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap cursor-pointer bg-transparent border-none p-0 font-mono text-sm">
+            <a onClick={() => handleNav('about-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap cursor-pointer select-none">
               About
-            </button>
-            <button type="button" onClick={() => handleNav('faq-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap cursor-pointer bg-transparent border-none p-0 font-mono text-sm">
+            </a>
+            <a onClick={() => handleNav('faq-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap cursor-pointer select-none">
               FAQ
-            </button>
+            </a>
           </nav>
         </div>
 
         {/* Right: CTA Button */}
         <div className="flex justify-end items-center">
-          <button
-            type="button"
+          <a
             onClick={() => handleNav('contact-section')}
-            className="btn-primary text-sm whitespace-nowrap cursor-pointer"
+            className="btn-primary text-sm whitespace-nowrap cursor-pointer select-none"
           >
             Get in touch
-          </button>
+          </a>
         </div>
 
       </div>

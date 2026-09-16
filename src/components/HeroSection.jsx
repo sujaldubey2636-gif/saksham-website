@@ -26,21 +26,19 @@ export default function HeroSection() {
 
           {/* Primary Action + Direct Line */}
           <div className="mt-8 flex flex-wrap items-center gap-4 pointer-events-auto">
-            <button
-              type="button"
+            <a
               onClick={() => {
                 const el = document.getElementById('contact-section');
                 if (el) {
-                  const top = el.getBoundingClientRect().top + window.scrollY - 80;
-                  window.scrollTo({ top, behavior: 'smooth' });
+                  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
               }}
               onMouseEnter={() => window.triggerHyperdrive && window.triggerHyperdrive(true)}
               onMouseLeave={() => window.triggerHyperdrive && window.triggerHyperdrive(false)}
-              className="inline-flex items-center justify-center px-5 py-3 rounded text-sm font-medium bg-[#E58E26]/20 backdrop-blur-md border border-[#E58E26]/50 text-[#E58E26] hover:bg-[#E58E26]/30 transition-colors font-mono tracking-tight shadow-[0_0_15px_rgba(229,142,38,0.15)] cursor-pointer"
+              className="inline-flex items-center justify-center px-5 py-3 rounded text-sm font-medium bg-[#E58E26]/20 backdrop-blur-md border border-[#E58E26]/50 text-[#E58E26] hover:bg-[#E58E26]/30 transition-colors font-mono tracking-tight shadow-[0_0_15px_rgba(229,142,38,0.15)] cursor-pointer select-none"
             >
               Discuss a project &rarr;
-            </button>
+            </a>
           </div>
 
           <div className="mt-12 pt-6 border-t border-[#2A2D35]/50 w-full flex items-center font-mono">
