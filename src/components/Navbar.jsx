@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Logo from './Logo';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 16);
@@ -13,15 +15,24 @@ export default function Navbar() {
 
   const scrollTo = (id) => (e) => {
     e.preventDefault();
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    if (location.pathname !== '/') {
+      navigate('/');
+      setTimeout(() => {
+        const element = document.getElementById(id);
+        if (element) element.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+      return;
+    }
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   return (
     <header
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        scrolled
-          ? 'bg-[#121316]/95 backdrop-blur-xl border-b border-[#2A2D35]'
-          : 'bg-[#121316]/80 backdrop-blur-lg'
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled ? 'bg-[#121316]/80 backdrop-blur-md border-b border-[#2A2D35] py-2' : 'bg-transparent py-4'
       }`}
     >
       <div className="h-16 px-6 sm:px-10 lg:px-16 max-w-7xl mx-auto flex items-center justify-between">
@@ -33,12 +44,13 @@ export default function Navbar() {
         </Link>
 
         <nav className="hidden lg:flex items-center gap-8 text-sm font-mono">
+          <Link to="/portfolio" className="text-[#4cd7f6] hover:text-[#F0F1F3] transition-colors">
+            Client Ships
+          </Link>
           {[
             { label: 'Services',  id: 'services-section' },
-            { label: 'Work',      id: 'work-section' },
             { label: 'Process',   id: 'process-section' },
             { label: 'About',     id: 'about-section' },
-            { label: 'FAQ',       id: 'faq-section' },
           ].map((item) => (
             <a
               key={item.label}

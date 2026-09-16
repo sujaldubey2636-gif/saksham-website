@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Card3D from './Card3D';
 
 const PROJECTS = [
@@ -129,6 +130,12 @@ export default function ProjectsSection() {
               </div>
             </article>
           ))}
+        </div>
+        
+        <div className="mt-16 md:mt-20 flex justify-center">
+          <Link to="/portfolio" className="btn-primary flex items-center gap-2">
+            View All Client Websites &amp; Ships <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+          </Link>
         </div>
       </div>
 

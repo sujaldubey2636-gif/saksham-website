@@ -5,6 +5,8 @@ import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
 import FloatingWhatsApp from './components/FloatingWhatsApp';
 
+import PortfolioPage from './pages/PortfolioPage';
+
 export default function App() {
   return (
     <Router>
@@ -13,6 +15,7 @@ export default function App() {
         <main className="flex-1 pt-16">
           <Routes>
             <Route path="/" element={<HomePage />} />
+            <Route path="/portfolio" element={<PortfolioPage />} />
           </Routes>
         </main>
         <Footer />
