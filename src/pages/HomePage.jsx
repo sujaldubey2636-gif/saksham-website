@@ -9,7 +9,6 @@ import ProcessTimelineSection from '../components/ProcessTimelineSection';
 import TrustMatrixSection from '../components/TrustMatrixSection';
 import WhySakhamSection from '../components/WhySakhamSection';
 import AboutSection from '../components/AboutSection';
-import FaqSection from '../components/FaqSection';
 import ContactSection from '../components/ContactSection';
 
 export default function HomePage() {
@@ -49,7 +48,6 @@ export default function HomePage() {
       <TrustMatrixSection />
       <WhySakhamSection />
       <AboutSection />
-      <FaqSection />
       <ContactSection selectedScope={selectedScope} />
     </div>
   );
