@@ -15,17 +15,20 @@ export default function Navbar() {
 
   const scrollTo = (id) => (e) => {
     e.preventDefault();
+    
+    const performScroll = () => {
+      const element = document.getElementById(id);
+      if (element) {
+        const y = element.getBoundingClientRect().top + window.scrollY - 80; // 80px offset for fixed navbar
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    };
+
     if (location.pathname !== '/') {
       navigate('/');
-      setTimeout(() => {
-        const element = document.getElementById(id);
-        if (element) element.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
-      return;
-    }
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      setTimeout(performScroll, 300);
+    } else {
+      performScroll();
     }
   };
 
