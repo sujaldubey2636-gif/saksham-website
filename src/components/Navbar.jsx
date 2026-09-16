@@ -58,23 +58,23 @@ export default function Navbar() {
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
               }}
-              className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors"
+              className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap"
             >
               Home
             </Link>
-            <a href="#services-section" onClick={scrollTo('services-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors">
+            <a href="#services-section" onClick={scrollTo('services-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap">
               Services
             </a>
-            <a href="#process-section" onClick={scrollTo('process-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors">
+            <a href="#process-section" onClick={scrollTo('process-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap">
               Process
             </a>
-            <Link to="/portfolio" className="text-[#4cd7f6] hover:text-[#F0F1F3] transition-colors">
+            <Link to="/portfolio" className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap">
               Client Ships
             </Link>
-            <a href="#about-section" onClick={scrollTo('about-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors">
+            <a href="#about-section" onClick={scrollTo('about-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap">
               About
             </a>
-            <a href="#faq-section" onClick={scrollTo('faq-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors">
+            <a href="#faq-section" onClick={scrollTo('faq-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap">
               FAQ
             </a>
           </nav>
