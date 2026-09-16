@@ -24,7 +24,7 @@ export default function ServicesSection() {
   ];
 
   return (
-    <section id="services-section" className="py-24 lg:py-32 px-6 sm:px-10 lg:px-16 bg-[#121316] border-b border-[#2A2D35]">
+    <section id="services-section" className="scroll-mt-24 py-24 lg:py-32 px-6 sm:px-10 lg:px-16 bg-[#121316] border-b border-[#2A2D35]">
       <div className="max-w-7xl mx-auto">
         <header className="mb-16 animate-on-scroll">
           <span className="text-xs font-mono text-[#E58E26] uppercase tracking-wider mb-4 block">

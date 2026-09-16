@@ -25,7 +25,7 @@ const ProcessTimelineSection = () => {
   ];
 
   return (
-    <section id="process-section" className="w-full py-24 lg:py-32 px-6 sm:px-10 lg:px-16 max-w-7xl mx-auto bg-[#121316] border-b border-[#2A2D35]">
+    <section id="process-section" className="scroll-mt-24 w-full py-24 lg:py-32 px-6 sm:px-10 lg:px-16 max-w-7xl mx-auto bg-[#121316] border-b border-[#2A2D35]">
       <div className="flex flex-col gap-4 text-left max-w-2xl mb-16">
         <span className="text-xs font-mono text-[#E58E26] uppercase tracking-widest font-semibold">// HOW WE OPERATE</span>
         <h2 className="text-4xl md:text-5xl font-['Bricolage_Grotesque',sans-serif] font-bold tracking-tight text-[#F0F1F3]">

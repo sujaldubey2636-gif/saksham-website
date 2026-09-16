@@ -19,14 +19,13 @@ export default function Navbar() {
     const performScroll = () => {
       const element = document.getElementById(id);
       if (element) {
-        const y = element.getBoundingClientRect().top + window.scrollY - 80; // 80px offset for fixed navbar
-        window.scrollTo({ top: y, behavior: 'smooth' });
+        element.scrollIntoView({ behavior: 'smooth' });
       }
     };
 
     if (location.pathname !== '/') {
       navigate('/');
-      setTimeout(performScroll, 300);
+      setTimeout(performScroll, 500); // Wait for HomePage to render
     } else {
       performScroll();
     }

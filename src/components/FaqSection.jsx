@@ -35,7 +35,7 @@ const FaqSection = () => {
   };
 
   return (
-    <section id="faq-section" className="py-24 lg:py-32 px-6 sm:px-10 lg:px-16 bg-[#121316] border-b border-[#2A2D35]">
+    <section id="faq-section" className="scroll-mt-24 py-24 lg:py-32 px-6 sm:px-10 lg:px-16 bg-[#121316] border-b border-[#2A2D35]">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col items-center justify-center text-center">
           <span className="text-xs font-mono text-[#E58E26] font-semibold tracking-wider uppercase">// COMMON QUESTIONS</span>
