@@ -80,32 +80,6 @@ export default function ServicesSection() {
                     {s.desc}
                   </p>
                 </div>
-
-                {/* Tags */}
-                <div className="mt-8 pt-4 border-t border-[#2A2D35] group-hover:border-[#3A3D45] transition-colors flex flex-wrap gap-2">
-                  {s.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="text-xs font-mono px-2.5 py-1 rounded-md border transition-all duration-300 group-hover:border-opacity-40"
-                      style={{
-                        color: '#8A919E',
-                        borderColor: '#2A2D35',
-                      }}
-                      onMouseEnter={(e) => {
-                        e.target.style.color = s.accent;
-                        e.target.style.borderColor = `${s.accent}60`;
-                        e.target.style.backgroundColor = `${s.accent}10`;
-                      }}
-                      onMouseLeave={(e) => {
-                        e.target.style.color = '#8A919E';
-                        e.target.style.borderColor = '#2A2D35';
-                        e.target.style.backgroundColor = 'transparent';
-                      }}
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
               </article>
             </Card3D>
           ))}

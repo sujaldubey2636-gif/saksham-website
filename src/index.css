@@ -52,11 +52,22 @@
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+  
   html, body {
     background-color: var(--color-surface);
     color: var(--color-on-surface);
     font-family: var(--font-body);
     -webkit-font-smoothing: antialiased;
+  }
+
+  /* Force GPU compositing on sections for smoother scrolling */
+  section {
+    transform: translateZ(0);
+    backface-visibility: hidden;
   }
 }
 
