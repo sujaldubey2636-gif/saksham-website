@@ -24,20 +24,6 @@ const AboutSection = () => {
             <span className="text-sm font-medium text-[#E58E26]">Saksham Sharma</span>
             <span className="text-sm text-[#8A919E]">Founder & Lead Engineer</span>
           </div>
-
-          <div className="mt-6 flex flex-col gap-4">
-            <p className="text-base text-[#8A919E] leading-relaxed">
-              <span className="font-bold text-[#F0F1F3]">Saksham</span> means{' '}
-              <span className="italic text-[#F0F1F3]">capable</span> in Sanskrit. We started this studio
-              because small and mid-sized businesses deserve the exact same enterprise-grade digital tools, lightning-fast
-              sites, and automated operations that huge corporations rely on — without the bloated agency price tag,
-              bureaucracy, or endless check-in calls.
-            </p>
-            <p className="text-base text-[#8A919E] leading-relaxed">
-              We treat client ventures with genuine care, authentic craftsmanship, and a relentless focus on getting things
-              done right the first time.
-            </p>
-          </div>
         </div>
       </div>
     </section>
