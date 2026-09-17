@@ -48,9 +48,9 @@ export default function Navbar() {
   const navLinks = [
     { label: 'Home', action: () => { setMenuOpen(false); if (location.pathname === '/') { window.scrollTo({ top: 0, behavior: 'smooth' }); } else { navigate('/'); } }, isLink: false },
     { label: 'Services', action: () => handleNav('services-section'), isLink: false },
-    { label: 'Feedback', action: () => handleNav('feedback-section'), isLink: false },
-    { label: 'Client Ships', to: '/portfolio', isLink: true },
     { label: 'About', action: () => handleNav('about-section'), isLink: false },
+    { label: 'Client Ships', to: '/portfolio', isLink: true },
+    { label: 'Feedback', action: () => handleNav('feedback-section'), isLink: false },
     { label: 'Contact', action: () => handleNav('contact-section'), isLink: false },
   ];
 
@@ -92,14 +92,14 @@ export default function Navbar() {
               <a onClick={() => handleNav('services-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap cursor-pointer select-none">
                 Services
               </a>
-              <a onClick={() => handleNav('feedback-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap cursor-pointer select-none">
-                Feedback
+              <a onClick={() => handleNav('about-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap cursor-pointer select-none">
+                About
               </a>
               <Link to="/portfolio" className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap">
                 Client Ships
               </Link>
-              <a onClick={() => handleNav('about-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap cursor-pointer select-none">
-                About
+              <a onClick={() => handleNav('feedback-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap cursor-pointer select-none">
+                Feedback
               </a>
             </nav>
           </div>
