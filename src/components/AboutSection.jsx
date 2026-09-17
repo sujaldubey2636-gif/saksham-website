@@ -8,89 +8,76 @@ const AboutSection = () => {
 
   return (
     <section id="about-section" className="scroll-mt-24 py-24 lg:py-32 px-6 sm:px-10 lg:px-16 bg-[#121316] border-b border-[#2A2D35]">
-      <div className="max-w-7xl mx-auto flex flex-col gap-20">
+      <div className="max-w-7xl mx-auto">
 
-        {/* Header */}
-        <div className="flex flex-col gap-4 max-w-3xl animate-on-scroll">
-          <span className="text-xs font-mono text-[#E58E26] font-semibold tracking-wider uppercase">// WHO WE ARE</span>
-          <h2 className="text-4xl md:text-5xl font-['Bricolage_Grotesque',sans-serif] font-bold tracking-tight text-[#F0F1F3]">
-            About Team SAKSHAM
-          </h2>
-          <p className="text-lg text-[#8A919E] leading-relaxed mt-2">
-            We help businesses get online, save time, and grow — using websites, AI automation, and marketing that's built to actually work.
-          </p>
-        </div>
+        {/* Top: Two-Column Hero Text */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 animate-on-scroll">
+          {/* Left: Big Heading */}
+          <div className="flex flex-col gap-4">
+            <span className="text-xs font-mono text-[#E58E26] font-semibold tracking-wider uppercase">// WHO WE ARE</span>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-['Bricolage_Grotesque',sans-serif] font-bold tracking-tight text-[#F0F1F3] leading-[1.1]">
+              We build what your
+              <span className="text-[#E58E26]"> business </span>
+              actually needs.
+            </h2>
+          </div>
 
-        {/* What We Do */}
-        <div className="flex flex-col gap-8 animate-on-scroll">
-          <h3 className="text-2xl md:text-3xl font-['Bricolage_Grotesque',sans-serif] font-bold text-[#F0F1F3]">
-            What we do for you
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Card: Websites */}
-            <div className="bg-[#1A1C21] border border-[#2A2D35] rounded-xl p-8 flex flex-col gap-4 hover:border-[#E58E26]/40 transition-colors">
-              <div className="w-12 h-12 rounded-lg bg-[#E58E26]/10 flex items-center justify-center">
-                <span className="material-symbols-outlined text-2xl text-[#E58E26]">language</span>
-              </div>
-              <h4 className="text-lg font-bold text-[#F0F1F3] font-['Bricolage_Grotesque',sans-serif]">Websites</h4>
-              <p className="text-sm text-[#8A919E] leading-relaxed">
-                We build fast, modern, professional websites that make your business look credible and bring in customers — not just a page that sits there.
-              </p>
-            </div>
-
-            {/* Card: AI Automation */}
-            <div className="bg-[#1A1C21] border border-[#2A2D35] rounded-xl p-8 flex flex-col gap-4 hover:border-[#4cd7f6]/40 transition-colors">
-              <div className="w-12 h-12 rounded-lg bg-[#4cd7f6]/10 flex items-center justify-center">
-                <span className="material-symbols-outlined text-2xl text-[#4cd7f6]">smart_toy</span>
-              </div>
-              <h4 className="text-lg font-bold text-[#F0F1F3] font-['Bricolage_Grotesque',sans-serif]">AI Automation</h4>
-              <p className="text-sm text-[#8A919E] leading-relaxed">
-                We set up smart systems that handle repetitive tasks for you — responding to customer queries, managing leads, or organizing data — so you save time and don't need extra staff.
-              </p>
-            </div>
-
-            {/* Card: Digital Marketing */}
-            <div className="bg-[#1A1C21] border border-[#2A2D35] rounded-xl p-8 flex flex-col gap-4 hover:border-[#d0bcff]/40 transition-colors">
-              <div className="w-12 h-12 rounded-lg bg-[#d0bcff]/10 flex items-center justify-center">
-                <span className="material-symbols-outlined text-2xl text-[#d0bcff]">trending_up</span>
-              </div>
-              <h4 className="text-lg font-bold text-[#F0F1F3] font-['Bricolage_Grotesque',sans-serif]">Digital Marketing</h4>
-              <p className="text-sm text-[#8A919E] leading-relaxed">
-                We help you get found by the right people online, so your business grows instead of staying invisible.
-              </p>
-            </div>
+          {/* Right: Description Paragraphs */}
+          <div className="flex flex-col gap-6 justify-center">
+            <p className="text-lg text-[#8A919E] leading-relaxed">
+              We help businesses get online, save time, and grow — using websites, AI automation, and marketing that's built to actually work.
+            </p>
+            <p className="text-base text-[#8A919E] leading-relaxed">
+              Whether you need a professional website that brings in customers, smart AI systems that handle repetitive tasks, or digital marketing that gets you found by the right people — we deliver all three under one roof.
+            </p>
           </div>
         </div>
 
-        {/* Why Work With Us */}
-        <div className="flex flex-col gap-8 animate-on-scroll">
-          <h3 className="text-2xl md:text-3xl font-['Bricolage_Grotesque',sans-serif] font-bold text-[#F0F1F3]">
-            Why work with us
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { icon: 'payments', label: 'Affordable', desc: 'No big-agency price tags' },
-              { icon: 'bolt', label: 'Fast', desc: "You're not waiting weeks for basic updates" },
-              { icon: 'auto_awesome', label: 'Modern', desc: 'We use the latest AI tools, so what we build saves you effort — not just looks nice' },
-              { icon: 'forum', label: 'Direct', desc: 'You talk straight to the team doing the work, no middlemen' },
-            ].map((item) => (
-              <div key={item.label} className="flex flex-col gap-3 p-6 rounded-xl bg-[#1A1C21]/50 border border-[#2A2D35] hover:border-[#E58E26]/30 transition-colors">
-                <span className="material-symbols-outlined text-2xl text-[#E58E26]">{item.icon}</span>
-                <span className="text-base font-bold text-[#F0F1F3] font-['Bricolage_Grotesque',sans-serif]">{item.label}</span>
-                <span className="text-sm text-[#8A919E] leading-relaxed">{item.desc}</span>
-              </div>
-            ))}
+        {/* Divider */}
+        <div className="w-full h-px bg-[#2A2D35] my-16 lg:my-20"></div>
+
+        {/* Bottom: Why Work With Us - Horizontal Stats-Style Layout */}
+        <div className="animate-on-scroll">
+          <h3 className="text-sm font-mono text-[#8A919E] uppercase tracking-widest mb-10">Why work with us</h3>
+          
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-10 gap-x-8">
+            {/* Stat 1 */}
+            <div className="flex flex-col gap-2 border-l-2 border-[#E58E26] pl-5">
+              <span className="text-2xl md:text-3xl font-['Bricolage_Grotesque',sans-serif] font-bold text-[#F0F1F3]">Affordable</span>
+              <span className="text-sm text-[#8A919E] leading-relaxed">No big-agency price tags. Enterprise quality at startup-friendly costs.</span>
+            </div>
+
+            {/* Stat 2 */}
+            <div className="flex flex-col gap-2 border-l-2 border-[#4cd7f6] pl-5">
+              <span className="text-2xl md:text-3xl font-['Bricolage_Grotesque',sans-serif] font-bold text-[#F0F1F3]">Fast</span>
+              <span className="text-sm text-[#8A919E] leading-relaxed">You're not waiting weeks for basic updates. We ship in days, not months.</span>
+            </div>
+
+            {/* Stat 3 */}
+            <div className="flex flex-col gap-2 border-l-2 border-[#10b981] pl-5">
+              <span className="text-2xl md:text-3xl font-['Bricolage_Grotesque',sans-serif] font-bold text-[#F0F1F3]">Modern</span>
+              <span className="text-sm text-[#8A919E] leading-relaxed">We use the latest AI tools, so what we build saves you effort — not just looks nice.</span>
+            </div>
+
+            {/* Stat 4 */}
+            <div className="flex flex-col gap-2 border-l-2 border-[#d0bcff] pl-5">
+              <span className="text-2xl md:text-3xl font-['Bricolage_Grotesque',sans-serif] font-bold text-[#F0F1F3]">Direct</span>
+              <span className="text-sm text-[#8A919E] leading-relaxed">You talk straight to the team doing the work. No middlemen, no runaround.</span>
+            </div>
           </div>
         </div>
 
         {/* CTA */}
-        <div className="flex flex-col items-center text-center gap-6 pt-4 animate-on-scroll">
-          <h3 className="text-2xl md:text-3xl font-['Bricolage_Grotesque',sans-serif] font-bold text-[#F0F1F3]">
-            Ready to grow your business?
-          </h3>
+        <div className="mt-20 flex flex-col sm:flex-row items-center justify-between gap-6 p-8 rounded-xl bg-[#1A1C21] border border-[#2A2D35] animate-on-scroll">
+          <div>
+            <h3 className="text-xl md:text-2xl font-['Bricolage_Grotesque',sans-serif] font-bold text-[#F0F1F3]">
+              Ready to grow your business?
+            </h3>
+            <p className="text-sm text-[#8A919E] mt-1">Let's talk about what we can build together.</p>
+          </div>
           <button
             onClick={scrollToContact}
-            className="btn-primary text-base px-8 py-4 cursor-pointer"
+            className="btn-primary text-base px-8 py-4 cursor-pointer shrink-0"
           >
             Get in touch →
           </button>
