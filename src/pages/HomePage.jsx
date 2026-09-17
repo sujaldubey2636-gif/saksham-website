@@ -3,9 +3,8 @@ import HeroSection from '../components/HeroSection';
 import FounderVideoSection from '../components/FounderVideoSection';
 import ServicesSection from '../components/ServicesSection';
 import BeforeAfterSection from '../components/BeforeAfterSection';
-import TestimonialsSection from '../components/TestimonialsSection';
+import LiveFeedbackSection from '../components/LiveFeedbackSection';
 import ProjectEstimator from '../components/ProjectEstimator';
-import ProcessTimelineSection from '../components/ProcessTimelineSection';
 import TrustMatrixSection from '../components/TrustMatrixSection';
 import WhySakhamSection from '../components/WhySakhamSection';
 import AboutSection from '../components/AboutSection';
@@ -42,9 +41,8 @@ export default function HomePage() {
       <FounderVideoSection />
       <ServicesSection />
       <BeforeAfterSection />
-      <TestimonialsSection />
+      <LiveFeedbackSection />
       <ProjectEstimator onSelectScope={setSelectedScope} />
-      <ProcessTimelineSection />
       <TrustMatrixSection />
       <WhySakhamSection />
       <AboutSection />
