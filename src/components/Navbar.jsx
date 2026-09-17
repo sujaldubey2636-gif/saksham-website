@@ -74,8 +74,8 @@ export default function Navbar() {
             <a onClick={() => handleNav('services-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap cursor-pointer select-none">
               Services
             </a>
-            <a onClick={() => handleNav('process-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap cursor-pointer select-none">
-              Process
+            <a onClick={() => handleNav('feedback-section')} className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap cursor-pointer select-none">
+              Feedback
             </a>
             <Link to="/portfolio" className="text-[#8A919E] hover:text-[#F0F1F3] transition-colors whitespace-nowrap">
               Client Ships
