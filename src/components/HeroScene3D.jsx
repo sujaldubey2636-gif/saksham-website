@@ -667,7 +667,7 @@ export default function HeroScene3D() {
       (entries) => {
         isVisible = entries[0].isIntersecting;
       },
-      { rootMargin: '0px 0px 500px 0px' } // Keep rendering slightly before it enters screen
+      { rootMargin: '500px 0px 500px 0px' } // Keep rendering well before/after it enters screen
     );
     if (container) {
       observer.observe(container);
@@ -676,13 +676,15 @@ export default function HeroScene3D() {
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
 
+      // 1. ALWAYS get delta first so time doesn't accumulate while tab is hidden or off-screen
+      const rawDelta = clock.getDelta();
+      
       // Only suspend when tab is hidden, never pause unexpectedly
       if (document.hidden) return;
       
       // Skip expensive math and rendering if off-screen
       if (!isVisible) return;
 
-      const rawDelta = clock.getDelta();
       const delta = Math.min(rawDelta, 0.04);
       
       // Cinematic 1: Warp Speed Intro
@@ -1187,10 +1189,20 @@ export default function HeroScene3D() {
     // =========================================================
     // SECTION E: RESPONSIVE RESIZE
     // =========================================================
+    let lastWidth = window.innerWidth;
+    
     const handleResize = () => {
       if (!container) return;
       const width = container.clientWidth;
       const height = container.clientHeight;
+      
+      // Prevent massive lag on mobile when URL bar hides/shows on scroll
+      // We only run the expensive WebGL resize if the actual width changed (or on first load)
+      if (width === lastWidth && renderer.domElement.width > 0) {
+          // It's just a height change (URL bar), skip the expensive rebuild
+          return;
+      }
+      lastWidth = width;
 
       camera.aspect = width / height;
 
