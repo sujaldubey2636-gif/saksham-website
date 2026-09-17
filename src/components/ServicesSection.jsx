@@ -7,19 +7,22 @@ export default function ServicesSection() {
       icon: 'code_blocks',
       title: 'Web Development',
       desc: 'We design and build fast, responsive websites that convert visitors into customers. React, Next.js, and modern CMS platforms.',
-      tags: 'React · Next.js · CMS',
+      tags: ['React', 'Next.js', 'CMS'],
+      accent: '#E58E26',
     },
     {
       icon: 'campaign',
       title: 'Digital Marketing',
       desc: 'Data-driven acquisition strategies, technical SEO, and retention flows that compound your revenue over time.',
-      tags: 'SEO · Paid Ads · Email',
+      tags: ['SEO', 'Paid Ads', 'Email'],
+      accent: '#4cd7f6',
     },
     {
       icon: 'hub',
       title: 'Automation',
       desc: 'We connect your tools and eliminate manual work with custom API integrations, CRM sync, and workflow automation.',
-      tags: 'Make · Zapier · APIs',
+      tags: ['Make', 'Zapier', 'APIs'],
+      accent: '#10b981',
     },
   ];
 
@@ -38,23 +41,70 @@ export default function ServicesSection() {
           </p>
         </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-on-scroll delay-100">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {services.map((s, idx) => (
-            <Card3D key={idx} maxTilt={8} glare={true} scale={1.02} className="h-full">
-              <article className="h-full bg-[#1A1C21] border border-[#2A2D35] rounded-xl p-8 flex flex-col justify-between hover:border-[#E58E26]/40 transition-colors">
+            <Card3D
+              key={idx}
+              maxTilt={8}
+              glare={true}
+              scale={1.03}
+              borderGlow={true}
+              glowColor={`${s.accent}99`}
+              className={`h-full animate-on-scroll`}
+              style={{ transitionDelay: `${idx * 120}ms` }}
+            >
+              <article className="group h-full bg-[#1A1C21] border border-[#2A2D35] rounded-xl p-8 flex flex-col justify-between hover:border-transparent transition-all duration-500">
                 <div>
-                  <div className="w-12 h-12 rounded-lg bg-[#24272e] text-[#E58E26] flex items-center justify-center mb-6">
-                    <span className="material-symbols-outlined">{s.icon}</span>
+                  {/* Icon with glow */}
+                  <div
+                    className="w-12 h-12 rounded-lg flex items-center justify-center mb-6 transition-all duration-500 group-hover:shadow-lg"
+                    style={{
+                      backgroundColor: `${s.accent}15`,
+                      color: s.accent,
+                    }}
+                  >
+                    <span
+                      className="material-symbols-outlined transition-all duration-500 group-hover:scale-110"
+                      style={{ filter: 'drop-shadow(0 0 0px transparent)' }}
+                      onMouseEnter={(e) => e.target.style.filter = `drop-shadow(0 0 8px ${s.accent})`}
+                      onMouseLeave={(e) => e.target.style.filter = 'drop-shadow(0 0 0px transparent)'}
+                    >
+                      {s.icon}
+                    </span>
                   </div>
-                  <h3 className="text-xl font-['Bricolage_Grotesque',sans-serif] font-semibold text-[#F0F1F3]">
+
+                  <h3 className="text-xl font-['Bricolage_Grotesque',sans-serif] font-semibold text-[#F0F1F3] group-hover:text-white transition-colors">
                     {s.title}
                   </h3>
-                  <p className="text-base text-[#8A919E] mt-3 leading-relaxed">
+                  <p className="text-base text-[#8A919E] mt-3 leading-relaxed group-hover:text-[#a0a7b3] transition-colors">
                     {s.desc}
                   </p>
                 </div>
-                <div className="mt-8 pt-4 border-t border-[#2A2D35] text-xs font-mono text-[#8A919E]">
-                  {s.tags}
+
+                {/* Tags */}
+                <div className="mt-8 pt-4 border-t border-[#2A2D35] group-hover:border-[#3A3D45] transition-colors flex flex-wrap gap-2">
+                  {s.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="text-xs font-mono px-2.5 py-1 rounded-md border transition-all duration-300 group-hover:border-opacity-40"
+                      style={{
+                        color: '#8A919E',
+                        borderColor: '#2A2D35',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.color = s.accent;
+                        e.target.style.borderColor = `${s.accent}60`;
+                        e.target.style.backgroundColor = `${s.accent}10`;
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.color = '#8A919E';
+                        e.target.style.borderColor = '#2A2D35';
+                        e.target.style.backgroundColor = 'transparent';
+                      }}
+                    >
+                      {tag}
+                    </span>
+                  ))}
                 </div>
               </article>
             </Card3D>

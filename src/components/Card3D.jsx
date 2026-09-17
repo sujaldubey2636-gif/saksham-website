@@ -6,10 +6,13 @@ export default function Card3D({
   maxTilt = 10,
   glare = true,
   scale = 1.02,
+  borderGlow = true,
+  glowColor = 'rgba(229,142,38,0.6)',
   style = {},
 }) {
   const cardRef = useRef(null);
   const glareRef = useRef(null);
+  const borderRef = useRef(null);
   const rafId = useRef(null);
 
   useEffect(() => {
@@ -38,6 +41,12 @@ export default function Card3D({
       if (glareRef.current) {
         glareRef.current.style.opacity = glareOpacity;
         glareRef.current.style.background = `radial-gradient(circle at ${glareX}% ${glareY}%, rgba(255,255,255,0.35) 0%, rgba(229,142,38,0.12) 35%, transparent 70%)`;
+      }
+
+      // Border glow follows the mouse
+      if (borderRef.current) {
+        borderRef.current.style.opacity = isHovered ? '1' : '0';
+        borderRef.current.style.background = `radial-gradient(600px circle at ${glareX}% ${glareY}%, ${glowColor}, transparent 40%)`;
       }
 
       if (isHovered || Math.abs(currentRotateX) > 0.05 || Math.abs(currentRotateY) > 0.05) {
@@ -84,7 +93,7 @@ export default function Card3D({
       card.removeEventListener('mouseleave', handleMouseLeave);
       cancelAnimationFrame(rafId.current);
     };
-  }, [maxTilt, scale]);
+  }, [maxTilt, scale, glowColor]);
 
   return (
     <div
@@ -98,6 +107,16 @@ export default function Card3D({
     >
       {children}
 
+      {/* Mouse-following border glow */}
+      {borderGlow && (
+        <div
+          ref={borderRef}
+          className="pointer-events-none absolute -inset-px rounded-[inherit] opacity-0 transition-opacity duration-500 z-20"
+          style={{ mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)', maskComposite: 'exclude', WebkitMaskComposite: 'xor', padding: '1px' }}
+        />
+      )}
+
+      {/* Glare overlay */}
       {glare && (
         <div
           ref={glareRef}
