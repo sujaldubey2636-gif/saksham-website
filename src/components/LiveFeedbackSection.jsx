@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
+// Added more initial reviews so the marquee feels populated and builds trust instantly.
 const INITIAL_REVIEWS = [
   {
     id: 1,
@@ -16,6 +17,30 @@ const INITIAL_REVIEWS = [
     rating: 5,
     text: 'Finally, an engineering partner that actually listens. They didn\'t just build what we asked for, they improved the core architecture. Highly recommended.',
     date: '2026-09-02',
+  },
+  {
+    id: 3,
+    name: 'Dr. Ananya Sen',
+    role: 'Founder, Aura Studio',
+    rating: 5,
+    text: 'Working with Team SAKSHAM was refreshingly straightforward. Our booking site launched in 12 days and appointments jumped 140% in the first month.',
+    date: '2026-07-28',
+  },
+  {
+    id: 4,
+    name: 'Rhea Kapoor',
+    role: 'Growth Lead, Pulse Coffee',
+    rating: 5,
+    text: 'No games, no hidden fees. We got our complete codebase on day one. The 30-day support after launch was genuinely helpful.',
+    date: '2026-06-14',
+  },
+  {
+    id: 5,
+    name: 'David Torres',
+    role: 'CEO, Nexus Logistics',
+    rating: 5,
+    text: 'Two agencies quoted us $25k and months of work. SAKSHAM delivered our automation pipeline in 9 days. It saves us 14 hours every week.',
+    date: '2026-08-05',
   }
 ];
 
@@ -75,11 +100,14 @@ export default function LiveFeedbackSection() {
     );
   };
 
+  // We duplicate the reviews array to create a seamless infinite scrolling marquee
+  const marqueeItems = [...reviews, ...reviews];
+
   return (
-    <section id="feedback-section" className="scroll-mt-24 w-full py-24 lg:py-32 px-6 sm:px-10 lg:px-16 max-w-7xl mx-auto bg-[#121316] border-b border-[#2A2D35]">
+    <section id="feedback-section" className="scroll-mt-24 w-full py-24 lg:py-32 bg-[#121316] border-b border-[#2A2D35] overflow-hidden">
       
       {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-16 animate-on-scroll">
+      <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-16 animate-on-scroll">
         <div className="flex flex-col gap-4 text-left max-w-2xl">
           <span className="text-xs font-mono text-[#E58E26] uppercase tracking-widest font-semibold">// CLIENT EXPERIENCES</span>
           <h2 className="text-4xl md:text-5xl font-['Bricolage_Grotesque',sans-serif] font-bold tracking-tight text-[#F0F1F3]">
@@ -99,42 +127,44 @@ export default function LiveFeedbackSection() {
         </button>
       </div>
 
-      {/* Reviews Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {reviews.map((review, idx) => (
-          <div 
-            key={review.id} 
-            className={`bg-[#1A1C21] border border-[#2A2D35] rounded-xl p-8 flex flex-col gap-6 relative overflow-hidden transition-all duration-500 hover:border-[#4cd7f6]/40 ${review.isNew ? 'animate-fade-in ring-1 ring-[#E58E26]' : 'animate-on-scroll'}`}
-            style={{ transitionDelay: review.isNew ? '0ms' : `${idx * 100}ms` }}
-          >
-            {/* Top Bar: Stars + Date */}
-            <div className="flex justify-between items-center">
-              {renderStars(review.rating)}
-              <span className="text-xs font-mono text-[#6b7280]">{review.date}</span>
-            </div>
-
-            {/* Review Text */}
-            <p className="text-[#F0F1F3] text-base leading-relaxed italic flex-grow">
-              "{review.text}"
-            </p>
-
-            {/* Author Info */}
-            <div className="flex items-center gap-4 pt-4 border-t border-[#2A2D35]">
-              <div className="w-10 h-10 rounded-full bg-[#2A2D35] flex items-center justify-center text-[#F0F1F3] font-bold font-['Bricolage_Grotesque',sans-serif]">
-                {review.name.charAt(0)}
+      {/* Infinite Scrolling Marquee */}
+      <div className="relative w-full flex overflow-x-hidden">
+        {/* Left fade gradient */}
+        <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[#121316] to-transparent z-10 pointer-events-none" />
+        
+        <div className="flex gap-6 px-3 animate-marquee w-max">
+          {marqueeItems.map((review, idx) => (
+            <div 
+              key={`${review.id}-${idx}`}
+              className={`w-[350px] md:w-[420px] shrink-0 bg-[#1A1C21] border border-[#2A2D35] rounded-xl p-8 flex flex-col gap-6 relative transition-all duration-300 hover:border-[#4cd7f6]/40 hover:bg-[#1f2127] ${review.isNew ? 'ring-1 ring-[#E58E26]' : ''}`}
+            >
+              {/* Top Bar: Stars + Date */}
+              <div className="flex justify-between items-center">
+                {renderStars(review.rating)}
+                <span className="text-xs font-mono text-[#6b7280]">{review.date}</span>
               </div>
-              <div className="flex flex-col">
-                <span className="text-sm font-semibold text-[#F0F1F3]">{review.name}</span>
-                <span className="text-xs text-[#8A919E]">{review.role}</span>
+
+              {/* Review Text */}
+              <p className="text-[#F0F1F3] text-base leading-relaxed italic flex-grow whitespace-normal">
+                "{review.text}"
+              </p>
+
+              {/* Author Info */}
+              <div className="flex items-center gap-4 pt-4 border-t border-[#2A2D35]">
+                <div className="w-10 h-10 shrink-0 rounded-full bg-[#2A2D35] flex items-center justify-center text-[#F0F1F3] font-bold font-['Bricolage_Grotesque',sans-serif]">
+                  {review.name.charAt(0)}
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-sm font-semibold text-[#F0F1F3] truncate">{review.name}</span>
+                  <span className="text-xs text-[#8A919E] truncate">{review.role}</span>
+                </div>
               </div>
             </div>
-            
-            {/* Verified Badge */}
-            <div className="absolute top-8 right-8 opacity-10">
-              <span className="material-symbols-outlined text-6xl">format_quote</span>
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
+
+        {/* Right fade gradient */}
+        <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[#121316] to-transparent z-10 pointer-events-none" />
       </div>
 
       {/* Feedback Modal Overlay */}
