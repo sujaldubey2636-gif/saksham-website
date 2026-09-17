@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../supabaseClient';
 
-// Added more initial reviews so the marquee feels populated and builds trust instantly.
 const INITIAL_REVIEWS = [
   {
     id: 1,
@@ -49,6 +48,13 @@ export default function LiveFeedbackSection() {
   const [reviews, setReviews] = useState(INITIAL_REVIEWS);
   const [isModalOpen, setIsModalOpen] = useState(false);
   
+  // Drag and Auto-Scroll State
+  const scrollRef = useRef(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeftState, setScrollLeftState] = useState(0);
+
   // Form State
   const [formData, setFormData] = useState({
     name: '',
@@ -67,12 +73,57 @@ export default function LiveFeedbackSection() {
         .order('created_at', { ascending: false });
         
       if (data && data.length > 0) {
-        // Merge real database reviews with our initial seed reviews
         setReviews([...data, ...INITIAL_REVIEWS]);
       }
     };
     fetchReviews();
   }, []);
+
+  // Auto-scroll loop
+  useEffect(() => {
+    let animationId;
+    const container = scrollRef.current;
+    if (!container) return;
+
+    const scroll = () => {
+      if (!isHovered && !isDragging) {
+        container.scrollLeft += 1;
+        
+        // Loop back seamlessly when reaching halfway
+        if (container.scrollLeft >= container.scrollWidth / 2) {
+          container.scrollLeft = 0;
+        }
+      }
+      animationId = requestAnimationFrame(scroll);
+    };
+
+    animationId = requestAnimationFrame(scroll);
+    return () => cancelAnimationFrame(animationId);
+  }, [isHovered, isDragging]);
+
+  // Mouse Drag Handlers
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setStartX(e.pageX - scrollRef.current.offsetLeft);
+    setScrollLeftState(scrollRef.current.scrollLeft);
+  };
+
+  const handleMouseLeave = () => {
+    setIsDragging(false);
+    setIsHovered(false);
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const x = e.pageX - scrollRef.current.offsetLeft;
+    const walk = (x - startX) * 2;
+    scrollRef.current.scrollLeft = scrollLeftState - walk;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -86,15 +137,12 @@ export default function LiveFeedbackSection() {
       date: new Date().toISOString().split('T')[0],
     };
 
-    // 1. Optimistic UI update (shows instantly)
     const tempReview = { ...newReview, id: Date.now(), isNew: true };
     setReviews([tempReview, ...reviews]);
     
-    // Reset and close
     setFormData({ name: '', role: '', rating: 5, text: '' });
     setIsModalOpen(false);
 
-    // 2. Push to Supabase database
     const { error } = await supabase
       .from('reviews')
       .insert([newReview]);
@@ -116,13 +164,11 @@ export default function LiveFeedbackSection() {
     );
   };
 
-  // We duplicate the reviews array to create a seamless infinite scrolling marquee
   const marqueeItems = [...reviews, ...reviews];
 
   return (
     <section id="feedback-section" className="scroll-mt-24 w-full py-24 lg:py-32 bg-[#121316] border-b border-[#2A2D35] overflow-hidden">
       
-      {/* Header */}
       <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-16 animate-on-scroll">
         <div className="flex flex-col gap-4 text-left max-w-2xl">
           <span className="text-xs font-mono text-[#E58E26] uppercase tracking-widest font-semibold">// CLIENT EXPERIENCES</span>
@@ -130,7 +176,7 @@ export default function LiveFeedbackSection() {
             Don't just take our word for it.
           </h2>
           <p className="text-lg text-[#8A919E] max-w-xl mt-2">
-            Real feedback from partners who trusted us to build their core systems.
+            Real feedback from partners who trusted us to build their core systems. You can drag or swipe to explore.
           </p>
         </div>
         
@@ -143,34 +189,41 @@ export default function LiveFeedbackSection() {
         </button>
       </div>
 
-      {/* Infinite Scrolling Marquee */}
-      <div className="relative w-full flex overflow-x-hidden">
+      {/* Interactive Auto-Scrolling Marquee */}
+      <div className="relative w-full overflow-hidden">
         {/* Left fade gradient */}
         <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[#121316] to-transparent z-10 pointer-events-none" />
         
-        <div className="flex gap-6 px-3 animate-marquee w-max">
+        <div 
+          ref={scrollRef}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={handleMouseLeave}
+          onMouseDown={handleMouseDown}
+          onMouseUp={handleMouseUp}
+          onMouseMove={handleMouseMove}
+          onTouchStart={() => setIsHovered(true)}
+          onTouchEnd={() => setIsHovered(false)}
+          className={`flex gap-6 px-3 overflow-x-auto scrollbar-hide select-none w-full ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+        >
           {marqueeItems.map((review, idx) => (
             <div 
               key={`${review.id}-${idx}`}
               className={`w-[350px] md:w-[420px] shrink-0 bg-[#1A1C21] border border-[#2A2D35] rounded-xl p-8 flex flex-col gap-6 relative transition-all duration-300 hover:border-[#4cd7f6]/40 hover:bg-[#1f2127] ${review.isNew ? 'ring-1 ring-[#E58E26]' : ''}`}
             >
-              {/* Top Bar: Stars + Date */}
               <div className="flex justify-between items-center">
                 {renderStars(review.rating)}
                 <span className="text-xs font-mono text-[#6b7280]">{review.date}</span>
               </div>
 
-              {/* Review Text */}
-              <p className="text-[#F0F1F3] text-base leading-relaxed italic flex-grow whitespace-normal">
+              <p className="text-[#F0F1F3] text-base leading-relaxed italic flex-grow whitespace-normal pointer-events-none">
                 "{review.text}"
               </p>
 
-              {/* Author Info */}
               <div className="flex items-center gap-4 pt-4 border-t border-[#2A2D35]">
                 <div className="w-10 h-10 shrink-0 rounded-full bg-[#2A2D35] flex items-center justify-center text-[#F0F1F3] font-bold font-['Bricolage_Grotesque',sans-serif]">
                   {review.name.charAt(0)}
                 </div>
-                <div className="flex flex-col min-w-0">
+                <div className="flex flex-col min-w-0 pointer-events-none">
                   <span className="text-sm font-semibold text-[#F0F1F3] truncate">{review.name}</span>
                   <span className="text-xs text-[#8A919E] truncate">{review.role}</span>
                 </div>
@@ -183,7 +236,6 @@ export default function LiveFeedbackSection() {
         <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[#121316] to-transparent z-10 pointer-events-none" />
       </div>
 
-      {/* Feedback Modal Overlay */}
       {isModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
           <div 
@@ -206,7 +258,6 @@ export default function LiveFeedbackSection() {
               </div>
 
               <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-                {/* Star Rating Input */}
                 <div className="flex flex-col gap-2">
                   <label className="text-sm font-mono text-[#8A919E]">Rating</label>
                   <div className="flex gap-2">
