@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { supabase } from '../supabaseClient';
 
 // Added more initial reviews so the marquee feels populated and builds trust instantly.
 const INITIAL_REVIEWS = [
@@ -57,35 +58,50 @@ export default function LiveFeedbackSection() {
   });
   const [hoveredStar, setHoveredStar] = useState(0);
 
-  // Load reviews from local storage on mount
+  // Load reviews from Supabase on mount
   useEffect(() => {
-    const saved = localStorage.getItem('saksham_client_reviews');
-    if (saved) {
-      setReviews(JSON.parse(saved));
-    }
+    const fetchReviews = async () => {
+      const { data, error } = await supabase
+        .from('reviews')
+        .select('*')
+        .order('created_at', { ascending: false });
+        
+      if (data && data.length > 0) {
+        // Merge real database reviews with our initial seed reviews
+        setReviews([...data, ...INITIAL_REVIEWS]);
+      }
+    };
+    fetchReviews();
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name || !formData.text) return;
 
     const newReview = {
-      id: Date.now(),
       name: formData.name,
       role: formData.role || 'Verified Client',
       rating: formData.rating,
       text: formData.text,
       date: new Date().toISOString().split('T')[0],
-      isNew: true
     };
 
-    const updatedReviews = [newReview, ...reviews];
-    setReviews(updatedReviews);
-    localStorage.setItem('saksham_client_reviews', JSON.stringify(updatedReviews));
+    // 1. Optimistic UI update (shows instantly)
+    const tempReview = { ...newReview, id: Date.now(), isNew: true };
+    setReviews([tempReview, ...reviews]);
     
     // Reset and close
     setFormData({ name: '', role: '', rating: 5, text: '' });
     setIsModalOpen(false);
+
+    // 2. Push to Supabase database
+    const { error } = await supabase
+      .from('reviews')
+      .insert([newReview]);
+      
+    if (error) {
+      console.error("Error inserting review into Supabase:", error);
+    }
   };
 
   const renderStars = (rating) => {
