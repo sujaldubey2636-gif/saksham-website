@@ -4,7 +4,6 @@ import * as THREE from 'three';
 
 export default function HeroScene3D() {
   const containerRef = useRef(null);
-  console.log("Cache Bust v2 - 3D Core Active");
 
   useEffect(() => {
     const container = containerRef.current;
@@ -654,13 +653,34 @@ export default function HeroScene3D() {
     let warpSpeedMultiplier = 15.0; // Warp speed intro
     let clock = new THREE.Clock();
     const tempNodePos = new THREE.Vector3(); // For calculating spherical orbits
+    const heatColorCyan = new THREE.Color(0x4cd7f6);
+    const heatColorAmber = new THREE.Color(0xe58e26);
+    const tempMeteorPos = new THREE.Vector3();
+    const tempMeteorTail = new THREE.Vector3();
+    const tempCometPos = new THREE.Vector3();
+    const tempCometTail = new THREE.Vector3();
     const baseCameraPos = new THREE.Vector3(0, 14, 42);
+
+    let isVisible = true;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        isVisible = entries[0].isIntersecting;
+      },
+      { rootMargin: '0px 0px 500px 0px' } // Keep rendering slightly before it enters screen
+    );
+    if (container) {
+      observer.observe(container);
+    }
 
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
 
       // Only suspend when tab is hidden, never pause unexpectedly
       if (document.hidden) return;
+      
+      // Skip expensive math and rendering if off-screen
+      if (!isVisible) return;
 
       const rawDelta = clock.getDelta();
       const delta = Math.min(rawDelta, 0.04);
@@ -808,11 +828,9 @@ export default function HeroScene3D() {
       // 1. Friction Heatmap (Spin to Heat)
       const spinSpeed = Math.abs(rotationVelocity.x) + Math.abs(rotationVelocity.y);
       const heatRatio = Math.max(0, Math.min((spinSpeed - 0.005) * 15, 1.0));
-      const colorCyan = new THREE.Color(0x4cd7f6);
-      const colorAmber = new THREE.Color(0xe58e26);
 
       if (!isHyperdrive) {
-        outerCoreMesh.material.color.lerpColors(colorCyan, colorAmber, heatRatio);
+        outerCoreMesh.material.color.lerpColors(heatColorCyan, heatColorAmber, heatRatio);
         outerCoreMesh.material.opacity = 0.45 + (heatRatio * 0.3); // Glows brighter when hot
         quantumMat.color.setHSL(0.55 + Math.sin(elapsedTime * 0.3) * 0.1 - (heatRatio * 0.4), 0.8, 0.5);
       } else {
@@ -1109,7 +1127,7 @@ export default function HeroScene3D() {
               
               // Streak downwards and across
               const endX = startX > 0 ? -80 : 80;
-              meteorEnd.copy(meteorStart).add(new THREE.Vector3(endX, -80 - Math.random() * 40, 20));
+              meteorEnd.copy(meteorStart).addScaledVector(new THREE.Vector3(endX, -80 - Math.random() * 40, 20), 1);
           }
       } else {
           meteorProgress += activeDelta * 1.8; // Very fast streak
@@ -1117,13 +1135,13 @@ export default function HeroScene3D() {
               meteorActive = false;
               meteorMat.opacity = 0;
           } else {
-              const currentPos = new THREE.Vector3().lerpVectors(meteorStart, meteorEnd, meteorProgress);
+              tempMeteorPos.lerpVectors(meteorStart, meteorEnd, meteorProgress);
               const tailLength = 0.25; // 25% of the streak is visible tail
-              const tailPos = new THREE.Vector3().lerpVectors(meteorStart, meteorEnd, Math.max(0, meteorProgress - tailLength));
+              tempMeteorTail.lerpVectors(meteorStart, meteorEnd, Math.max(0, meteorProgress - tailLength));
               
               const posArray = meteorGeo.attributes.position.array;
-              posArray[0] = currentPos.x; posArray[1] = currentPos.y; posArray[2] = currentPos.z;
-              posArray[3] = tailPos.x;    posArray[4] = tailPos.y;    posArray[5] = tailPos.z;
+              posArray[0] = tempMeteorPos.x; posArray[1] = tempMeteorPos.y; posArray[2] = tempMeteorPos.z;
+              posArray[3] = tempMeteorTail.x;    posArray[4] = tempMeteorTail.y;    posArray[5] = tempMeteorTail.z;
               meteorGeo.attributes.position.needsUpdate = true;
               
               // Fade in and out smoothly
@@ -1138,12 +1156,12 @@ export default function HeroScene3D() {
               cometActive = false;
               cometMat.opacity = 0;
           } else {
-              const currentPos = new THREE.Vector3().lerpVectors(cometStart, cometEnd, cometProgress);
-              const tailPos = new THREE.Vector3().lerpVectors(cometStart, cometEnd, Math.max(0, cometProgress - 0.15));
+              tempCometPos.lerpVectors(cometStart, cometEnd, cometProgress);
+              tempCometTail.lerpVectors(cometStart, cometEnd, Math.max(0, cometProgress - 0.15));
               
               const posArray = cometGeo.attributes.position.array;
-              posArray[0] = currentPos.x; posArray[1] = currentPos.y; posArray[2] = currentPos.z;
-              posArray[3] = tailPos.x;    posArray[4] = tailPos.y;    posArray[5] = tailPos.z;
+              posArray[0] = tempCometPos.x; posArray[1] = tempCometPos.y; posArray[2] = tempCometPos.z;
+              posArray[3] = tempCometTail.x;    posArray[4] = tempCometTail.y;    posArray[5] = tempCometTail.z;
               cometGeo.attributes.position.needsUpdate = true;
               
               cometMat.opacity = 1.0 - (cometProgress * cometProgress); // smooth fade at end
@@ -1226,6 +1244,7 @@ export default function HeroScene3D() {
       window.removeEventListener('touchend', onPointerUp);
       window.removeEventListener('resize', handleResize);
       document.removeEventListener('visibilitychange', onVisibilityChange);
+      observer.disconnect();
 
       // Cleanup
       scene.clear();
