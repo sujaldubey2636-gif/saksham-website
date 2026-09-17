@@ -8,23 +8,23 @@ export default function FloatingWhatsApp() {
   return (
     <aside
       aria-label="Direct WhatsApp Contact"
-      className="fixed bottom-5 right-5 z-40 flex items-center"
+      className="fixed bottom-6 right-6 z-40 flex items-center"
     >
       <a
         href={whatsappUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="group flex items-center gap-3 px-4 py-2.5 rounded-full bg-[#1A1C21]/95 hover:bg-[#24272e] border border-[#2A2D35] hover:border-emerald-500/60 shadow-2xl backdrop-blur-md transition-all duration-300 hover:scale-105 active:scale-95"
+        className="group flex items-center rounded-full bg-[#1A1C21]/95 hover:bg-[#24272e] border border-[#2A2D35] hover:border-emerald-500/60 shadow-2xl backdrop-blur-md transition-all duration-500 hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] active:scale-95 overflow-hidden"
         title="Direct chat with Saksham"
       >
         {/* Status Indicator & WhatsApp Icon */}
-        <div className="relative flex items-center justify-center">
-          <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+        <div className="relative flex items-center justify-center p-3.5">
+          <span className="absolute top-2 right-2 flex h-2.5 w-2.5">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
           </span>
           <svg
-            className="w-5 h-5 text-emerald-400 group-hover:text-emerald-300 transition-colors"
+            className="w-6 h-6 text-emerald-400 group-hover:text-emerald-300 transition-colors"
             fill="currentColor"
             viewBox="0 0 24 24"
           >
@@ -32,8 +32,8 @@ export default function FloatingWhatsApp() {
           </svg>
         </div>
 
-        {/* Text Details */}
-        <div className="flex flex-col text-left">
+        {/* Text Details - Collapsed by default, expands on hover */}
+        <div className="flex flex-col text-left max-w-0 opacity-0 group-hover:max-w-[200px] group-hover:opacity-100 group-hover:pr-5 transition-all duration-500 ease-out whitespace-nowrap overflow-hidden">
           <div className="flex items-center gap-1.5">
             <span className="text-xs font-mono font-medium text-[#F0F1F3] group-hover:text-emerald-400 transition-colors">
               Chat with Saksham
