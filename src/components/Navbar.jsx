@@ -108,7 +108,7 @@ export default function Navbar() {
           <div className="flex justify-end items-center gap-4">
             <a
               onClick={() => handleNav('contact-section')}
-              className="btn-primary text-sm whitespace-nowrap cursor-pointer select-none hidden sm:inline-flex"
+              className="btn-primary text-sm whitespace-nowrap cursor-pointer select-none hidden md:inline-flex"
             >
               Get in touch
             </a>
