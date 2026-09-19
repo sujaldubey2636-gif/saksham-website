@@ -53,8 +53,10 @@ export default function LiveFeedbackSection() {
     if (!container) return;
     const scroll = () => {
       if (!isHovered && !isDragging) {
-        container.scrollLeft += 1;
-        if (container.scrollLeft >= container.scrollWidth / 2) container.scrollLeft = 0;
+        // Stop scrolling if we reach the end
+        if (container.scrollLeft < container.scrollWidth - container.clientWidth) {
+          container.scrollLeft += 0.5;
+        }
       }
       animationId = requestAnimationFrame(scroll);
     };
@@ -114,7 +116,7 @@ export default function LiveFeedbackSection() {
   );
 
   const activeRating = hoveredStar || formData.rating;
-  const marqueeItems = [...reviews, ...reviews];
+  const marqueeItems = reviews;
 
   // Step progress bar
   const progressWidth = step === 1 ? '33%' : step === 2 ? '66%' : '100%';
