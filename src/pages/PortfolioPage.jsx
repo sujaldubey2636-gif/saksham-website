@@ -6,9 +6,9 @@ const ALL_PROJECTS = [
     title: "LifeFirst Healthcare",
     category: "Healthcare",
     description: "A modern, high-performance web platform built for LifeFirst Healthcare, focusing on seamless patient experience and reliability.",
-    tags: ["React", "TailwindCSS", "Healthcare UI"],
-    imageSrc: "https://images.unsplash.com/photo-1538108149393-cebb47cbdc96?q=80&w=1000&auto=format&fit=crop", // Placeholder medical image
-    url: "#" // Need the actual URL from the user
+    tags: ["React", "Healthcare UI", "Responsive Design"],
+    imageSrc: "https://image.thum.io/get/width/1200/crop/800/https://sujaldubey2636-gif.github.io/life-first-healthcare/", // Live dynamic screenshot of the website
+    url: "https://sujaldubey2636-gif.github.io/life-first-healthcare/"
   }
 ];
 
@@ -48,15 +48,23 @@ export default function PortfolioPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
             {ALL_PROJECTS.map((project, idx) => (
               <div key={idx} className="group flex flex-col bg-[#1A1C21] border border-[#2A2D35] rounded-xl overflow-hidden hover:border-[#4cd7f6]/40 transition-colors duration-300">
-                <div className="relative aspect-video overflow-hidden bg-black">
-                  <img 
-                    src={project.imageSrc} 
-                    alt={project.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#1A1C21] to-transparent opacity-60"></div>
-                  <div className="absolute top-4 left-4">
-                    <span className="text-[10px] font-mono bg-black/60 backdrop-blur text-white px-2 py-1 rounded border border-white/10 uppercase tracking-widest">
+                <div className="relative aspect-video bg-[#121316] flex flex-col group-hover:shadow-[0_0_20px_rgba(76,215,246,0.1)] transition-shadow duration-300">
+                  {/* Fake Browser Chrome */}
+                  <div className="w-full h-7 bg-[#24272E] flex items-center px-3 gap-1.5 shrink-0 border-b border-[#2A2D35] relative z-10">
+                    <div className="w-2.5 h-2.5 rounded-full bg-[#FF5F56]"></div>
+                    <div className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E]"></div>
+                    <div className="w-2.5 h-2.5 rounded-full bg-[#27C93F]"></div>
+                  </div>
+                  <div className="relative flex-grow overflow-hidden">
+                    <img 
+                      src={project.imageSrc} 
+                      alt={project.title}
+                      className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700 ease-out"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#1A1C21] to-transparent opacity-80 group-hover:opacity-40 transition-opacity duration-500"></div>
+                  </div>
+                  <div className="absolute top-10 left-4 z-20">
+                    <span className="text-[10px] font-mono bg-black/80 backdrop-blur text-[#F0F1F3] px-2 py-1 rounded border border-[#2A2D35] uppercase tracking-widest shadow-lg">
                       {project.category}
                     </span>
                   </div>
