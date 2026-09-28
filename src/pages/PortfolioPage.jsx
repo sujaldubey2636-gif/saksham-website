@@ -1,7 +1,16 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-const ALL_PROJECTS = [];
+const ALL_PROJECTS = [
+  {
+    title: "LifeFirst Healthcare",
+    category: "Healthcare",
+    description: "A modern, high-performance web platform built for LifeFirst Healthcare, focusing on seamless patient experience and reliability.",
+    tags: ["React", "TailwindCSS", "Healthcare UI"],
+    imageSrc: "https://images.unsplash.com/photo-1538108149393-cebb47cbdc96?q=80&w=1000&auto=format&fit=crop", // Placeholder medical image
+    url: "#" // Need the actual URL from the user
+  }
+];
 
 export default function PortfolioPage() {
   useEffect(() => {
