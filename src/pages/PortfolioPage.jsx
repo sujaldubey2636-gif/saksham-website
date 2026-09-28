@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 
 const ALL_PROJECTS = [
   {
-    title: "LifeFirst Healthcare",
+    title: "Life First Healthcare",
     category: "Healthcare",
-    description: "A modern, high-performance web platform built for LifeFirst Healthcare, focusing on seamless patient experience and reliability.",
+    description: "Quality Home Healthcare, Delivered to Your Doorstep. A complete platform focusing on seamless patient experience and reliability.",
     tags: ["React", "Healthcare UI", "Responsive Design"],
     imageSrc: "https://image.thum.io/get/width/1200/crop/800/https://sujaldubey2636-gif.github.io/life-first-healthcare/", // Live dynamic screenshot of the website
     url: "https://sujaldubey2636-gif.github.io/life-first-healthcare/"
